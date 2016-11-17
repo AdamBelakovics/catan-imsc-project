@@ -1,5 +1,7 @@
 package controller.player;
 
+import java.util.Map;
+
 import controller.map.Hex;
 import controller.map.TableElement;
 
@@ -8,6 +10,7 @@ public class Player {
 	PlayerController controller; 
 	int id;
 	int points;
+	Map<Resource, Integer> changeLUT;
 	
 	
 	/**
