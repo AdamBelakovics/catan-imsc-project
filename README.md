@@ -1,3 +1,4 @@
+## KÉREK MINDENKIT HOGY CSAK MŰKÖDŐ KÓDOT TÖLTSÖN FEL!
 # catan-imsc-project
 A Catan implementation
 
