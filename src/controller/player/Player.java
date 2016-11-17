@@ -11,7 +11,7 @@ public class Player {
 	int id;
 	int points;
 	Map<Resource, Integer> changeLUT;
-	//mybrach test Adam
+	//hey my branch
 	
 	/**
 	 * Rolls the dice(e. g. generates two random integers (1-6), and adds them), and allocates new resources to each Player.
