@@ -1,4 +1,5 @@
-## KÉREK MINDENKIT HOGY CSAK MŰKÖDŐ KÓDOT TÖLTSÖN FEL!
+# KÉREK MINDENKIT HOGY CSAK MŰKÖDŐ KÓDOT TÖLTSÖN FEL!
+#Fontos hogy ugyanazt a fájlt ne módosítsátok és pulloljátok párhuzamosan
 # catan-imsc-project
 A Catan implementation
 
