@@ -11,7 +11,7 @@ public class Player {
 	int id;
 	int points;
 	Map<Resource, Integer> changeLUT;
-	//Akos is here! Lets work!
+	//Akos is here! Lets work!5
 	
 	/**
 	 * Rolls the dice(e. g. generates two random integers (1-6), and adds them), and allocates new resources to each Player.
