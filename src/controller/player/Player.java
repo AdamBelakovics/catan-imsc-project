@@ -11,6 +11,7 @@ public class Player {
 	int id;
 	int points;
 	Map<Resource, Integer> changeLUT;
+	//git test
 	
 	
 	/**
