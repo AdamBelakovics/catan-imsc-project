@@ -15,7 +15,6 @@ public class Player {
 	
 	//Ezekre kene gettereket/settereket irni - Mate vallalta
 	Map<Resource, Integer> changeLUT;
-<<<<<<< HEAD
 	Map<Resource, Integer> resourcePool;
 	ArrayList<DevCard> devCards;
 	
@@ -27,7 +26,6 @@ public class Player {
 	 * Initialize changeLUT to 4
 	 * Initialize resourcePool to 0
 	 */
-	
 	public Player(String name, int id, PlayerController controller){
 		this.name = name;
 		this.id = id;
@@ -117,12 +115,6 @@ public class Player {
 	public int getActiveKnights(){
 		return activeKnights;
 	}
-	
-	
-	
-=======
-	//hey my branch
->>>>>>> refs/remotes/origin/master
 	
 	/**
 	 * Rolls the dice(e. g. generates two random integers (1-6), and adds them), and allocates new resources to each Player.
