@@ -15,6 +15,7 @@ public class Player {
 	
 	//Ezekre kene gettereket/settereket irni - Mate vallalta
 	Map<Resource, Integer> changeLUT;
+<<<<<<< HEAD
 	Map<Resource, Integer> resourcePool;
 	ArrayList<DevCard> devCards;
 	
@@ -119,6 +120,9 @@ public class Player {
 	
 	
 	
+=======
+	//hey my branch
+>>>>>>> refs/remotes/origin/master
 	
 	/**
 	 * Rolls the dice(e. g. generates two random integers (1-6), and adds them), and allocates new resources to each Player.
