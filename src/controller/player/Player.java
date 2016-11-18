@@ -1,6 +1,7 @@
 package controller.player;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 import controller.map.Hex;
@@ -13,10 +14,8 @@ public class Player {
 	int points;
 	int activeKnights;
 	
-	//Ezekre kene gettereket/settereket irni - Mate vallalta
-	Map<Resource, Integer> changeLUT;
-<<<<<<< HEAD
-	Map<Resource, Integer> resourcePool;
+	HashMap<Resource, Integer> changeLUT = new HashMap<Resource, Integer>();
+	HashMap<Resource, Integer> resourcePool = new HashMap<Resource, Integer>();
 	ArrayList<DevCard> devCards;
 	
 	/**
@@ -45,19 +44,15 @@ public class Player {
 				
 	}
 	
-	public String getPlayerName(){
-		return name;
-	}
-	
 	
 	/**
 	 * Increase player's points with a value
 	 * @param value
-	 * @throws GameEndsException if it's bigger then 10
+	 * @throws GameEndsException if points are bigger then 10
 	 * TODO Handle exception in main!
 	 *  **/
 	
-	public void inrPoints(int value) throws GameEndsException{			
+	public void incPoints(int value) throws GameEndsException{			
 		if((points + value) >= 10){	
 			points = 10;
 			throw new GameEndsException(id);						 		
@@ -73,6 +68,15 @@ public class Player {
 		if((points - value) < 0) throw new OutOfRangeException("Points goes negative");
 		points -= value;
 	}
+	
+	/**
+	 * getChangeLUT
+	 * @param Resource
+	 * @return value of change lut
+	 */
+	public int getChangeLUT(Resource r){
+		return changeLUT.get(r);
+	}
 	/**
 	 * set ChangeLUT
 	 * @param Resource r
@@ -82,6 +86,11 @@ public class Player {
 	public void setChangeLUT(Resource r, int value)throws OutOfRangeException{
 		if(value!=2 || value!=3 || value!=4) throw new OutOfRangeException("Invalid value. (Try 2, 3, 4)");
 		changeLUT.replace(r, value);
+	}
+	
+	
+	public int getResourcePool(Resource r){
+		return resourcePool.get(r);
 	}
 	
 	/**
@@ -96,21 +105,32 @@ public class Player {
 			resourcePool.replace(r, (resourcePool.get(r)+value));		
 	}
 	
+	/**
+	 * Decrease resourcePool
+	 * @param Resource r
+	 * @param int value 
+	 * @throws OutOfRangeException if value is negative OR with this value, player's stuff goes below 0
+	 */
 	public void decResourcePool(Resource r, int value) throws OutOfRangeException{
 		if(value < 0) throw new OutOfRangeException("Value can't be negative.");
 		if((resourcePool.get(r)-value) < 0) throw new OutOfRangeException("It can not be much reduced");
-		
+		resourcePool.replace(r, (resourcePool.get(r)-value));		
 	}
 	
 	public PlayerController getPlayerController(){
 		return controller;
 	}
 	
-	public int getPlayerId(){
+	public String getName(){
+		return name;
+	}
+	
+	
+	public int getId(){
 		return id;
 	}
 	
-	public int getPlayerPoints(){
+	public int getPoints(){
 		return points;
 	}
 	
@@ -118,11 +138,18 @@ public class Player {
 		return activeKnights;
 	}
 	
+	public void incActiveKnights(int value){
+		activeKnights += value;
+	}
+	
+	public void decActiveKnights(int value) throws OutOfRangeException{
+		if((activeKnights - value) < 0) throw new OutOfRangeException("It can not be much reduced.");
+		activeKnights -= value;
+	}
 	
 	
-=======
-	//hey my branch
->>>>>>> refs/remotes/origin/master
+	
+	
 	
 	/**
 	 * Rolls the dice(e. g. generates two random integers (1-6), and adds them), and allocates new resources to each Player.
