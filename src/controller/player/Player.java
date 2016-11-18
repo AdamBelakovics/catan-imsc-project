@@ -14,14 +14,12 @@ public class Player {
 	int points;
 	int activeKnights;
 	
-<<<<<<< HEAD
+	
 	//Ezekre kene gettereket/settereket irni - Mate vallalta
-	Map<Resource, Integer> changeLUT;
-	Map<Resource, Integer> resourcePool;
-=======
+
 	HashMap<Resource, Integer> changeLUT = new HashMap<Resource, Integer>();
 	HashMap<Resource, Integer> resourcePool = new HashMap<Resource, Integer>();
->>>>>>> refs/remotes/origin/MateSzoke
+
 	ArrayList<DevCard> devCards;
 	
 	/**
@@ -143,8 +141,7 @@ public class Player {
 		return activeKnights;
 	}
 	
-<<<<<<< HEAD
-=======
+
 	public void incActiveKnights(int value){
 		activeKnights += value;
 	}
@@ -158,7 +155,7 @@ public class Player {
 	
 	
 	
->>>>>>> refs/remotes/origin/MateSzoke
+	
 	/**
 	 * Rolls the dice(e. g. generates two random integers (1-6), and adds them), and allocates new resources to each Player.
 	 * If 7 is rolled calls the handleThief method
