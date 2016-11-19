@@ -15,7 +15,6 @@ public class UIController extends PlayerController {
 	@Override
 	public void turn() {
 		// TODO Auto-generated method stub
-		
 	}
 
 }
