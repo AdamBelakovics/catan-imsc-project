@@ -30,12 +30,6 @@ public class Hex implements TableElement {
 		return ypos;
 	}
 	
-	@Override
-	public boolean isBuildPossible(Building what) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	
 	private void generateVertices() {
 		for(Orientation o : Orientation.values()){
 			if(o == Orientation.EAST || o == Orientation.WEST){
