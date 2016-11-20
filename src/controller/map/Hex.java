@@ -27,6 +27,10 @@ public class Hex implements TableElement {
 		return res;
 	}
 	
+	public int getProsperity(){
+		return prosperity;
+	}
+	
 	private void generateVertices() {
 		for(Orientation o : Orientation.values()){
 			if(o == Orientation.EAST || o == Orientation.WEST){
