@@ -2,17 +2,15 @@
 
 package controller.map;
 
-import java.awt.Polygon;
 import java.util.HashMap;
-
-
 import controller.player.Building;
+import controller.player.Resource;
 
 
 public class Hex implements TableElement {
 	HashMap<Orientation, Vertex> vertices = new HashMap<Orientation, Vertex>(6);
 	String id;
-	Resource res = new Resource();
+	Resource res = Resource.Lumber;
 	int prosperity = 0;
 	
 	public Hex (String identifier){
