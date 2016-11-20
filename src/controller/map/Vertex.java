@@ -22,13 +22,13 @@ public class Vertex {
 	/**
 	 * @return the Settlement contained by this Vertex
 	 */
-	Settlement getSettlement() {
+	public Settlement getSettlement() {
 		return settlement;
 	}
 	/**
 	 * @return List of neighboring Vertexes
 	 */
-	ArrayList<Vertex> getNeighbours() {
+	public ArrayList<Vertex> getNeighbours() {
 		return neighbors;
 	}
 	
@@ -36,7 +36,7 @@ public class Vertex {
 	 * @param other
 	 * @return true if two Vertexes are the same else false
 	 */
-	boolean equals(Vertex other) {
+	public boolean equals(Vertex other) {
 		if (ID == other.getID()){
 			return true;
 		}
