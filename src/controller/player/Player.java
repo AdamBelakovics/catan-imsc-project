@@ -9,18 +9,24 @@ import controller.map.TableElement;
 
 public class Player {
 	String name;
-	PlayerController controller; 
+	public PlayerController controller; 
 	int id;
 	int points;
 	int activeKnights;
 	
-	
-	//Ezekre kene gettereket/settereket irni - Mate vallalta
-
 	HashMap<Resource, Integer> changeLUT = new HashMap<Resource, Integer>();
 	HashMap<Resource, Integer> resourcePool = new HashMap<Resource, Integer>();
-
-	ArrayList<DevCard> devCards;
+	ArrayList<DevCard> devCards = new ArrayList<DevCard>();
+	ArrayList<DevCard> playedDevCards = new ArrayList<DevCard>();
+	
+	/**
+	 * TODO work in progress
+	 * @param playerID
+	 * @return
+	 */
+	ArrayList<DevCard> getPlayedDevelopmentCards(){
+		return playedDevCards;	
+	}
 	
 	/**
 	 * Player constructor
@@ -30,6 +36,7 @@ public class Player {
 	 * Initialize changeLUT to 4
 	 * Initialize resourcePool to 0
 	 */
+	
 	public Player(String name, int id, PlayerController controller){
 		this.name = name;
 		this.id = id;
@@ -141,7 +148,6 @@ public class Player {
 		return activeKnights;
 	}
 	
-
 	public void incActiveKnights(int value){
 		activeKnights += value;
 	}
@@ -150,7 +156,6 @@ public class Player {
 		if((activeKnights - value) < 0) throw new OutOfRangeException("It can not be much reduced.");
 		activeKnights -= value;
 	}
-	
 	
 	
 	
@@ -198,3 +203,4 @@ public class Player {
 		
 	}
 }
+
