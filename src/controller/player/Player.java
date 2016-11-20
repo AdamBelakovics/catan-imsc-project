@@ -24,7 +24,7 @@ public class Player {
 	 * @param playerID
 	 * @return
 	 */
-	ArrayList<DevCard> getPlayedDevelopmentCards(){
+	public ArrayList<DevCard> getPlayedDevelopmentCards(){
 		return playedDevCards;	
 	}
 	
