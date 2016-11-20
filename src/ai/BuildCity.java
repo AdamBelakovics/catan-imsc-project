@@ -2,6 +2,7 @@ package ai;
 
 import controller.map.Table;
 import controller.map.Vertex;
+import controller.player.Player;
 
 import java.util.ArrayList;
 
@@ -18,6 +19,8 @@ public class BuildCity {
 	private AI owner;
 	private Vertex node;
 	private double buildValue;
+	private Player aiPlayer;
+	private ArrayList<Player> otherPlayers;
 	
 	/**
 	 * Constructor. Initializes attributes.
@@ -25,11 +28,13 @@ public class BuildCity {
 	 * @param owner - the ai player who uses this class
 	 * @author Gergely Olah
 	 */
-	public BuildCity(Table map, AI owner){
+	public BuildCity(Table map, AI owner, Player aiPlayer, ArrayList<Player> otherPlayers){
 		this.map = map;
 		this.owner = owner;
 		node = null;
 		buildValue = 0;
+		this.aiPlayer = aiPlayer;
+		this.otherPlayers = otherPlayers;
 	}
 	
 	/**

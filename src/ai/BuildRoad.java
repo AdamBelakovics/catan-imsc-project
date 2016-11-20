@@ -1,11 +1,13 @@
 package ai;
 
 import java.util.ArrayList;
+
 import java.util.HashSet;
 
 import controller.map.Vertex;
 import controller.map.Table;
 import controller.map.Edge;
+import controller.player.Player;
 
 /**
  * Building a road
@@ -20,6 +22,8 @@ public class BuildRoad {
 	private double buildValue;
 	private Vertex nodeFrom;
 	private Vertex nodeTo;
+	private Player aiPlayer;
+	private ArrayList<Player> otherPlayers;
 	
 	/**
 	 * Constructor. Initializes attributes.
@@ -27,12 +31,14 @@ public class BuildRoad {
 	 * @param owner - the ai player who uses this class
 	 * @author Gergely Olah
 	 */
-	public BuildRoad(Table map, AI owner){
+	public BuildRoad(Table map, AI owner, Player aiPlayer, ArrayList<Player> otherPlayers){
 		this.map = map;
 		this.owner = owner;
 		nodeFrom = null;
 		nodeTo = null;
 		buildValue = 0;
+		this.aiPlayer = aiPlayer;
+		this.otherPlayers = otherPlayers;
 	}
 	
 	/**
@@ -113,7 +119,7 @@ public class BuildRoad {
 	private Vertex fromWhereCanBuildRoad(Vertex nodeTo){
 		// there is no point in building multiple roads to same node
 		for(Edge r : map.getPlayerRoads(owner.getPlayerID())){
-			if(r.getNodes().contains(nodeTo))
+			if(r.getEnds().contains(nodeTo))
 				return null;
 		}
 		for(Vertex nodeFrom : nodeTo.getNeighbours()){

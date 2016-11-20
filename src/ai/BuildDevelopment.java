@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import controller.map.Table;
+import controller.player.Player;
 import controller.player.Resource;
 
 
@@ -22,6 +23,8 @@ public class BuildDevelopment {
 	private Table map;
 	private AI owner;
 	private int player;
+	private Player aiPlayer;
+	private ArrayList<Player> otherPlayers;
 	
 	/**
 	 * Constructor
@@ -29,9 +32,11 @@ public class BuildDevelopment {
 	 * @param o - the ai player who uses this class
 	 * @author Gergely Olah
 	 */
-	public BuildDevelopment(Table map, AI owner, int player){
+	public BuildDevelopment(Table map, AI owner, int player, Player aiPlayer, ArrayList<Player> otherPlayers){
 		this.map = map;
 		this.owner = owner;
+		this.aiPlayer = aiPlayer;
+		this.otherPlayers = otherPlayers;
 	}
 	/**
 	 * Calculates the combined values of all development
