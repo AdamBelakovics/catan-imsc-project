@@ -12,6 +12,8 @@ import controller.player.Building;
 public class Hex implements TableElement {
 	HashMap<Orientation, Vertex> vertices = new HashMap<Orientation, Vertex>(6);
 	String id;
+	Resource res = new Resource();
+	int prosperity = 0;
 	
 	public Hex (String identifier){
 		id = identifier;
@@ -21,8 +23,13 @@ public class Hex implements TableElement {
 		return id;
 	}
 	
+	public Resource getResource(){
+		return res;
+	}
 	
-	
+	public int getProsperity(){
+		return prosperity;
+	}
 	
 	private void generateVertices() {
 		for(Orientation o : Orientation.values()){

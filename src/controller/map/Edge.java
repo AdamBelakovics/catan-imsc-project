@@ -13,14 +13,14 @@ public class Edge implements TableElement {
 	/**
 	 * @return returns the Road contained by this Edge
 	 */
-	Road getRoad(){
+	public Road getRoad(){
 		return road;
 	}
 	
 	/**
 	 * @return  returns the Vertexes which the Edge connects
 	 */
-	ArrayList<Vertex> getEnds(){
+	public ArrayList<Vertex> getEnds(){
 		ArrayList<Vertex> ends = new ArrayList<Vertex>();
 		ends.add(first);
 		ends.add(second);
@@ -31,7 +31,7 @@ public class Edge implements TableElement {
 	 * @param other
 	 * @return true if two Edges are the same else false
 	 */
-	boolean equals(Edge other) {
+	public boolean equals(Edge other) {
 		if (other.first == first && other.second == second)
 			return true;
 		return false;
