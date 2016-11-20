@@ -1,10 +1,43 @@
 package controller.map;
 
+import java.util.ArrayList;
+
 import controller.player.Building;
+import controller.player.Road;
 
 public class Edge implements TableElement {
-	Vertex one;
-	Vertex two;
+	Vertex first = new Vertex(); 
+	Vertex second = new Vertex();
+	Road road = new Road();
+	
+	/**
+	 * @return returns the Road contained by this Edge
+	 */
+	Road getRoad(){
+		return road;
+	}
+	
+	/**
+	 * @return  returns the Vertexes which the Edge connects
+	 */
+	ArrayList<Vertex> getEnds(){
+		ArrayList<Vertex> ends = new ArrayList<Vertex>();
+		ends.add(first);
+		ends.add(second);
+		return ends;	
+	}
+	
+	/**
+	 * @param other
+	 * @return true if two Edges are the same else false
+	 */
+	boolean equals(Edge other) {
+		if (other.first == first && other.second == second)
+			return true;
+		return false;
+	}
+	
+	
 	@Override
 	public boolean isBuildPossible(Building what) {
 		// TODO Auto-generated method stub
