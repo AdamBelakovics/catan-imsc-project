@@ -65,7 +65,7 @@ public class BuildVillage {
 	private ArrayList<Vertex> listValidNodes(){
 		ArrayList<Vertex> result = new ArrayList<Vertex>();
 		for(Vertex n : map.getNodes()){
-			if(n.getRoads(owner.getPlayerID()).size() > 0 && n.isValid()){
+			if(n.getRoads(aiPlayer.getId()).size() > 0 && n.isValid()){
 				result.add(n);
 			}
 		}

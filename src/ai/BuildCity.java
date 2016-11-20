@@ -68,7 +68,7 @@ public class BuildCity {
 	public void refresh(){		
 		buildValue = 0;
 		node = null;
-		ArrayList<Vertex> nodes = map.getVillages(owner.getPlayerID());
+		ArrayList<Vertex> nodes = map.getVillages(aiPlayer.getId());
 		for(Vertex n: nodes){
 			double currentVal = owner.nodePersonalValue(n);
 			if(currentVal > buildValue){

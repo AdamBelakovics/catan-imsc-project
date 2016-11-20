@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import controller.map.Table;
+import controller.player.DevCard;
 import controller.player.Player;
 import controller.player.Resource;
 
@@ -152,10 +153,11 @@ public class BuildDevelopment {
 	 */
 	private double calculateTwoRoadProbability(){
 		double result = 0.08;
-		HashMap<String, Integer> playedCards;
-		for(int player : owner.getPlayerIDs()){
-			playedCards = map.getPlayedDevelopmentCards(player);
-			result -= playedCards.get("tworoad") * 0.04;
+		ArrayList<DevCard> playedCards;
+		for(Player player : otherPlayers){
+			playedCards = player.getPlayedDevelopmentCards();
+			// TODO count how many were played
+			// result -= playedCards.get("tworoad") * 0.04;
 		}
 		playedCards = map.getPlayedDevelopmentCards(owner.getPlayerID());
 		result -= playedCards.get("tworoad") * 0.04;
@@ -171,9 +173,10 @@ public class BuildDevelopment {
 	 */
 	private double calculateMonopolyProbability(){
 		double result = 0.08;
-		HashMap<String, Integer> playedCards;
-		for(int player : owner.getPlayerIDs()){
-			playedCards = map.getPlayedDevelopmentCards(player);
+		ArrayList<DevCard> playedCards;
+		for(Player player : otherPlayers){
+			playedCards = player.getPlayedDevelopmentCards();
+			// TODO count how many were played
 			result -= playedCards.get("monopoly") * 0.04;
 		}
 		playedCards = map.getPlayedDevelopmentCards(owner.getPlayerID());
@@ -190,9 +193,10 @@ public class BuildDevelopment {
 	 */
 	private double calculateInventionProbability(){
 		double result = 0.08;
-		HashMap<String, Integer> playedCards;
-		for(int player : owner.getPlayerIDs()){
-			playedCards = map.getPlayedDevelopmentCards(player);
+		ArrayList<DevCard> playedCards;
+		for(Player player : otherPlayers){
+			playedCards = player.getPlayedDevelopmentCards();
+			// TODO count how many were played
 			result -= playedCards.get("invention") * 0.04;
 		}
 		playedCards = map.getPlayedDevelopmentCards(owner.getPlayerID());
@@ -209,9 +213,10 @@ public class BuildDevelopment {
 	 */
 	private double calculatePlusPointProbability(){
 		double result = 0.2;
-		HashMap<String, Integer> playedCards;
-		for(int player : owner.getPlayerIDs()){
-			playedCards = map.getPlayedDevelopmentCards(player);
+		ArrayList<DevCard> playedCards;
+		for(Player player : otherPlayers){
+			playedCards = player.getPlayedDevelopmentCards();
+			// TODO count how many were played
 			result -= playedCards.get("plus-point") * 0.04;
 		}
 		playedCards = map.getPlayedDevelopmentCards(owner.getPlayerID());
@@ -228,9 +233,10 @@ public class BuildDevelopment {
 	 */
 	private double calculateKnightProbability(){
 		double result = 0.56;
-		HashMap<String, Integer> playedCards;
-		for(int player : owner.getPlayerIDs()){
-			playedCards = map.getPlayedDevelopmentCards(player);
+		ArrayList<DevCard> playedCards;
+		for(Player player : otherPlayers){
+			playedCards = player.getPlayedDevelopmentCards();
+			// TODO count how many were played
 			result -= playedCards.get("knight") * 0.04;
 		}
 		playedCards = map.getPlayedDevelopmentCards(owner.getPlayerID());

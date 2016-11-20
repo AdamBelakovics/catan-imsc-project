@@ -118,19 +118,19 @@ public class BuildRoad {
 	 */
 	private Vertex fromWhereCanBuildRoad(Vertex nodeTo){
 		// there is no point in building multiple roads to same node
-		for(Edge r : map.getPlayerRoads(owner.getPlayerID())){
+		for(Edge r : map.getPlayerRoads(this.aiPlayer.getId())){
 			if(r.getEnds().contains(nodeTo))
 				return null;
 		}
 		for(Vertex nodeFrom : nodeTo.getNeighbours()){
 			// if there is at least one road to this node
-			if(nodeFrom.getRoads(owner.getPlayerID()).size() > 0){
+			if(nodeFrom.getRoads(this.aiPlayer.getId()).size() > 0){
 				// we have to check whether there is someone else's road there
 				boolean isRoadBuilt = false;
 				Edge keyRoad = new Edge(nodeFrom, nodeTo);
 				// check all players
-				for(int player : owner.getPlayerIDs()){
-					if(map.getPlayerRoads(player).contains(keyRoad)){
+				for(Player player : otherPlayers){
+					if(map.getPlayerRoads(player.getId()).contains(keyRoad)){
 						isRoadBuilt = true;
 					}
 				}
@@ -151,12 +151,12 @@ public class BuildRoad {
 	 */
 	public int calculateMaxRoadDifference(){
 		int maxRoadVal = 0;
-		for(int player : owner.getPlayerIDs()){
-			int playersMax = calculatePlayerMaxRoad(player);
+		for(Player player : otherPlayers){
+			int playersMax = calculatePlayerMaxRoad(player.getId());
 			if(playersMax > maxRoadVal)
 				maxRoadVal = playersMax;
 		}
-		int AIMaxVal = calculatePlayerMaxRoad(owner.getPlayerID());
+		int AIMaxVal = calculatePlayerMaxRoad(aiPlayer.getId());
 		return maxRoadVal - AIMaxVal;
 	}
 	
@@ -226,8 +226,8 @@ public class BuildRoad {
 	 */
 	private boolean isMaxRoadStart(Vertex fromNode){
 		HashSet<Vertex> visitedNodes = new HashSet<Vertex>();
-		int nodesMaxRoad = calculatePlayerMaxRoadFromNode(fromNode, owner.getPlayerID(), visitedNodes);
-		int maxRoad = calculatePlayerMaxRoad(owner.getPlayerID());
+		int nodesMaxRoad = calculatePlayerMaxRoadFromNode(fromNode,aiPlayer.getId(), visitedNodes);
+		int maxRoad = calculatePlayerMaxRoad(aiPlayer.getId());
 		return nodesMaxRoad == maxRoad;
 	}
 }
