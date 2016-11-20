@@ -41,7 +41,7 @@ public class Table{
 	 * Work in progress TODO
 	 * @return List of all Vertexes
 	 */
-	ArrayList<Vertex> getNodes(){ //TODO convert inner vertexMap to List
+	public ArrayList<Vertex> getNodes(){ //TODO convert inner vertexMap to List
 		return new ArrayList<Vertex>(); 
 	}
 	
@@ -50,7 +50,7 @@ public class Table{
 	 * Work in progress TODO
 	 * @return List of all Hexes
 	 */
-	ArrayList<Hex> getFields(){ //TODO convert inner hexgrid to List
+	public ArrayList<Hex> getFields(){ //TODO convert inner hexgrid to List
 		return new ArrayList<Hex>(); 
 	}
 	
@@ -59,7 +59,7 @@ public class Table{
 	 * Work in progress TODO
 	 * @return List of all Edges
 	 */
-	ArrayList<Edge> getEdges(){ //TODO create inner container for Edges
+	public ArrayList<Edge> getEdges(){ //TODO create inner container for Edges
 		return new ArrayList<Edge>(); 
 	}
 	
