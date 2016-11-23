@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<TextureMap>
+<Texture r="Brick" c="0x8e4900"/>
+<Texture r="Lumber" c="0x215411"/>
+<Texture r="Ore" c="0x7a7a7a"/>
+<Texture r="Grain" c="0xefc53b"/>
+<Texture r="Wool" c="0xcecece"/>
+</TextureMap>
