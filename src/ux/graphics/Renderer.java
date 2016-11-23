@@ -1,14 +1,20 @@
 package ux.graphics;
 
 import java.awt.Polygon;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.Timer;
 
 import controller.map.*;
 import controller.player.*;
@@ -17,30 +23,42 @@ import ux.ui.UIController;
 public class Renderer {
 	UIController currUIC;
 	Table board;
-	JFrame mainPanel;
+	JFrame mainFrame;
+	JPanel mainPanel;
 	BoardRenderer boardPanel;
 	HUDRenderer HUDPanel;
+	Timer updateTimer;
 	
 	/**
 	 * @param _board
 	 */
-	public Renderer(Table _board) {
+	public Renderer(Table _board, int _width, int _height) {
 		board=_board;
-		mainPanel=new JFrame("JCatan");
-		mainPanel.setSize(800, 600);
-		boardPanel=new BoardRenderer(board);
-		HUDPanel=new HUDRenderer();
-		mainPanel.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		mainPanel.add(boardPanel);
+		mainFrame=new JFrame("JCatan");
+		mainFrame.setSize(_width, _height);
+		boardPanel=new BoardRenderer(board,_width,_height);
+		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		mainPanel.addKeyListener(new BoardKeyListener());
-		mainPanel.addMouseListener(new BoardMouseListener());
+		mainPanel=new JPanel();
+		mainFrame.add(mainPanel);
 		
-		mainPanel.setVisible(true);
+		updateTimer=new Timer(15, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				draw();
+			}
+		});
+		updateTimer.start();
+
+		mainFrame.addKeyListener(new BoardKeyListener());
+		mainFrame.addMouseListener(new BoardMouseListener());
+		mainFrame.addMouseWheelListener(new BoardWheelListener());
+		
+		mainFrame.setVisible(true);
 	}
 	
 	public void draw(){
-		mainPanel.repaint();
+		boardPanel.paint(mainFrame.getGraphics());
 	};
 	public void updateDice(Dice dice){};
 	public void updateTableElement(TableElement element){};
@@ -52,9 +70,9 @@ public class Renderer {
 
 		@Override
 		public void mouseClicked(MouseEvent ev) {
-			Map.Entry<Hex,HexPoly> selected=boardPanel.getHexUnderCursor(ev.getX(), ev.getY()-mainPanel.getInsets().top);
+			Map.Entry<Hex,HexPoly> selected=boardPanel.hexRenderer.getHexUnderCursor(ev.getX(), ev.getY());
 			if (selected!=null) {
-				boardPanel.selectHex(selected.getKey());
+				boardPanel.hexRenderer.selectHex(selected.getKey());
 			}
 		}
 
@@ -80,12 +98,12 @@ public class Renderer {
 			case 'q':
 			case 'Q':
 				System.out.println("[BoardRenderer]Rotated board to left");
-				boardPanel.cycleOrientation(-1);
+				boardPanel.hexRenderer.cycleOrientation(-1);
 				break;
 			case 'e':
 			case 'E':
 				System.out.println("[BoardRenderer]Rotated board to right");
-				boardPanel.cycleOrientation(1);
+				boardPanel.hexRenderer.cycleOrientation(1);
 				break;
 			}
 		}
@@ -97,4 +115,13 @@ public class Renderer {
 		public void keyReleased(KeyEvent e) {}
 	}
 
+	class BoardWheelListener implements MouseWheelListener {
+
+		@Override
+		public void mouseWheelMoved(MouseWheelEvent ev) {
+			System.out.println("[BoardWheelListener] Used mousewheel for "+ev.getWheelRotation()+" clicks.");
+			boardPanel.hexRenderer.zoomBoard(ev.getWheelRotation());			
+		}
+		
+	}
 }
