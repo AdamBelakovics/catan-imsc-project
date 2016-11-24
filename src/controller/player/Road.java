@@ -1,5 +1,5 @@
 package controller.player;
 
-public class Road {
+public class Road implements Building {
 
 }

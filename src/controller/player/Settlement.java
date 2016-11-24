@@ -1,5 +1,5 @@
 package controller.player;
 
-public class Settlement {
+public class Settlement implements Building{
 
 }
