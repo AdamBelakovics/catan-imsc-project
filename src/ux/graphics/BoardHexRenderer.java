@@ -26,8 +26,10 @@ public class BoardHexRenderer extends ImageRenderer {
 	private Graphics2D hexCanvas;
 	private double zoomLevel;
 	private HashMap<Hex,HexPoly> hexMap;
-	private HashMap<Resource,Integer> colorMap;
+	private HashMap<Resource,Color> colorMap;
 	private HashMap<Point,Vertex> vertexMap;
+	Map.Entry<Hex, HexPoly> selectedTile=null;
+	
 	Building currentlyBuilding;
 
 	//Constants
@@ -35,15 +37,15 @@ public class BoardHexRenderer extends ImageRenderer {
 	final double rotationStep=0.01;
 
 	public BoardHexRenderer(ImageRenderer _parentRenderer,Table _board,int _width,int _height) {
+		
+		super(_width,_height);
 
 		parentRenderer=_parentRenderer;
 		width=parentRenderer.getWidth();
 		height=parentRenderer.getHeight();
 		board=_board;
 		hexMap=new HashMap<Hex,HexPoly>();
-		colorMap=TextureXMLReader.readXML("textures.xml");
-		width=_width;
-		height=_height;
+		colorMap=ResourceXMLReader.readTextureXML("textures.xml");
 		generateHexes();
 		generateVertices();
 		currentlyBuilding=null;
@@ -134,9 +136,8 @@ public class BoardHexRenderer extends ImageRenderer {
 	 * @author Kiss Lorinc
 	 */
 	private void paintHexes() {
-		Map.Entry<Hex, HexPoly> selectedTile=null;
 		for (Map.Entry<Hex, HexPoly> entry : hexMap.entrySet()){
-			hexCanvas.setPaint(new Color(colorMap.get(entry.getKey().getResource())));
+			hexCanvas.setPaint(colorMap.get(entry.getKey().getResource()));
 			hexCanvas.draw(entry.getValue());
 			hexCanvas.fillPolygon(entry.getValue());
 			if (entry.getValue().selected) selectedTile=entry;

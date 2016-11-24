@@ -43,8 +43,7 @@ public class BoardRenderer extends ImageRenderer {
 	public BoardOrientation boardOrientation;
 
 	public BoardRenderer(Table _board,int _width, int _height) {
-		width=_width;
-		height=_height;
+		super(_width,_height);
 		board=_board;
 		boardOrientation=BoardOrientation.NORTH;
 		hexImage=new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);

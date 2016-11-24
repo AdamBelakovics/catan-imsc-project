@@ -35,17 +35,21 @@ public class Renderer {
 
 	/**
 	 * Initializes the renderer
+	 * @param uiController 
 	 * @param _board the Table element currently in the game
 	 * @param _width width of the window
 	 * @param _height height of the window
 	 */
-	public Renderer(Table _board, int _width, int _height) {
+	public Renderer(UIController uiController, Table _board, int _width, int _height) {
 		board=_board;
+		currUIC=uiController;
 		mainFrame=new JFrame("JCatan");
-		mainFrame.setSize(_width, _height);
-		boardPanel=new BoardRenderer(board,_width,_height);
-		hudPanel=new HUDRenderer(_width,_height);
 		
+		boardPanel=new BoardRenderer(board,_width,_height);
+		hudPanel=new HUDRenderer(currUIC, _width,_height);
+
+		mainFrame.setSize(_width, _height);
+		mainFrame.setResizable(false);
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		updateTimer=new Timer(15, new ActionListener() {
@@ -89,8 +93,8 @@ public class Renderer {
 			}
 			Button selectedButton=hudPanel.interfaceRenderer.getButtonUnderCursor(ev.getX(), ev.getY());
 			if (selectedButton!=null) {
-				selectedButton.press();
-				if (selectedButton.getClass()==BuildButton.class)
+				hudPanel.pressButton(selectedButton);
+				if (selectedButton instanceof BuildButton && selectedButton.selected)
 					boardPanel.hexRenderer.currentlyBuilding=((BuildButton)selectedButton).building;
 			}
 		}
