@@ -15,7 +15,8 @@ import java.util.ArrayList;
  */
 public class BuildVillage {
 	private Table map;
-	private AI owner;
+	// TODO needs ai
+	//private AI owner;
 	private Vertex node;
 	private double buildValue;
 	private Player aiPlayer;
@@ -27,9 +28,11 @@ public class BuildVillage {
 	 * @param owner - the ai player who uses this class
 	 * @author Gergely Olah
 	 */
-	public BuildVillage(Table map, AI owner, Player aiPlayer, ArrayList<Player> otherPlayers){
+	// TODO contructor should get ai
+	public BuildVillage(Table map, Player aiPlayer, ArrayList<Player> otherPlayers){
 		this.map = map;
-		this.owner = owner;
+		// need ai
+		//this.owner = owner;
 		node = null;
 		buildValue = 0;
 		this.aiPlayer = aiPlayer;
@@ -64,11 +67,14 @@ public class BuildVillage {
 	 */
 	private ArrayList<Vertex> listValidNodes(){
 		ArrayList<Vertex> result = new ArrayList<Vertex>();
+		// TODO this might be different, waiting for Table's implemention
+		/*
 		for(Vertex n : map.getNodes()){
 			if(n.getRoads(aiPlayer.getId()).size() > 0 && n.isValid()){
 				result.add(n);
 			}
 		}
+		*/
 		return result;
 	}
 	
@@ -83,7 +89,9 @@ public class BuildVillage {
 		node = null;
 		ArrayList<Vertex> nodes = listValidNodes();		
 		for(Vertex n : nodes){
-			double currentValue = owner.nodePersonalValue(n);
+			// TODO need ai
+			//double currentValue = owner.nodePersonalValue(n);
+			double currentValue = 0;
 			if(currentValue > buildValue){
 				buildValue = currentValue;
 				node = n;

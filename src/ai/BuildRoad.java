@@ -18,7 +18,8 @@ import controller.player.Player;
  */
 public class BuildRoad {
 	private Table map;
-	private AI owner;
+	// TODO need ai
+	//private AI owner;
 	private double buildValue;
 	private Vertex nodeFrom;
 	private Vertex nodeTo;
@@ -31,9 +32,10 @@ public class BuildRoad {
 	 * @param owner - the ai player who uses this class
 	 * @author Gergely Olah
 	 */
-	public BuildRoad(Table map, AI owner, Player aiPlayer, ArrayList<Player> otherPlayers){
+	public BuildRoad(Table map, Player aiPlayer, ArrayList<Player> otherPlayers){
 		this.map = map;
-		this.owner = owner;
+		// TODO need ai
+		//this.owner = owner;
 		nodeFrom = null;
 		nodeTo = null;
 		buildValue = 0;
@@ -91,7 +93,9 @@ public class BuildRoad {
 		for(Vertex nodeTo : map.getNodes()){
 			Vertex nodeFrom = fromWhereCanBuildRoad(nodeTo);
 			if(nodeFrom != null){
-				val = owner.nodePersonalValue(nodeTo);
+				// TODO need ai
+				val = 2;
+				//val = owner.nodePersonalValue(nodeTo);
 				if(dif < 2){
 					if(dif >= -1)
 						difVal = 3;
@@ -117,6 +121,8 @@ public class BuildRoad {
 	 * @author Gergely Olah
 	 */
 	private Vertex fromWhereCanBuildRoad(Vertex nodeTo){
+		// TODO getPlayerRoads, getRoadsFromNode, needs some work
+		/*
 		// there is no point in building multiple roads to same node
 		for(Edge r : map.getPlayerRoads(this.aiPlayer.getId())){
 			if(r.getEnds().contains(nodeTo))
@@ -127,7 +133,9 @@ public class BuildRoad {
 			if(nodeFrom.getRoads(this.aiPlayer.getId()).size() > 0){
 				// we have to check whether there is someone else's road there
 				boolean isRoadBuilt = false;
-				Edge keyRoad = new Edge(nodeFrom, nodeTo);
+				
+				// this might not be needed
+				//Edge keyRoad = new Edge(nodeFrom, nodeTo);
 				// check all players
 				for(Player player : otherPlayers){
 					if(map.getPlayerRoads(player.getId()).contains(keyRoad)){
@@ -139,7 +147,7 @@ public class BuildRoad {
 					return nodeFrom;
 				}
 			}
-		}
+		}*/
 		return null;
 	}
 	
@@ -189,6 +197,8 @@ public class BuildRoad {
 	 * @author Gergely Olah
 	 */
 	private int calculatePlayerMaxRoadFromNode(Vertex fromNode, int player, HashSet<Vertex> visitedNodes){
+		// TODO needs getRoadsFromNode(player), and Rode.getNodes()
+		/*
 		int dist, max=0;
 	    visitedNodes.add(fromNode);
 	    for(Edge road : fromNode.getRoads(player)){
@@ -215,6 +225,8 @@ public class BuildRoad {
 
 	    visitedNodes.remove(fromNode);
 	    return max;
+	    */
+		return 0;
 	}
 	
 	/**

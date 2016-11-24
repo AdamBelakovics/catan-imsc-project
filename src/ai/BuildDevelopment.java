@@ -22,7 +22,8 @@ import controller.player.Resource;
  */
 public class BuildDevelopment {
 	private Table map;
-	private AI owner;
+	// TODO ai
+	//private AI owner;
 	private int player;
 	private Player aiPlayer;
 	private ArrayList<Player> otherPlayers;
@@ -33,9 +34,10 @@ public class BuildDevelopment {
 	 * @param o - the ai player who uses this class
 	 * @author Gergely Olah
 	 */
-	public BuildDevelopment(Table map, AI owner, int player, Player aiPlayer, ArrayList<Player> otherPlayers){
+	public BuildDevelopment(Table map, int player, Player aiPlayer, ArrayList<Player> otherPlayers){
 		this.map = map;
-		this.owner = owner;
+		// TODO ai
+		//this.owner = owner;
 		this.aiPlayer = aiPlayer;
 		this.otherPlayers = otherPlayers;
 	}
@@ -60,7 +62,9 @@ public class BuildDevelopment {
 	 * @author Gergely Olah
 	 */
 	private double calculateTwoRoadValue(){
-		BuildRoad r = new BuildRoad(map, owner);
+		// TODO ai
+		//BuildRoad r = new BuildRoad(map, owner);
+		BuildRoad r = new BuildRoad(map, aiPlayer, otherPlayers);
 		int dif = r.calculateMaxRoadDifference();
 		int difVal = 1;
 		if(dif < 2 && dif >= -2)
@@ -87,13 +91,14 @@ public class BuildDevelopment {
 	 */
 	private double calculateInventionValue(){
 		double minResourceFrequency = -1;
-		HashMap<Resource, Material> res = owner.getResources();
+		// TODO need Material, ai 
+		/*HashMap<Resource, Material> res = owner.getResources();
 		for(Map.Entry<Resource, Material> it : res.entrySet()){
 			double currentFrequency = it.getValue().personalFrequency();
 			if(minResourceFrequency == -1 || currentFrequency < minResourceFrequency){
 				minResourceFrequency = currentFrequency;
 			}
-		}
+		}*/
 		// the return value is between 0 and 10
 		if(minResourceFrequency > 0)
 			return Math.max(10 / minResourceFrequency, 10);
@@ -108,7 +113,8 @@ public class BuildDevelopment {
 	 */
 	private double calculateMonopolyValue(){
 		double maxMaterialValue = 0;
-		HashMap<Resource, Material> res = owner.getResources();
+		// TODO need Material, ai
+		/*HashMap<Resource, Material> res = owner.getResources();
 		for(Map.Entry<Resource, Material> it : res.entrySet()){
 			double currentValue;
 			// handling division by zero
@@ -120,7 +126,7 @@ public class BuildDevelopment {
 			if(maxMaterialValue < currentValue){
 				maxMaterialValue = currentValue;
 			}
-		}
+		}*/
 		return Math.max(maxMaterialValue, 10);
 	}
 	
@@ -131,17 +137,21 @@ public class BuildDevelopment {
 	 */
 	private double calculateKnightValue(){
 		int robbed = 1;
-		if(owner.isRobbed())
-			robbed = 2;
+		// TODO ai
+		/*if(owner.isRobbed())
+			robbed = 2;*/
 		int dif, difVal;
-		dif = owner.getKnightDiff();
+		dif = 0;
+		// TODO ai
+		//dif = owner.getKnightDiff();
 		difVal = 1;
 		if(dif < 2 && dif >= -2)
 			difVal = 3;
 		else if(dif < -2)
 			difVal = 2;
-			
-		return Math.max(robbed * difVal + owner.getRobbedSum() + 2.5, 10);
+		// TODO ai
+		return 0;
+		//return Math.max(robbed * difVal + owner.getRobbedSum() + 2.5, 10);
 	}
 	
 	/**
@@ -159,8 +169,9 @@ public class BuildDevelopment {
 			// TODO count how many were played
 			// result -= playedCards.get("tworoad") * 0.04;
 		}
-		playedCards = map.getPlayedDevelopmentCards(owner.getPlayerID());
-		result -= playedCards.get("tworoad") * 0.04;
+		// TODO need devcard
+		//playedCards = map.getPlayedDevelopmentCards(owner.getPlayerID());
+		//result -= playedCards.get("tworoad") * 0.04;
 		return result;
 	}
 	
@@ -173,6 +184,8 @@ public class BuildDevelopment {
 	 */
 	private double calculateMonopolyProbability(){
 		double result = 0.08;
+		// TODO need DevCard
+		/*
 		ArrayList<DevCard> playedCards;
 		for(Player player : otherPlayers){
 			playedCards = player.getPlayedDevelopmentCards();
@@ -180,7 +193,7 @@ public class BuildDevelopment {
 			result -= playedCards.get("monopoly") * 0.04;
 		}
 		playedCards = map.getPlayedDevelopmentCards(owner.getPlayerID());
-		result -= playedCards.get("monopoly") * 0.04;
+		result -= playedCards.get("monopoly") * 0.04;*/
 		return result;
 	}
 	
@@ -193,6 +206,8 @@ public class BuildDevelopment {
 	 */
 	private double calculateInventionProbability(){
 		double result = 0.08;
+		// TODO need DevCard
+		/*
 		ArrayList<DevCard> playedCards;
 		for(Player player : otherPlayers){
 			playedCards = player.getPlayedDevelopmentCards();
@@ -201,6 +216,7 @@ public class BuildDevelopment {
 		}
 		playedCards = map.getPlayedDevelopmentCards(owner.getPlayerID());
 		result -= playedCards.get("invention") * 0.04;
+		*/
 		return result;
 	}
 	
@@ -213,6 +229,8 @@ public class BuildDevelopment {
 	 */
 	private double calculatePlusPointProbability(){
 		double result = 0.2;
+		// TODO need DevCard
+		/*
 		ArrayList<DevCard> playedCards;
 		for(Player player : otherPlayers){
 			playedCards = player.getPlayedDevelopmentCards();
@@ -221,6 +239,7 @@ public class BuildDevelopment {
 		}
 		playedCards = map.getPlayedDevelopmentCards(owner.getPlayerID());
 		result -= playedCards.get("plus-point") * 0.04;
+		*/
 		return result;
 	}
 	
@@ -233,6 +252,8 @@ public class BuildDevelopment {
 	 */
 	private double calculateKnightProbability(){
 		double result = 0.56;
+		// TODO need DevCard
+		/*
 		ArrayList<DevCard> playedCards;
 		for(Player player : otherPlayers){
 			playedCards = player.getPlayedDevelopmentCards();
@@ -241,6 +262,7 @@ public class BuildDevelopment {
 		}
 		playedCards = map.getPlayedDevelopmentCards(owner.getPlayerID());
 		result -= playedCards.get("knight") * 0.04;
+		*/
 		return result;
 	}
 }
