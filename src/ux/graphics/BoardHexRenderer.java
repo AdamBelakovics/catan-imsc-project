@@ -4,40 +4,69 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.Robot;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import controller.map.Hex;
+import controller.map.Table;
+import controller.map.Vertex;
+import controller.player.Building;
+import controller.player.Resource;
 import ux.graphics.BoardRenderer.BoardOrientation;
 
 public class BoardHexRenderer extends ImageRenderer {
-	double rotationLeft;
-	Graphics2D hexCanvas;
-	double zoomLevel;
+	private Table board;
+	private double rotationLeft;
+	private Graphics2D hexCanvas;
+	private double zoomLevel;
+	private HashMap<Hex,HexPoly> hexMap;
+	private HashMap<Resource,Integer> colorMap;
+	private HashMap<Point,Vertex> vertexMap;
+	Building currentlyBuilding;
 
 	//Constants
 	final double eps=0.01;
 	final double rotationStep=0.01;
 
-	public BoardHexRenderer(ImageRenderer _parentRenderer, HashMap<Hex,HexPoly> _hexMap,int _width,int _height) {
+	public BoardHexRenderer(ImageRenderer _parentRenderer,Table _board,int _width,int _height) {
 
 		parentRenderer=_parentRenderer;
 		width=parentRenderer.getWidth();
 		height=parentRenderer.getHeight();
+		board=_board;
+		hexMap=new HashMap<Hex,HexPoly>();
+		colorMap=TextureXMLReader.readXML("textures.xml");
 		width=_width;
 		height=_height;
 		generateHexes();
+		generateVertices();
+		currentlyBuilding=null;
 		rotationLeft=0;
 		zoomLevel=1;
 	}
 
+	private void generateVertices() {
+		for (Vertex v : board.getNodes())
+			vertexMap.put(pointFromVertex(v), v);		
+	}
+
+	private Point pointFromVertex(Vertex v) {
+			//TODO
+		return new Point();
+	}
+
 	public void paint(Graphics g) {
 		hexCanvas=(Graphics2D)g;
-		hexCanvas.setBackground(Color.white);
-		hexCanvas.clearRect(0, 0, width, height);
+		hexCanvas.setColor(Color.white);
+		hexCanvas.fillRect(0, 0, width, height);
 		translateBoardCanvas();
+
 		paintHexes();
 	}
 
@@ -57,7 +86,7 @@ public class BoardHexRenderer extends ImageRenderer {
 
 		//Applying rotation, if needed
 		if (Math.abs(rotationLeft)>eps) {
-			hexCanvas.rotate((Math.signum(rotationLeft)+((BoardRenderer)parentRenderer).boardOrientation.ordinal()-1)*Math.PI/3-rotationLeft);
+			hexCanvas.rotate((((BoardRenderer)parentRenderer).boardOrientation.ordinal())*Math.PI/3-rotationLeft);
 			rotationLeft-=Math.signum(rotationLeft)*rotationStep;
 		} else hexCanvas.rotate(((BoardRenderer)parentRenderer).boardOrientation.ordinal()*Math.PI/3);
 	}
@@ -70,7 +99,7 @@ public class BoardHexRenderer extends ImageRenderer {
 	 */
 	public void cycleOrientation(int i) {
 		if (Math.abs(rotationLeft)<eps) {
-			((BoardRenderer)parentRenderer).boardOrientation=BoardOrientation.values()[((((BoardRenderer)parentRenderer).boardOrientation.ordinal()+i)%6)];
+			((BoardRenderer)parentRenderer).boardOrientation=BoardOrientation.values()[((((BoardRenderer)parentRenderer).boardOrientation.ordinal()+i+6)%6)];
 			rotationLeft+=i*Math.PI/3;
 		}
 	}
@@ -89,7 +118,7 @@ public class BoardHexRenderer extends ImageRenderer {
 
 	public Map.Entry<Hex, HexPoly> getHexUnderCursor(int x, int y) {
 
-		for (Map.Entry<Hex, HexPoly> entry : ((BoardRenderer)parentRenderer).hexMap.entrySet()){
+		for (Map.Entry<Hex, HexPoly> entry : hexMap.entrySet()){
 			try {
 				if (entry.getValue().contains(hexCanvas.getTransform().createInverse().transform(new Point(x,y), null))) return entry;
 			} catch (NoninvertibleTransformException e) {
@@ -105,16 +134,29 @@ public class BoardHexRenderer extends ImageRenderer {
 	 * @author Kiss Lorinc
 	 */
 	private void paintHexes() {
-		for (Map.Entry<Hex, HexPoly> entry : ((BoardRenderer)parentRenderer).hexMap.entrySet()){
-			hexCanvas.setPaint(Color.BLACK);
+		Map.Entry<Hex, HexPoly> selectedTile=null;
+		for (Map.Entry<Hex, HexPoly> entry : hexMap.entrySet()){
+			hexCanvas.setPaint(new Color(colorMap.get(entry.getKey().getResource())));
 			hexCanvas.draw(entry.getValue());
-			if (entry.getValue().selected) hexCanvas.fill(entry.getValue());
+			hexCanvas.fillPolygon(entry.getValue());
+			if (entry.getValue().selected) selectedTile=entry;
+		}
+		if (selectedTile!=null) {
+			hexCanvas.setPaint(Color.black);
+			hexCanvas.draw(selectedTile.getValue());
 		}
 	}
 
+	/**
+	 * Selects or deselects given hex
+	 * @param h the hex to select
+	 * @author Kiss Lorinc
+	 */
 	public void selectHex(Hex h) {
-		System.out.println("[Renderer]Selected "+((BoardRenderer)parentRenderer).hexMap.get(h).toString());
-		((BoardRenderer)parentRenderer).hexMap.get(h).selected=!(((BoardRenderer)parentRenderer).hexMap.get(h).selected);
+		System.out.println("[Renderer]Selected "+hexMap.get(h).toString());
+		for (Map.Entry<Hex, HexPoly> entry : hexMap.entrySet())	if (!entry.getKey().equals(h)) entry.getValue().selected=false;
+		hexMap.get(h).selected=!(hexMap.get(h).selected);
+		
 	}
 	/**
 	 * Generates hexes in the HashMap
@@ -122,10 +164,22 @@ public class BoardHexRenderer extends ImageRenderer {
 	 * @author      Kiss Lorinc
 	 */
 	private void generateHexes() {
-		// TODO hexes from table
-		for(int i=-3;i<=3;i++)
-			for(int j=-3;j<=3;j++)
-				if (!(i+4 <=j || i-4 >=j))
-					((BoardRenderer)parentRenderer).hexMap.put(new Hex(i,j),HexPolyFactory.getHexPoly(new Hex(i,j),j));
+		int x=0;
+		int y=0;
+		Table.IteratorHex iterator=board.hexIterator();
+		do {
+			Hex currHex=iterator.next();
+			hexMap.put(currHex, HexPolyFactory.getHexPoly(currHex, x-3, y-3));
+			do {
+				if (y < 6)
+					y++;
+				else if(x < 6){
+					x++;
+					y = 0;
+				}
+			}
+			while(x+4 <= y || x-4 >= y);
+		}
+		while (iterator.hasNext());
 	}
 }

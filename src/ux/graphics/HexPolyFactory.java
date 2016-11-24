@@ -16,20 +16,20 @@ public class HexPolyFactory {
 	 * @param offset the offset of the hexes from the left
 	 * @return drawable Polygon
 	 */
-	public static HexPoly getHexPoly(Hex sourceHex,int offset) {
+	public static HexPoly getHexPoly(Hex sourceHex,int x, int y) {
 		final int radius=50;
 		HexPoly hexPoly=new HexPoly();
 		// distance between hex center points
 		double distance=2*radius*Math.cos(Math.toRadians(30));
 		
 		// center point of the hex
-		double baseX=sourceHex.getx()*distance-offset*distance/2;
-		double baseY=sourceHex.gety()*(distance*Math.sin(Math.toRadians(30))/2+radius+4);
+		int offset=y;
+		double baseX=x*distance-offset*distance/2;
+		double baseY=y*(distance*Math.sin(Math.toRadians(30))/2+radius+4);
 		
 		for (int i=0;i!=360;i+=60) hexPoly.addPoint(
-				(int)(baseX+radius*Math.sin(Math.toRadians(i))), 
-				(int)(baseY+radius*Math.cos(Math.toRadians(i))));
-		// TODO Texturing
+				(int)(baseX+(radius+1)*Math.sin(Math.toRadians(i))), 
+				(int)(baseY+(radius+1)*Math.cos(Math.toRadians(i))));
 		return hexPoly;
 	}
 }

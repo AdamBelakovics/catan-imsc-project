@@ -1,14 +1,18 @@
 package ux.graphics;
 
+import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.Polygon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,23 +28,25 @@ public class Renderer {
 	UIController currUIC;
 	Table board;
 	JFrame mainFrame;
-	JPanel mainPanel;
 	BoardRenderer boardPanel;
-	HUDRenderer HUDPanel;
+	HUDRenderer hudPanel;
 	Timer updateTimer;
-	
+	Image bufferImg;
+
 	/**
-	 * @param _board
+	 * Initializes the renderer
+	 * @param _board the Table element currently in the game
+	 * @param _width width of the window
+	 * @param _height height of the window
 	 */
 	public Renderer(Table _board, int _width, int _height) {
 		board=_board;
 		mainFrame=new JFrame("JCatan");
 		mainFrame.setSize(_width, _height);
 		boardPanel=new BoardRenderer(board,_width,_height);
-		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		hudPanel=new HUDRenderer(_width,_height);
 		
-		mainPanel=new JPanel();
-		mainFrame.add(mainPanel);
+		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		updateTimer=new Timer(15, new ActionListener() {
 			@Override
@@ -58,21 +64,34 @@ public class Renderer {
 	}
 	
 	public void draw(){
-		boardPanel.paint(mainFrame.getGraphics());
+		bufferImg=mainFrame.createImage(mainFrame.getWidth(), mainFrame.getHeight());
+		if (bufferImg!=null) {
+			boardPanel.paint(bufferImg.getGraphics());
+			hudPanel.paint(bufferImg.getGraphics());
+			mainFrame.getGraphics().drawImage(bufferImg, 0, 0, null);
+		}
 	};
 	public void updateDice(Dice dice){};
 	public void updateTableElement(TableElement element){};
 	public void updateDevCards(Player actualPlayer){};
 	public void updateResources(Player actualPlayer){};
 	public void updateThief(Hex to) {};
+
 	
 	class BoardMouseListener implements MouseListener {
 
 		@Override
 		public void mouseClicked(MouseEvent ev) {
-			Map.Entry<Hex,HexPoly> selected=boardPanel.hexRenderer.getHexUnderCursor(ev.getX(), ev.getY());
-			if (selected!=null) {
-				boardPanel.hexRenderer.selectHex(selected.getKey());
+			Map.Entry<Hex,HexPoly> selectedHex=boardPanel.hexRenderer.getHexUnderCursor(ev.getX(), ev.getY());
+			if (selectedHex!=null) {
+				boardPanel.hexRenderer.selectHex(selectedHex.getKey());
+				hudPanel.interfaceRenderer.setActiveHex(selectedHex.getKey());
+			}
+			Button selectedButton=hudPanel.interfaceRenderer.getButtonUnderCursor(ev.getX(), ev.getY());
+			if (selectedButton!=null) {
+				selectedButton.press();
+				if (selectedButton.getClass()==BuildButton.class)
+					boardPanel.hexRenderer.currentlyBuilding=((BuildButton)selectedButton).building;
 			}
 		}
 

@@ -26,9 +26,8 @@ import controller.map.Table;
  */
 public class BoardRenderer extends ImageRenderer {
 	Table board;
-	Graphics2D canvas;
+	Graphics2D boardCanvas;
 	BufferedImage hexImage;
-	HashMap<Hex,HexPoly> hexMap;
 	
 	public BoardHexRenderer hexRenderer;
 
@@ -47,16 +46,15 @@ public class BoardRenderer extends ImageRenderer {
 		width=_width;
 		height=_height;
 		board=_board;
-		hexMap=new HashMap<Hex, HexPoly>();
 		boardOrientation=BoardOrientation.NORTH;
 		hexImage=new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-		hexRenderer=new BoardHexRenderer(this, hexMap,width,height);
+		hexRenderer=new BoardHexRenderer(this, board ,width,height);
 	}
 
 	public void paint(Graphics g) {
-		canvas=(Graphics2D)g;
+		boardCanvas=(Graphics2D)g;
 		hexRenderer.paint(hexImage.createGraphics());
-		canvas.drawImage(hexImage, 0, 0, null);
-		canvas.translate(getWidth()/2, getHeight()/2);
+		if (hexImage!=null && boardCanvas!=null) boardCanvas.drawImage(hexImage, 0, 0, null);
+		boardCanvas.translate(getWidth()/2, getHeight()/2);
 	}
 }
