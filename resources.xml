@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<ResourceMap>
+	<Building b="Road">
+		<Resource r="Brick" v="1"/>
+		<Resource r="Lumber" v="1"/>
+		<Resource r="Ore" v="0"/>
+		<Resource r="Grain" v="0"/>
+		<Resource r="Wool" v="0"/>
+	</Building>
+	
+	<Building b="Settlement">
+		<Resource r="Brick" v="1"/>
+		<Resource r="Lumber" v="1"/>
+		<Resource r="Ore" v="0"/>
+		<Resource r="Grain" v="1"/>
+		<Resource r="Wool" v="1"/>
+	</Building>
+	
+	<Building b="City">
+		<Resource r="Brick" v="0"/>
+		<Resource r="Lumber" v="0"/>
+		<Resource r="Ore" v="3"/>
+		<Resource r="Grain" v="2"/>
+		<Resource r="Wool" v="0"/>
+	</Building>
+	
+	<Building b="Development">
+		<Resource r="Brick" v="0"/>
+		<Resource r="Lumber" v="0"/>
+		<Resource r="Ore" v="1"/>
+		<Resource r="Grain" v="1"/>
+		<Resource r="Wool" v="1"/>
+	</Building>
+</ResourceMap>
