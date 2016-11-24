@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.TreeMap;
 
 import controller.player.Building;
 import controller.map.TableElement;
+import controller.map.Table.IteratorHex;
 
 
 /**
@@ -23,12 +25,6 @@ public class Table{
 	 * A two-dimensional array storing the Hexes of the Game's Table
 	 */
 	private Hex[][] hexGrid = new Hex[7][7];
-	
-	/**
-	 * iteratorHex
-	 * The iterator of hexGrid. The IteratorHex class is implemented as an inner class of Table.
-	 */
-	private IteratorHex iteratorHex = new IteratorHex();
 	
 	/**
 	 * vertexMap
@@ -68,14 +64,15 @@ public class Table{
 	 * @return iteratorHex The iterator of hexGrid. The next() method returns reference for current Hex.
 	 */
 	public IteratorHex hexIterator() {
-		return iteratorHex;
+		return new IteratorHex();
 	};
 	
 	/**
 	 * The constructor generates all the Hexes, Vertices and Edges of the Table.
 	 */
 	public Table(){
-		this.generateHexGrid();
+		generateHexGrid();
+		generateVertices();
 	}
 	
 	/**
@@ -103,6 +100,74 @@ public class Table{
 				}
 			}
 		}	
+	}
+	
+	/**
+	 * This private function generates the Vertices for the Hexgrid. References are stored in Table.vertexMap, 
+	 * in Hex.vertices and in Vertex.hexes
+	 */
+	private void generateVertices(){
+		Orientation[] oarray =  Orientation.values();
+		ArrayList<Orientation> oList = new ArrayList<Orientation>();
+		ArrayList<Orientation> shiftedOList = new ArrayList<Orientation>();
+		for (int i = 0; i < oarray.length; i++) {
+			oList.add(oarray[i]);
+		}
+		oList.remove(0); //remove NORTH
+		oList.remove(3); //remove SOUTH
+		shiftedOList.add(oList.get(oList.size() - 1));
+		for (int i = 0; i < oList.size() - 1; i++) {
+			shiftedOList.add(oList.get(i));
+		}
+		IteratorHex i = hexIterator();
+		while(i.hasNext()){
+			Hex h0 = i.next();
+			for (int j = 0; j < shiftedOList.size(); j++) {
+				Hex h1 = i.getNeighboringHex(shiftedOList.get(j));
+				Hex h2 = i.getNeighboringHex(oList.get(j));
+				Map<Integer, String> mapForSorting = new TreeMap<Integer, String>();
+				mapForSorting.put(new Integer(h0.getID()), h0.getID());
+				mapForSorting.put(new Integer(h1.getID()), h1.getID());
+				mapForSorting.put(new Integer(h2.getID()), h2.getID());
+				String vertexID = "";
+				for(Map.Entry<Integer, String> entry : mapForSorting.entrySet()){
+					vertexID = vertexID + entry.getValue();
+				}
+				if (vertexID.length() >= 6){ //az olyan Vertexek amelyeknek az IDje 6 karakternél rövidebbek invalidak
+					Vertex v = new Vertex(vertexID);
+					if(vertexMap.containsKey(vertexID)){ //ha benne van akkor csak a pointereket állítjuk be
+						h0.vertices.put(vertexID, v);
+						v.hexes.put(h0.getID(), h0);
+					}
+					else{//ha nincs benne hozzáadjuk a Tablehöz is
+						vertexMap.put(vertexID, v); //ha valid beletesszük
+						h0.vertices.put(vertexID, v);
+						v.hexes.put(h0.getID(), h0);
+					}
+				}
+			}
+		}
+		
+		//Fontos teszt
+		
+		/*for(Map.Entry<String, Vertex> v : vertexMap.entrySet()){
+			System.out.println(vertexMap.size());
+		}*/
+		
+		
+		/*IteratorHex j = hexIterator();
+		while(j.hasNext())
+			System.out.println(j.next().vertices);*/
+	}
+	
+	public void generateAllNeigbours(){
+		IteratorHex i = hexIterator();
+		ArrayList<Hex> hexlist = new ArrayList<Hex>();
+		while(i.hasNext()){
+			i.next();
+			for(Orientation o : Orientation.values())
+				hexlist.add(i.getNeighboringHex(o)); //TODO TODO TODO
+		}
 	}
 	
 	
@@ -159,7 +224,6 @@ public class Table{
 		public Hex getNeighboringHex(Orientation to){
 			int newX = this.i;
 			int newY = this.j;
-			System.out.println(to);
 			switch(to){
 			case NORTHWEST:
 				newX--;
@@ -182,12 +246,12 @@ public class Table{
 				newY--;
 				break;
 			default:
-				System.out.println("Ervenytelen irany!!!");
+				//TODO throw stg wrong direction
 				break;
 			}
 			if (newX+4 <=newY || newX-4 >=newY || newX > 6 || newY > 6 || newX < 0 || newY < 0){
 				//precheck if the next hex would be out of the map
-				System.out.println("Ervenytelen lepes!!!"); //todo throw sth
+				//TODO throw sth wrong move
 				return Table.this.hexGrid[this.i][this.j];
 			}
 			else{
