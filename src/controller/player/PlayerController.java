@@ -4,7 +4,7 @@ import java.util.Map;
 
 import controller.map.*;
 
-abstract class PlayerController {
+public abstract class PlayerController {
 	Player controllerPlayer;
 	Table board;
 	abstract public boolean query(Player donor, Map<Resource,Integer> offer, Map<Resource,Integer> demand);
