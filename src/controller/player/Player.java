@@ -1,3 +1,4 @@
+
 package controller.player;
 
 import java.util.ArrayList;
@@ -6,6 +7,13 @@ import java.util.Map;
 
 import controller.map.Hex;
 import controller.map.TableElement;
+import controller.player.devcards.DevCard;
+import controller.player.devcards.DevCardShop;
+import controller.player.devcards.KnightCard;
+import controller.player.devcards.MonopolyCard;
+import controller.player.devcards.RoadBuildingCard;
+import controller.player.devcards.VictoryPointCard;
+import controller.player.devcards.YearOfPlentyCard;
 
 public class Player {
 	String name;
@@ -18,6 +26,10 @@ public class Player {
 	HashMap<Resource, Integer> resourcePool = new HashMap<Resource, Integer>();
 	ArrayList<DevCard> devCards = new ArrayList<DevCard>();
 	ArrayList<DevCard> playedDevCards = new ArrayList<DevCard>();
+	ArrayList<Building> availableBuildings = new ArrayList<Building>();
+	ArrayList<Building> erectedBuildings = new ArrayList<Building>();
+	
+	
 	
 	/**
 	 * Player constructor
@@ -26,6 +38,9 @@ public class Player {
 	 * @param controller
 	 * Initialize changeLUT to 4
 	 * Initialize resourcePool to 0
+	 * Initialize buildings: 15 Roads
+	 * 						 5 Settlements
+	 * 						 4 Cities
 	 */
 	public Player(String name, int id, PlayerController controller){
 		this.name = name;
@@ -40,7 +55,21 @@ public class Player {
 		for(Resource r : Resource.values()){		
 			resourcePool.put(r, 0);
 		}
+		
+		for(int i = 0; i < 15; i++){
+			availableBuildings.add(new Road());
+		}
+		
+		for(int i = 0; i < 5; i++){
+			availableBuildings.add(new Settlement());
+		}
+		
+		for(int i = 0; i < 4; i++){
+			availableBuildings.add(new City());
+		}
+		
 		devCards = null;
+		playedDevCards = null;
 				
 	}
 	
@@ -53,7 +82,7 @@ public class Player {
 	 * @throws GameEndsException if points are bigger then 10
 	 * TODO Handle exception in main!
 	 *  **/
-	protected final void incPoints(int value) throws GameEndsException{			
+	public final void incPoints(int value) throws GameEndsException{			
 		if((points + value) >= 10){	
 			points = 10;
 			throw new GameEndsException(id);						 		
@@ -74,7 +103,7 @@ public class Player {
 	 * Number of active knights can be increased by a given amount with this method.
 	 * @param value 
 	 */
-	protected final void incActiveKnights(int value){
+	public final void incActiveKnights(int value){
 		activeKnights += value;
 	}
 	
@@ -93,7 +122,7 @@ public class Player {
 	 * @param int value 
 	 * @throws OutOfRangeException if value is negative
 	 */
-	protected final void incResourceAmount(Resource r, int value) throws OutOfRangeException{
+	public final void incResourceAmount(Resource r, int value) throws OutOfRangeException{
 		if(value < 0) throw new OutOfRangeException("Value can't be negative.");
 			resourcePool.replace(r, (resourcePool.get(r)+value));		
 	}
@@ -207,7 +236,7 @@ public class Player {
 	 * The player can choose to change the position of the Thief. Executes all the changes accordingly.
 	 * 
 	 */
-	private void handleThief(){
+	public void handleThief(){
 		
 	}
 	
@@ -216,8 +245,58 @@ public class Player {
 	 * Builds a Building to a specific TableElement
 	 * @param what Reference for a Building
 	 * @param where Reference to the TableElement
+	 * @throws GameEndsException Building Settlement or City increases Player's points.
 	 */
-	public void build(Building what, TableElement where){
+	public void build(Building what, TableElement where) throws GameEndsException{
+		Resource w = Resource.Wool;
+		Resource o = Resource.Ore;
+		Resource g = Resource.Grain;
+		Resource l = Resource.Lumber;
+		Resource b = Resource.Brick;
+		
+		if(what.getClass().equals(Road.class)){
+
+			try {
+				decResourceAmount(b, 1);
+				decResourceAmount(l, 1);
+			} catch (OutOfRangeException e1) {
+				e1.printStackTrace();
+			}
+			availableBuildings.remove(what);
+			erectedBuildings.add(what);
+															//TODO Player can take it's new Road to map
+															//Then TODO check if with this new Road have 5 continuous road segments (or longer then the previous longest road owner's)
+			
+		}
+		if(what.getClass().equals(Settlement.class)){
+			
+			try {											//TODO maybe here check is there any place to built Settlement at all
+				decResourceAmount(b, 1);
+				decResourceAmount(l, 1);
+				decResourceAmount(g, 1);
+				decResourceAmount(w, 1);
+			} catch (OutOfRangeException e1) {
+				e1.printStackTrace();
+			}
+			availableBuildings.remove(what);
+			erectedBuildings.add(what);
+			//HERE											TODO Player can take it's new Settlement to map
+			
+			this.incPoints(1);
+		}
+		if(what.getClass().equals(City.class)){
+			try {
+				decResourceAmount(g, 2);
+				decResourceAmount(o, 3);
+			} catch (OutOfRangeException e1) {
+				e1.printStackTrace();
+			}
+			availableBuildings.remove(what);
+			erectedBuildings.add(what);
+			//HERE											TODO Player can take it's new City to a Settlement's place
+			
+			this.incPoints(1);		//Inc 1, cause the Settlement became City (-1+2=+1)
+		}
 		
 	}
 	
@@ -235,18 +314,42 @@ public class Player {
 	 * PLAYER ACTION
 	 * Player can buy a random Development Card from the DevCardShop.
 	 * It's added to the devCards List.
+	 * @throws NotEnoughResourcesException if Player don't have enough resources to buy DevCard
 	 */
-	public void buyDevCard(){
+	public void buyDevCard() throws NotEnoughResourcesException {
+		Resource w = Resource.Wool;
+		Resource o = Resource.Ore;
+		Resource g = Resource.Grain;
 		
+		if((resourcePool.get(w)<0) | (resourcePool.get(o)<0) |  (resourcePool.get(g)<0)) throw new NotEnoughResourcesException("You dont't have enough resoureces to buy developement card.");
+		try {
+			decResourceAmount(w, 1);
+			decResourceAmount(o, 1);
+			decResourceAmount(g, 1);
+		} catch (OutOfRangeException e1) {
+			e1.printStackTrace();
+		}
+		
+		try {
+			devCards.add(DevCardShop.buyDevCard());
+		} catch (OutOfRangeException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**
 	 * PLAYER ACTION
 	 * Uses one of the players Dev cards
 	 * @param dc
+	 * @throws Throwable VictoryPointCard increase player's score, so it can throw GameEndsException
 	 */
-	public void playDev(DevCard dc){
-		
+	public void playDev(DevCard dc, Resource r) throws GameEndsException{
+		if(dc.getClass().equals(MonopolyCard.class) | dc.getClass().equals(YearOfPlentyCard.class))
+			dc.doCard(this, r);
+		if(dc.getClass().equals(KnightCard.class) | dc.getClass().equals(RoadBuildingCard.class) | dc.getClass().equals(VictoryPointCard.class))
+			dc.doCard(this);
+		playedDevCards.add(dc);
+		devCards.remove(dc);
 	}
 }
 
