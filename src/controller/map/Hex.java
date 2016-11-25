@@ -11,7 +11,7 @@ import controller.player.Building;
 import controller.player.Resource;
 
 
-public class Hex implements TableElement {
+public class Hex implements TableElement, Comparable {
 	public HashMap<String, Vertex> vertices = new HashMap<String, Vertex>();
 	public ArrayList<Hex> neighbourHexes = new ArrayList<Hex>();
 	public ArrayList<Vertex> neighbourVertices = new ArrayList<Vertex>();
@@ -31,6 +31,10 @@ public class Hex implements TableElement {
 		neighbourHexes = hexNeighbours;
 		for(Map.Entry<String, Vertex> v : vertices.entrySet())
 			neighbourVertices.add(v.getValue());
+	}
+	
+	public void setResource(Resource r){
+		res = r;
 	}
 	
 	public String getID(){
@@ -57,6 +61,13 @@ public class Hex implements TableElement {
 	public boolean isBuildPossible(Building what) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public int compareTo(Object o) {
+		if(((Hex) o).getID() == this.getID())
+			return 0;
+		return 1;
 	}
 
 }
