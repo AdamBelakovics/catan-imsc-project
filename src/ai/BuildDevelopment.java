@@ -6,6 +6,10 @@ import java.util.Map;
 
 import controller.map.Table;
 import controller.player.devcards.DevCard;
+import controller.player.devcards.KnightCard;
+import controller.player.devcards.MonopolyCard;
+import controller.player.devcards.RoadBuildingCard;
+import controller.player.devcards.VictoryPointCard;
 import controller.player.Player;
 import controller.player.Resource;
 
@@ -28,6 +32,12 @@ public class BuildDevelopment {
 	private Player aiPlayer;
 	private ArrayList<Player> otherPlayers;
 	
+	private double pMonopoly;
+	private double pInvention;
+	private double pKnight;
+	private double pPlusPoint;
+	private double pTwoRoad;
+	
 	/**
 	 * Constructor
 	 * @param map - the table
@@ -40,6 +50,11 @@ public class BuildDevelopment {
 		//this.owner = owner;
 		this.aiPlayer = aiPlayer;
 		this.otherPlayers = otherPlayers;
+		pMonopoly = 0.08;
+		pInvention = 0.08;
+		pKnight = 0.56;
+		pPlusPoint = 0.2;
+		pTwoRoad = 0.08;
 	}
 	/**
 	 * Calculates the combined values of all development
@@ -50,11 +65,12 @@ public class BuildDevelopment {
 	 * @author Gergely Olah
 	 */
 	public double getBuildValue(){
-		return calculateInventionProbability() * calculateInventionValue() + 
-				calculateKnightProbability() * calculateKnightValue() + 
-				calculateMonopolyProbability() * calculateMonopolyValue() + 
-				calculatePlusPointProbability() * calculatePlusPointValue() +
-				calculateTwoRoadProbability() * calculateTwoRoadValue();
+		calculateProbabilities();
+		return pInvention * calculateInventionValue() + 
+				pKnight * calculateKnightValue() + 
+				pMonopoly * calculateMonopolyValue() + 
+				pPlusPoint * calculatePlusPointValue() +
+				pTwoRoad * calculateTwoRoadValue();
 	}
 	/**
 	 * Calculates the value of getting a single two-road development card.
@@ -92,13 +108,13 @@ public class BuildDevelopment {
 	private double calculateInventionValue(){
 		double minResourceFrequency = -1;
 		// TODO need Material, ai 
-		/*HashMap<Resource, Material> res = owner.getResources();
+		Map<Resource, Material> res = owner.getResources();
 		for(Map.Entry<Resource, Material> it : res.entrySet()){
 			double currentFrequency = it.getValue().personalFrequency();
 			if(minResourceFrequency == -1 || currentFrequency < minResourceFrequency){
 				minResourceFrequency = currentFrequency;
 			}
-		}*/
+		}
 		// the return value is between 0 and 10
 		if(minResourceFrequency > 0)
 			return Math.max(10 / minResourceFrequency, 10);
@@ -114,7 +130,7 @@ public class BuildDevelopment {
 	private double calculateMonopolyValue(){
 		double maxMaterialValue = 0;
 		// TODO need Material, ai
-		/*HashMap<Resource, Material> res = owner.getResources();
+		Map<Resource, Material> res = owner.getResources();
 		for(Map.Entry<Resource, Material> it : res.entrySet()){
 			double currentValue;
 			// handling division by zero
@@ -126,7 +142,7 @@ public class BuildDevelopment {
 			if(maxMaterialValue < currentValue){
 				maxMaterialValue = currentValue;
 			}
-		}*/
+		}
 		return Math.max(maxMaterialValue, 10);
 	}
 	
@@ -138,131 +154,74 @@ public class BuildDevelopment {
 	private double calculateKnightValue(){
 		int robbed = 1;
 		// TODO ai
-		/*if(owner.isRobbed())
-			robbed = 2;*/
+		if(owner.isRobbed())
+			robbed = 2;
 		int dif, difVal;
 		dif = 0;
 		// TODO ai
-		//dif = owner.getKnightDiff();
+		dif = owner.getKnightDiff();
 		difVal = 1;
 		if(dif < 2 && dif >= -2)
 			difVal = 3;
 		else if(dif < -2)
 			difVal = 2;
 		// TODO ai
-		return 0;
-		//return Math.max(robbed * difVal + owner.getRobbedSum() + 2.5, 10);
+		//return 0;
+		return Math.max(robbed * difVal + owner.getRobbedSum() + 2.5, 10);
 	}
 	
 	/**
-	 * Calculates the probability of getting a two-road development
-	 * card. It only counts the cards that are played, it does not
-	 * counts the ones which are not in the pack but not used.
-	 * @return probability of getting a two-road development card
-	 * @author Gergely Olah
+	 * Calculates the probabilites for each devcard.
+	 * @author Gergely
 	 */
-	private double calculateTwoRoadProbability(){
-		double result = 0.08;
-		ArrayList<DevCard> playedCards;
+	private void calculateProbabilities(){
+		pMonopoly = 0.08;
+		pInvention = 0.08;
+		pKnight = 0.56;
+		pPlusPoint = 0.2;
+		pTwoRoad = 0.08;
+		
+		int monopolyCnt = 0;
+		int inventionCnt = 0;
+		int knightCnt = 0;
+		int plusPointCnt = 0;
+		int twoRoadCnt = 0;
+		
+		// counting how many cards other players played
 		for(Player player : otherPlayers){
-			playedCards = player.getPlayedDevelopmentCards();
-			// TODO count how many were played
-			// result -= playedCards.get("tworoad") * 0.04;
+			for(DevCard dc : player.getPlayedDevelopmentCards()){
+				if(dc.getClass().equals(KnightCard.class)){
+					knightCnt++;
+				} else if(dc.getClass().equals(MonopolyCard.class)){
+					monopolyCnt++;
+				} else if(dc.getClass().equals(RoadBuildingCard.class)){
+					twoRoadCnt++;
+				} else if(dc.getClass().equals(VictoryPointCard.class)){
+					plusPointCnt++;
+				} else {
+					inventionCnt++;
+				}
+			}
 		}
-		// TODO need devcard
-		//playedCards = map.getPlayedDevelopmentCards(owner.getPlayerID());
-		//result -= playedCards.get("tworoad") * 0.04;
-		return result;
-	}
-	
-	/**
-	 * Calculates the probability of getting a monopoly development
-	 * card. It only counts the cards that are played, it does not
-	 * counts the ones which are not in the pack but not used.
-	 * @return probability of getting a monopoly development card
-	 * @author Gergely Olah
-	 */
-	private double calculateMonopolyProbability(){
-		double result = 0.08;
-		// TODO need DevCard
-		/*
-		ArrayList<DevCard> playedCards;
-		for(Player player : otherPlayers){
-			playedCards = player.getPlayedDevelopmentCards();
-			// TODO count how many were played
-			result -= playedCards.get("monopoly") * 0.04;
+		// counting how many cards we (ai) played
+		for(DevCard dc : aiPlayer.getPlayedDevelopmentCards()){
+			if(dc.getClass().equals(KnightCard.class)){
+				knightCnt++;
+			} else if(dc.getClass().equals(MonopolyCard.class)){
+				monopolyCnt++;
+			} else if(dc.getClass().equals(RoadBuildingCard.class)){
+				twoRoadCnt++;
+			} else if(dc.getClass().equals(VictoryPointCard.class)){
+				plusPointCnt++;
+			} else {
+				inventionCnt++;
+			}
 		}
-		playedCards = map.getPlayedDevelopmentCards(owner.getPlayerID());
-		result -= playedCards.get("monopoly") * 0.04;*/
-		return result;
-	}
-	
-	/**
-	 * Calculates the probability of getting a invention development
-	 * card. It only counts the cards that are played, it does not
-	 * counts the ones which are not in the pack but not used.
-	 * @return probability of getting a invention development card
-	 * @author Gergely Olah
-	 */
-	private double calculateInventionProbability(){
-		double result = 0.08;
-		// TODO need DevCard
-		/*
-		ArrayList<DevCard> playedCards;
-		for(Player player : otherPlayers){
-			playedCards = player.getPlayedDevelopmentCards();
-			// TODO count how many were played
-			result -= playedCards.get("invention") * 0.04;
-		}
-		playedCards = map.getPlayedDevelopmentCards(owner.getPlayerID());
-		result -= playedCards.get("invention") * 0.04;
-		*/
-		return result;
-	}
-	
-	/**
-	 * Calculates the probability of getting a plus-point development
-	 * card. It only counts the cards that are played, it does not
-	 * counts the ones which are not in the pack but not used.
-	 * @return probability of getting a plus-point development card
-	 * @author Gergely Olah
-	 */
-	private double calculatePlusPointProbability(){
-		double result = 0.2;
-		// TODO need DevCard
-		/*
-		ArrayList<DevCard> playedCards;
-		for(Player player : otherPlayers){
-			playedCards = player.getPlayedDevelopmentCards();
-			// TODO count how many were played
-			result -= playedCards.get("plus-point") * 0.04;
-		}
-		playedCards = map.getPlayedDevelopmentCards(owner.getPlayerID());
-		result -= playedCards.get("plus-point") * 0.04;
-		*/
-		return result;
-	}
-	
-	/**
-	 * Calculates the probability of getting a knight development
-	 * card. It only counts the cards that are played, it does not
-	 * counts the ones which are not in the pack but not used.
-	 * @return probability of getting a knight development card
-	 * @author Gergely Olah
-	 */
-	private double calculateKnightProbability(){
-		double result = 0.56;
-		// TODO need DevCard
-		/*
-		ArrayList<DevCard> playedCards;
-		for(Player player : otherPlayers){
-			playedCards = player.getPlayedDevelopmentCards();
-			// TODO count how many were played
-			result -= playedCards.get("knight") * 0.04;
-		}
-		playedCards = map.getPlayedDevelopmentCards(owner.getPlayerID());
-		result -= playedCards.get("knight") * 0.04;
-		*/
-		return result;
+		
+		pKnight = (14 - knightCnt) / 25.0;
+		pInvention = (2 - inventionCnt) / 25.0;
+		pMonopoly = (2 - monopolyCnt) / 25.0;
+		pTwoRoad = (2 - twoRoadCnt) / 25.0;
+		pPlusPoint = (5 - plusPointCnt) / 25.0;
 	}
 }
