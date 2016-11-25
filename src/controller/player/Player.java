@@ -8,6 +8,7 @@ import java.util.Map;
 import controller.map.Hex;
 import controller.map.Table;
 import controller.map.TableElement;
+import controller.map.Vertex;
 import controller.player.devcards.DevCard;
 import controller.player.devcards.DevCardShop;
 import controller.player.devcards.KnightCard;
@@ -303,12 +304,15 @@ public class Player {
 			} catch (OutOfRangeException e1) {
 				e1.printStackTrace();
 			}
-			availableBuildings.remove(what);
-			
-			//HERE											TODO Player can take it's new Settlement to map
-			erectedBuildings.add(what);
-			what.setOwner(this);
-			this.incPoints(1);
+//			availableBuildings.remove(what);
+//			
+//			//HERE											TODO Player can take it's new Settlement to map
+//			erectedBuildings.add(what);
+//			what.setOwner(this);
+//			this.incPoints(1);
+			if(where.isBuildPossible(what)){
+				((Vertex)where).setSettlement(this);
+			}
 		}
 		if(what.getClass().equals(City.class)){
 			try {

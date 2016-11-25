@@ -8,6 +8,6 @@ public abstract class PlayerController {
 	Player controllerPlayer;
 	Table board;
 	abstract public boolean query(Player donor, Map<Resource,Integer> offer, Map<Resource,Integer> demand);
-	abstract public void turn();
+	abstract public void turn() throws GameEndsException;
 	
 }
