@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import controller.map.Table;
-import controller.player.DevCard;
+import controller.player.devcards.DevCard;
 import controller.player.Player;
 import controller.player.Resource;
 
