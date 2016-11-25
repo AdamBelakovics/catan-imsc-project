@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public class BuildCity {
 	private Table map;
 	// TODO ai
-	// private AI owner;
+	private AiController owner;
 	private Vertex node;
 	private double buildValue;
 	private Player aiPlayer;
@@ -29,10 +29,10 @@ public class BuildCity {
 	 * @param owner - the ai player who uses this class
 	 * @author Gergely Olah
 	 */
-	public BuildCity(Table map, Player aiPlayer, ArrayList<Player> otherPlayers){
+	public BuildCity(Table map, AiController owner, Player aiPlayer, ArrayList<Player> otherPlayers){
 		this.map = map;
 		// TODO ai
-		// this.owner = owner;
+		this.owner = owner;
 		node = null;
 		buildValue = 0;
 		this.aiPlayer = aiPlayer;

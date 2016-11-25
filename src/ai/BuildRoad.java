@@ -19,7 +19,7 @@ import controller.player.Player;
 public class BuildRoad {
 	private Table map;
 	// TODO need ai
-	//private AI owner;
+	private AiController owner;
 	private double buildValue;
 	private Vertex nodeFrom;
 	private Vertex nodeTo;
@@ -32,10 +32,10 @@ public class BuildRoad {
 	 * @param owner - the ai player who uses this class
 	 * @author Gergely Olah
 	 */
-	public BuildRoad(Table map, Player aiPlayer, ArrayList<Player> otherPlayers){
+	public BuildRoad(Table map, AiController owner, Player aiPlayer, ArrayList<Player> otherPlayers){
 		this.map = map;
 		// TODO need ai
-		//this.owner = owner;
+		this.owner = owner;
 		nodeFrom = null;
 		nodeTo = null;
 		buildValue = 0;

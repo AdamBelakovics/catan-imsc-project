@@ -11,10 +11,10 @@ public class AiController extends PlayerController {
 	private Table map;
 	private int robberSum;
 
-	private BuildCity buildCity= new BuildCity(map,me,players);
-	private BuildVillage buildVillage= new BuildVillage(map,me,players);
-	private BuildRoad buildRoad= new BuildRoad(map,me,players);
-	private BuildDevelopment buildDevelopment= new BuildDevelopment(map,robberSum, me,players);
+	private BuildCity buildCity= new BuildCity(map,this,me,players);
+	private BuildVillage buildVillage= new BuildVillage(map,this,me,players);
+	private BuildRoad buildRoad= new BuildRoad(map,this,me,players);
+	private BuildDevelopment buildDevelopment= new BuildDevelopment(map,this, me,players);
 
 	private Set<Integer> numbers=new HashSet<Integer>();
 	private Map<Resource, Material> resources = new HashMap<Resource, Material>();

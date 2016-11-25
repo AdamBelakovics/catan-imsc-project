@@ -16,7 +16,7 @@ import java.util.ArrayList;
 public class BuildVillage {
 	private Table map;
 	// TODO needs ai
-	//private AI owner;
+	private AiController owner;
 	private Vertex node;
 	private double buildValue;
 	private Player aiPlayer;
@@ -29,10 +29,10 @@ public class BuildVillage {
 	 * @author Gergely Olah
 	 */
 	// TODO contructor should get ai
-	public BuildVillage(Table map, Player aiPlayer, ArrayList<Player> otherPlayers){
+	public BuildVillage(Table map, AiController owner, Player aiPlayer, ArrayList<Player> otherPlayers){
 		this.map = map;
 		// need ai
-		//this.owner = owner;
+		this.owner = owner;
 		node = null;
 		buildValue = 0;
 		this.aiPlayer = aiPlayer;

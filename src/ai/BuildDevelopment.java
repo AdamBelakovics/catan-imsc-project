@@ -23,7 +23,7 @@ import controller.player.Resource;
 public class BuildDevelopment {
 	private Table map;
 	// TODO ai
-	//private AI owner;
+	private AiController owner;
 	private int player;
 	private Player aiPlayer;
 	private ArrayList<Player> otherPlayers;
@@ -34,7 +34,7 @@ public class BuildDevelopment {
 	 * @param o - the ai player who uses this class
 	 * @author Gergely Olah
 	 */
-	public BuildDevelopment(Table map, int player, Player aiPlayer, ArrayList<Player> otherPlayers){
+	public BuildDevelopment(Table map, AiController owner, Player aiPlayer, ArrayList<Player> otherPlayers){
 		this.map = map;
 		// TODO ai
 		//this.owner = owner;
@@ -64,7 +64,7 @@ public class BuildDevelopment {
 	private double calculateTwoRoadValue(){
 		// TODO ai
 		//BuildRoad r = new BuildRoad(map, owner);
-		BuildRoad r = new BuildRoad(map, aiPlayer, otherPlayers);
+		BuildRoad r = new BuildRoad(map, owner, aiPlayer, otherPlayers);
 		int dif = r.calculateMaxRoadDifference();
 		int difVal = 1;
 		if(dif < 2 && dif >= -2)
