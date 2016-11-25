@@ -7,7 +7,10 @@ import ux.ui.UIController;
 
 public class TestGraphics {
 	public static void main(String[] args) {
-		Renderer testRenderer=new Renderer(new UIController(),new Table(),1024,768);
+		UIController testUIC=new UIController();
+		Renderer testRenderer=new Renderer(testUIC,new Table(),1024,768);
+		testUIC.turn();
+		System.out.println("ended turn");
 		//TextureXMLReader.readXML("textures.xml");
 	}
 

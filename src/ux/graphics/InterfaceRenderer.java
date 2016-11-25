@@ -10,17 +10,21 @@ import java.util.HashMap;
 
 import controller.map.Hex;
 import controller.player.Building;
+import ux.ui.UIController;
 
 public class InterfaceRenderer extends ImageRenderer {
+	
+	UIController currUIC;
 	Graphics2D intCanvas;
 	
 	private Hex activeHex;
 	ArrayList<Button> buttonsList;
 	FrameMetrics frameMetrics;
 	
-	public InterfaceRenderer(int _width, int _height) {
+	public InterfaceRenderer(UIController _currUIC, int _width, int _height) {
 		super(_width,_height);
 		activeHex=null;
+		currUIC=_currUIC;
 		generateButtons();
 		frameMetrics=new FrameMetrics();
 	}
@@ -32,6 +36,8 @@ public class InterfaceRenderer extends ImageRenderer {
 		
 		buttonsList.add(new TradeButton("Trade", width*37/40, height*61/80, width*3/20-20, 40));
 		buttonsList.add(new TradeButton("Dev Card", width*37/40, height*67/80, width*3/20-20, 40));
+		
+		buttonsList.add(new EndTurnButton(currUIC,"End turn", 600,600,200,100));
 		
 	}
 	@Override

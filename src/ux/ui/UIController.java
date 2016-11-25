@@ -11,6 +11,7 @@ import controller.player.devcards.*;
 public class UIController extends PlayerController {
 	
 	Player controlledPlayer;
+	public volatile boolean active;
 	
 	public void setControlledPlayer(Player _controlledPlayer) {
 		controlledPlayer=_controlledPlayer;
@@ -52,13 +53,18 @@ public class UIController extends PlayerController {
 
 	@Override
 	public void turn() {
-		// TODO Auto-generated method stub
+		active=true;
+		while (active);
 	}
 
 	@Override
 	public boolean query(Player donor, Map<Resource, Integer> offer, Map<Resource, Integer> demand) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+	
+	public UIController() {
+		active=false;
 	}
 
 }

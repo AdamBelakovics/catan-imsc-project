@@ -87,6 +87,7 @@ public class Renderer {
 
 		@Override
 		public void mouseClicked(MouseEvent ev) {
+			if (!currUIC.active) return;
 			Map.Entry<Hex,HexPoly> selectedHex=boardPanel.hexRenderer.getHexUnderCursor(ev.getX(), ev.getY());
 			if (selectedHex!=null) {
 				boardPanel.hexRenderer.selectHex(selectedHex.getKey());

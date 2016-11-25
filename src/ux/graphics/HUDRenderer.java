@@ -18,7 +18,7 @@ public class HUDRenderer extends ImageRenderer {
 	public HUDRenderer(UIController currUIC, int _width, int _height) {
 		super(_width,_height);
 		uiPlayer=currUIC;
-		interfaceRenderer=new InterfaceRenderer(width,height);
+		interfaceRenderer=new InterfaceRenderer(uiPlayer,width,height);
 		cardRenderer=new CardRenderer(uiPlayer,width,height);
 		resRenderer=new ResourceRenderer(uiPlayer,width,height);
 		interfaceImage=new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
