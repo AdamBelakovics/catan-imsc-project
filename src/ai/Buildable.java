@@ -1,5 +1,5 @@
 package ai;
 
 public enum Buildable {
-Village,City,Development,Road;
+Village,City,Development,Road,None;
 }
