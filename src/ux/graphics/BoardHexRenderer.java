@@ -94,7 +94,7 @@ public class BoardHexRenderer extends ImageRenderer {
 		if (Math.abs(rotationLeft)>eps) {
 			boardTransformation.rotate((((BoardRenderer)parentRenderer).boardOrientation.ordinal())*Math.PI/3-rotationLeft);
 			rotationLeft-=Math.signum(rotationLeft)*rotationStep;
-		} else hexCanvas.rotate(((BoardRenderer)parentRenderer).boardOrientation.ordinal()*Math.PI/3);
+		} else boardTransformation.rotate(((BoardRenderer)parentRenderer).boardOrientation.ordinal()*Math.PI/3);
 		hexCanvas.setTransform(boardTransformation);
 	}
 
