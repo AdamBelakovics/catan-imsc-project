@@ -1,7 +1,33 @@
 package ux.graphics;
 
+import java.awt.Graphics;
+
 import javax.swing.JPanel;
 
-public class ResourceRenderer extends JPanel {
+import controller.player.Resource;
+import ux.ui.UIController;
+
+public class ResourceRenderer extends ImageRenderer {
+	UIController uiController;
+	
+	ResourceRenderer(UIController _uiController, int _width, int _height) {
+		super(_width, _height);
+		uiController=_uiController;
+	}
+
+	@Override
+	public void paint(Graphics g) {
+		StringPainter.printString(g,
+				"Brick: " + uiController.getPlayerResource(Resource.Brick) + 
+				" Lumber: " + uiController.getPlayerResource(Resource.Lumber) + 
+				" Ore: " + uiController.getPlayerResource(Resource.Ore),
+				width*17/20,height*37/40);
+		
+		StringPainter.printString(g,
+				"Grain: " + uiController.getPlayerResource(Resource.Grain) + 
+				" Wool: " + uiController.getPlayerResource(Resource.Wool),
+				width*17/20,height*38/40);
+		
+	}
 
 }
