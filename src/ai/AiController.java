@@ -278,7 +278,7 @@ public class AiController extends PlayerController {
 
 	}
 	
-	private double nodePersonalValue(Vertex v){
+	public double nodePersonalValue(Vertex v){
 		if(!(v.isBuildPossible(new Settlement()))){
 			return 0;
 		}
@@ -290,7 +290,7 @@ public class AiController extends PlayerController {
 		return sum;
 	}
 	
-	private double territoryPersonalValue(Hex h){
+	public double territoryPersonalValue(Hex h){
 		return Material.frequencyLUT(h.getProsperity()) * resources.get(h.getResource()).personalValue(); 
 	}
 
