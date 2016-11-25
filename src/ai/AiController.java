@@ -24,8 +24,7 @@ public class AiController extends PlayerController {
 	public AiController(Table t, Player p, ArrayList<Player> otherPlayers){
 		map=t;
 		me=p;
-		for(Player pl:otherPlayers)
-			players.put(pl.getId(), pl);
+		players.addAll(otherPlayers);
 		robberSum=0;
 	}
 
