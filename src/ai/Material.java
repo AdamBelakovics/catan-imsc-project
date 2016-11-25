@@ -140,7 +140,7 @@ public class Material {
 	 * @param a the number in question
 	 * @return the chance of rolling it
 	 */
-	private double frequencyLUT(int a){
+	public double frequencyLUT(int a){
 		switch (a) {
 		case 2:
 		case 12:		//intended fallthrough
