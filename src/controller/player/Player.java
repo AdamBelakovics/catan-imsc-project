@@ -22,6 +22,7 @@ public class Player {
 	int id;
 	int points;
 	int activeKnights;
+	Table table;
 	
 	HashMap<Resource, Integer> changeLUT = new HashMap<Resource, Integer>();
 	HashMap<Resource, Integer> resourcePool = new HashMap<Resource, Integer>();
@@ -44,7 +45,7 @@ public class Player {
 	 * 						 5 Settlements
 	 * 						 4 Cities
 	 */
-	public Player(String name, int id, PlayerController controller){
+	public Player(String name, int id, Table t){
 		this.name = name;
 		this.id = id;
 		points = 0;
@@ -72,11 +73,22 @@ public class Player {
 		
 		devCards = null;
 		playedDevCards = null;
+		table = t;
 				
 	}
 	
 	//PLAYER GETTER/SETTER METHODS PRIVATE---------------------------------------------------------------------->
 	//implemented as protected final for JUNIT testing
+	
+	
+	
+	/**
+	 * Setter for PlayerController
+	 * @param PlayerController for the Player
+	 */
+	public void setPlayerController(PlayerController c){
+		controller = c;
+	}
 	
 	/**
 	 * Increase player's points with a value
@@ -240,7 +252,7 @@ public class Player {
 		//HERE												TODO If Players have more than 7 Resources card, they lose half of them
 			handleThief();
 		}
-		Table.allocateResources(result);
+		table.allocateResources(result);
 	}
 	
 	/**

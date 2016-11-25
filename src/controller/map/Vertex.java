@@ -47,7 +47,9 @@ public class Vertex {
 	void generateNeighbours(){
 		
 		//Vertices
-		//TODO
+		for(Hex h : neighbourHexes){
+			h.getNeighbouringVertices(); //TODO befejez
+		}
 		
 		//Hexes
 		for(Map.Entry<String, Hex> e: hexes.entrySet()){

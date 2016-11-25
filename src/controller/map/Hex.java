@@ -49,7 +49,7 @@ public class Hex implements TableElement {
 		return neighbourHexes;
 	}
 	
-	public ArrayList<Vertex> getNeighbouringVertexes(){
+	public ArrayList<Vertex> getNeighbouringVertices(){
 		return neighbourVertices;
 	}
 

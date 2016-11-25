@@ -118,6 +118,7 @@ public class Table{
 	 * in Hex.vertices and in Vertex.hexes
 	 */
 	private void generateVertices(){
+
 		Orientation[] oarray =  Orientation.values();
 		ArrayList<Orientation> oList = new ArrayList<Orientation>();
 		ArrayList<Orientation> shiftedOList = new ArrayList<Orientation>();
@@ -147,8 +148,8 @@ public class Table{
 				if (vertexID.length() >= 6){ //az olyan Vertexek amelyeknek az IDje 6 karakternĂ©l rĂ¶videbbek invalidak
 					Vertex v = new Vertex(vertexID);
 					if(vertexMap.containsKey(vertexID)){ //ha benne van akkor csak a pointereket ĂˇllĂ­tjuk be
-						h0.vertices.put(vertexID, v);
-						v.hexes.put(h0.getID(), h0);
+						h0.vertices.put(vertexID, vertexMap.get(vertexID));
+						vertexMap.get(vertexID).hexes.put(h0.getID(), h0);
 					}
 					else{//ha nincs benne hozzĂˇadjuk a TablehĂ¶z is
 						vertexMap.put(vertexID, v); //ha valid beletesszĂĽk
