@@ -44,7 +44,6 @@ public class Table{
 	
 	/**
 	 * Returns All Vertexes as a List
-	 * Work in progress TODO
 	 * @return List of all Vertexes
 	 */
 	public ArrayList<Vertex> getNodes(){ 
@@ -53,7 +52,6 @@ public class Table{
 	
 	/**
 	 * Returns all Hexes as a List
-	 * Work in progress TODO
 	 * @return List of all Hexes
 	 */
 	public ArrayList<Hex> getFields(){ 
