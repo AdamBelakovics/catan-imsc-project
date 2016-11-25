@@ -118,7 +118,7 @@ public class Material {
 	 * @return the chance
 	 * not available or implemented methods are needed
 	 */
-	private double globalFrequency(){
+	public double globalFrequency(){
 		double sum = 0;
 		ArrayList<Hex> fields = board.getFields();
 		for(Hex x : fields){
