@@ -185,7 +185,26 @@ public class BuildDevelopment {
 		
 		// counting how many cards other players played
 		for(Player player : otherPlayers){
-			for(DevCard dc : player.getPlayedDevelopmentCards()){
+			if(player.getPlayedDevelopmentCards() != null){
+				for(DevCard dc : player.getPlayedDevelopmentCards()){
+					if(dc.getClass().equals(KnightCard.class)){
+						knightCnt++;
+					} else if(dc.getClass().equals(MonopolyCard.class)){
+						monopolyCnt++;
+					} else if(dc.getClass().equals(RoadBuildingCard.class)){
+						twoRoadCnt++;
+					} else if(dc.getClass().equals(VictoryPointCard.class)){
+						plusPointCnt++;
+					} else {
+						inventionCnt++;
+					}
+					allCnt++;
+				}
+			}
+		}
+		if(aiPlayer.getPlayedDevelopmentCards() != null){
+			// counting how many cards we (ai) played
+			for(DevCard dc : aiPlayer.getPlayedDevelopmentCards()){
 				if(dc.getClass().equals(KnightCard.class)){
 					knightCnt++;
 				} else if(dc.getClass().equals(MonopolyCard.class)){
@@ -199,21 +218,6 @@ public class BuildDevelopment {
 				}
 				allCnt++;
 			}
-		}
-		// counting how many cards we (ai) played
-		for(DevCard dc : aiPlayer.getPlayedDevelopmentCards()){
-			if(dc.getClass().equals(KnightCard.class)){
-				knightCnt++;
-			} else if(dc.getClass().equals(MonopolyCard.class)){
-				monopolyCnt++;
-			} else if(dc.getClass().equals(RoadBuildingCard.class)){
-				twoRoadCnt++;
-			} else if(dc.getClass().equals(VictoryPointCard.class)){
-				plusPointCnt++;
-			} else {
-				inventionCnt++;
-			}
-			allCnt++;
 		}
 		// to avoid divide by zero
 		if(allCnt == 0){
