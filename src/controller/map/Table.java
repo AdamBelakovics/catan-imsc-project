@@ -146,14 +146,14 @@ public class Table{
 				for(Map.Entry<Integer, String> entry : mapForSorting.entrySet()){
 					vertexID = vertexID + entry.getValue();
 				}
-				if (vertexID.length() >= 6){ //az olyan Vertexek amelyeknek az IDje 6 karakternél rövidebbek invalidak
+				if (vertexID.length() >= 6){ //az olyan Vertexek amelyeknek az IDje 6 karakternĂ©l rĂ¶videbbek invalidak
 					Vertex v = new Vertex(vertexID);
-					if(vertexMap.containsKey(vertexID)){ //ha benne van akkor csak a pointereket állítjuk be
+					if(vertexMap.containsKey(vertexID)){ //ha benne van akkor csak a pointereket ĂˇllĂ­tjuk be
 						h0.vertices.put(vertexID, v);
 						v.hexes.put(h0.getID(), h0);
 					}
-					else{//ha nincs benne hozzáadjuk a Tablehöz is
-						vertexMap.put(vertexID, v); //ha valid beletesszük
+					else{//ha nincs benne hozzĂˇadjuk a TablehĂ¶z is
+						vertexMap.put(vertexID, v); //ha valid beletesszĂĽk
 						h0.vertices.put(vertexID, v);
 						v.hexes.put(h0.getID(), h0);
 					}
@@ -294,6 +294,9 @@ public class Table{
 
 	}
 	
+	public void allocateResources(int result){
+		
+	}
 	
 	public boolean isBuildPossibleAt(Building what, TableElement where) {
 		return where.isBuildPossible(what);
