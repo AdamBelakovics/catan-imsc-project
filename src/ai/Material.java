@@ -1,6 +1,7 @@
 package ai;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import controller.map.*;
 import controller.player.*;
@@ -29,9 +30,11 @@ public class Material {
 	private double baseFrequency;
 	
 	private Table board;
+	private PlayerController me;
 	
-	public Material(Table t, Resource r){
+	public Material(Table t, PlayerController pc, Resource r){
 		
+		me = pc;
 		board = t;
 		myresource = r;
 		
@@ -66,19 +69,12 @@ public class Material {
 		 * initializing baseFrequency
 		 */
 		
-		/*
-		 * algorithm iterates through all territories and adds up the income rates
-		 * if the material on a given territory matches this material
-		 * TODO getFields is needed to be visible
-		 * TODO get number needs to be implemented
-		 */ 
 		baseFrequency = 0;
 		ArrayList<Hex> fields = board.getFields();
 		for(Hex x : fields){
 			if(x.getResource().equals(myresource)){
 				baseFrequency += frequencyLUT(x.getProsperity());
 			}
-			
 		}
 	}
 	
@@ -91,14 +87,17 @@ public class Material {
 		// TODO implement method body
 		
 		double sum = 0;
-//		ArrayList<Hex> fields = board.getFields();
-//		for(Hex x : fields){
-//			if(x.weHaveBuildingOnThisField()){
-//				if(x.getResource().equals(myresource)){
-//					sum += frequencyLUT(x.getProsperity());
-//				}
-//			}
-//		}
+		ArrayList<Hex> fields = board.getFields();
+		for(Hex x : fields){
+			List<Vertex> ver = x.getNeighbouringVertexes();
+			for(Vertex y : ver){
+				if(x.getOwner().equals(me)){
+					if(x.getResource().equals(myresource)){
+						sum += frequencyLUT(x.getProsperity());
+					}
+				}
+			}
+		}
 		return sum;
 		
 	}
@@ -108,18 +107,12 @@ public class Material {
 	 * @return the value (5 for now)
 	 */
 	public double personalvalue(){
-		 /*
-		  * TODO implement method body
-		  * my idea for calculation is to decide the base values multiply that with a polynom calculated with
-		  * interpolating polynomial calculation in wolfram alpha to match certain criteria based on the number of
-		  * the given material in hand (eg if we have zero it should be higher than the base value, if we have 1 it should be
-		  * the base value ... and if we have 6 or more it should be 0) than add a number based on how much other players have
-		  * and get form the resource
-		  * exact numbers to be determined
-		  */
+		double value = 0;
+		value = baseValue * factorByNumberInHandLUY(me.getPlayer().getResourceAmount(myresource)) + 2 * globalFrequency();
+		
 		
 		//returning a value randomly chosen for now
-		return 5;
+		return value;
 	}
 	
 	/**
@@ -128,22 +121,24 @@ public class Material {
 	 * not available or implemented methods are needed
 	 */
 	private double globalFrequency(){
-		// TODO implement method body
 		double sum = 0;
-//		ArrayList<Hex> fields = board.getFields();
-//		for(Hex x : fields){
-//			if(x.otherPlayersHaveBuildingOnThisField()){
-//				if(x.getResource().equals(myresource)){
-//					sum += frequencyLUT(x.getProsperity());
-//				}
-//			}
-//		}
+		ArrayList<Hex> fields = board.getFields();
+		for(Hex x : fields){
+			List<Vertex> ver = x.getNeighbouringVertexes();
+			for(Vertex y : ver){
+				if(!(x.getOwner().equals(me))){
+					if(x.getResource().equals(myresource)){
+						sum += frequencyLUT(x.getProsperity());
+					}
+				}
+			}
+		}
 		return sum;
 	}
 	
 	
 	/**
-	 * method for geting the chance of rolling a given number if we roll two dice
+	 * method for getting the chance of rolling a given number if we roll two dice
 	 * @param a the number in question
 	 * @return the chance of rolling it
 	 */
@@ -170,6 +165,26 @@ public class Material {
 		default:
 			System.out.println("argument is not a valid dice roll from Material.frequencyLUT");
 			return 1;
+		}
+	}
+	
+	/**
+	 * look up table for factors in calculating personal vale
+	 * @param inhand number of given material in hand
+	 * @return a factor for the calculation
+	 */
+	private double factorByNumberInHandLUY(int inhand){
+		switch(inhand){
+		case 0:
+			return 1;
+		case 2:
+			return 0.7;
+		case 3:
+			return 0.3;
+		case 4:
+			return 0.1;
+		default:
+			return 0;
 		}
 	}
 }
