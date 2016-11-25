@@ -30,9 +30,9 @@ public class Material {
 	private double baseFrequency;
 	
 	private Table board;
-	private PlayerController me;
+	private Player me;
 	
-	public Material(Table t, PlayerController pc, Resource r){
+	public Material(Table t, Player pc, Resource r){
 		
 		me = pc;
 		board = t;
@@ -40,23 +40,22 @@ public class Material {
 		
 		/*
 		 * initializing baseValue
-		 * TODO magic constants need to be calculated
 		 */
 		switch (myresource) {
 		case Brick:
-			baseValue = 0;
+			baseValue = 2;
 			break;
 		case Lumber:
-			baseValue = 0;
+			baseValue = 3;
 			break;
 		case Ore:
-			baseValue = 0;
+			baseValue = 5;
 			break;
 		case Grain:
-			baseValue = 0;
+			baseValue = 6;
 			break;
 		case Wool:
-			baseValue = 0;
+			baseValue = 4;
 			break;
 
 		default:
@@ -84,14 +83,13 @@ public class Material {
 	 * not available or implemented methods are needed
 	 */
 	public double personalFrequency(){
-		// TODO implement method body
 		
 		double sum = 0;
 		ArrayList<Hex> fields = board.getFields();
 		for(Hex x : fields){
 			List<Vertex> ver = x.getNeighbouringVertices();
 			for(Vertex y : ver){
-				if(x.getOwner().equals(me)){
+				if(y.getSettlement().getOwner().equals(me)){
 					if(x.getResource().equals(myresource)){
 						sum += frequencyLUT(x.getProsperity());
 					}
@@ -108,7 +106,7 @@ public class Material {
 	 */
 	public double personalValue(){
 		double value = 0;
-		value = baseValue * factorByNumberInHandLUY(me.getPlayer().getResourceAmount(myresource)) + 2 * globalFrequency();
+		value = baseValue * factorByNumberInHandLUY(me.getResourceAmount(myresource)) + 2 * globalFrequency();
 		
 		
 		//returning a value randomly chosen for now
@@ -126,7 +124,7 @@ public class Material {
 		for(Hex x : fields){
 			List<Vertex> ver = x.getNeighbouringVertices();
 			for(Vertex y : ver){
-				if(!(x.getOwner().equals(me))){
+				if(!(y.getSettlement().getOwner().equals(me))){
 					if(x.getResource().equals(myresource)){
 						sum += frequencyLUT(x.getProsperity());
 					}
