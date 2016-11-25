@@ -1,5 +1,5 @@
 package controller.player;
 
-public class City implements Building{
+public class City extends Building{
 
 }

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import controller.map.Hex;
+import controller.map.Table;
 import controller.map.TableElement;
 import controller.player.devcards.DevCard;
 import controller.player.devcards.DevCardShop;
@@ -28,6 +29,7 @@ public class Player {
 	ArrayList<DevCard> playedDevCards = new ArrayList<DevCard>();
 	ArrayList<Building> availableBuildings = new ArrayList<Building>();
 	ArrayList<Building> erectedBuildings = new ArrayList<Building>();
+	ArrayList<Player> otherPlayers = new ArrayList<Player>();
 	
 	
 	
@@ -220,15 +222,25 @@ public class Player {
 	}
 	
 	
+	public boolean equals(Player p){
+		return this.getId() == p.getId();
+	}
+	
+	
 	//PLAYER ACTIONS---------------------------------------------------------------------->
 	
 	/**
 	 * PLAYER ACTION
 	 * Rolls the dice(e. g. generates two random integers (1-6), and adds them), and allocates new resources to each Player.
-	 * If 7 is rolled calls the handleThief method
+	 * If 7 is rolled calls the handleThief method and calls
 	 */
 	public void rollTheDice() {
-		handleThief(); //ennek itt kell majd lennie TODO
+		int result = (int)(Math.random()*6+1) + (int)(Math.random()*6+1);
+		if(result == 7){
+		//HERE												TODO If Players have more than 7 Resources card, they lose half of them
+			handleThief();
+		}
+		Table.allocateResources(result);
 	}
 	
 	/**
@@ -264,6 +276,7 @@ public class Player {
 			}
 			availableBuildings.remove(what);
 			erectedBuildings.add(what);
+			what.setOwner(this);
 															//TODO Player can take it's new Road to map
 															//Then TODO check if with this new Road have 5 continuous road segments (or longer then the previous longest road owner's)
 			
@@ -279,9 +292,10 @@ public class Player {
 				e1.printStackTrace();
 			}
 			availableBuildings.remove(what);
-			erectedBuildings.add(what);
-			//HERE											TODO Player can take it's new Settlement to map
 			
+			//HERE											TODO Player can take it's new Settlement to map
+			erectedBuildings.add(what);
+			what.setOwner(this);
 			this.incPoints(1);
 		}
 		if(what.getClass().equals(City.class)){
@@ -292,9 +306,10 @@ public class Player {
 				e1.printStackTrace();
 			}
 			availableBuildings.remove(what);
-			erectedBuildings.add(what);
-			//HERE											TODO Player can take it's new City to a Settlement's place
 			
+			//HERE											TODO Player can take it's new City to a Settlement's place
+			erectedBuildings.add(what);
+			what.setOwner(this);
 			this.incPoints(1);		//Inc 1, cause the Settlement became City (-1+2=+1)
 		}
 		
