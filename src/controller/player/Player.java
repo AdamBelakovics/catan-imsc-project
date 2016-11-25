@@ -337,6 +337,7 @@ public class Player {
 		
 	}
 	
+	public void change(Resource give , Resource get){}
 	/**
 	 * PLAYER ACTION
 	 * Player can buy a random Development Card from the DevCardShop.
