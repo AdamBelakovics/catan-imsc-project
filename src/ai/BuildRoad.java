@@ -19,7 +19,6 @@ import controller.player.Player;
  */
 public class BuildRoad {
 	private Table map;
-	// TODO need ai
 	private AiController owner;
 	private double buildValue;
 	private Vertex nodeFrom;
@@ -35,7 +34,6 @@ public class BuildRoad {
 	 */
 	public BuildRoad(Table map, AiController owner, Player aiPlayer, ArrayList<Player> otherPlayers){
 		this.map = map;
-		// TODO need ai
 		this.owner = owner;
 		nodeFrom = null;
 		nodeTo = null;
@@ -89,17 +87,16 @@ public class BuildRoad {
 		double maxVal = 0;
 		double val;
 		int dif = calculateMaxRoadDifference();
-		int difVal = 1;
-		// n is the node to build the road to
+		double difVal = 1;
 		for(Vertex nodeTo : map.getNodes()){
 			Vertex nodeFrom = fromWhereCanBuildRoad(nodeTo);
 			if(nodeFrom != null){
 				val = nodePersonalValueForRoad(nodeTo);
 				if(dif < 2){
 					if(dif >= -1)
-						difVal = 3;
+						difVal = 1.5;
 					else
-						difVal = 2;
+						difVal = 1.2;
 					if(isMaxRoadStart(nodeFrom))
 						val = difVal * val;
 				}
@@ -135,13 +132,10 @@ public class BuildRoad {
 				// we have to check whether there is someone else's road there
 				boolean isRoadBuilt = false;
 				
-				// this might not be needed
-				//Edge keyRoad = new Edge(nodeFrom, nodeTo);
-				// check all players except ai, because we know we have no road here
-				for(Player player : otherPlayers){
-					if(map.getPlayerRoads(player.getId()).contains(keyRoad)){
+				// checks all players except ai, as we know we have no road here
+				for(Edge e : map.getEdges()){
+					if(e.getRoad() != null)
 						isRoadBuilt = true;
-					}
 				}
 				// if no road is blocking, we can build
 				if(!isRoadBuilt){
@@ -200,7 +194,7 @@ public class BuildRoad {
 	private int calculatePlayerMaxRoadFromNode(Vertex fromNode, int player, HashSet<Vertex> visitedNodes){
 		// TODO needs getRoadsFromNode(player), and Rode.getNodes()
 		
-		int dist, max=0;
+		int dist, max = 0;
 	    visitedNodes.add(fromNode);
 	    for(Edge road : fromNode.getRoads(player)){
 	    	Vertex n1, n2;
@@ -225,8 +219,6 @@ public class BuildRoad {
 
 	    visitedNodes.remove(fromNode);
 	    return max;
-	    
-		return 0;
 	}
 	
 	/**

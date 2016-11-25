@@ -47,7 +47,7 @@ public class BuildDevelopment {
 	public BuildDevelopment(Table map, AiController owner, Player aiPlayer, ArrayList<Player> otherPlayers){
 		this.map = map;
 		// TODO ai
-		//this.owner = owner;
+		this.owner = owner;
 		this.aiPlayer = aiPlayer;
 		this.otherPlayers = otherPlayers;
 		pMonopoly = 0.08;
@@ -78,8 +78,6 @@ public class BuildDevelopment {
 	 * @author Gergely Olah
 	 */
 	private double calculateTwoRoadValue(){
-		// TODO ai
-		//BuildRoad r = new BuildRoad(map, owner);
 		BuildRoad r = new BuildRoad(map, owner, aiPlayer, otherPlayers);
 		int dif = r.calculateMaxRoadDifference();
 		int difVal = 1;
@@ -107,7 +105,6 @@ public class BuildDevelopment {
 	 */
 	private double calculateInventionValue(){
 		double minResourceFrequency = -1;
-		// TODO need Material, ai 
 		Map<Resource, Material> res = owner.getResources();
 		for(Map.Entry<Resource, Material> it : res.entrySet()){
 			double currentFrequency = it.getValue().personalFrequency();
@@ -129,7 +126,6 @@ public class BuildDevelopment {
 	 */
 	private double calculateMonopolyValue(){
 		double maxMaterialValue = 0;
-		// TODO need Material, ai
 		Map<Resource, Material> res = owner.getResources();
 		for(Map.Entry<Resource, Material> it : res.entrySet()){
 			double currentValue;
@@ -153,26 +149,25 @@ public class BuildDevelopment {
 	 */
 	private double calculateKnightValue(){
 		int robbed = 1;
-		// TODO ai
 		if(owner.isRobbed())
 			robbed = 2;
 		int dif, difVal;
 		dif = 0;
-		// TODO ai
 		dif = owner.getKnightDiff();
 		difVal = 1;
 		if(dif < 2 && dif >= -2)
 			difVal = 3;
 		else if(dif < -2)
 			difVal = 2;
-		// TODO ai
-		//return 0;
-		return Math.max(robbed * difVal + owner.getRobbedSum() + 2.5, 10);
+		// TODO getRobbedSum() in AiController, not very important
+		//return Math.max(robbed * difVal + owner.getRobbedSum() + 2.5, 10);
+		return Math.max(robbed * difVal + 2.5, 10);
 	}
 	
 	/**
 	 * Calculates the probabilites for each devcard.
-	 * @author Gergely
+	 * Doesn't count the ones that are not in the pack, but unplayed.
+	 * @author Gergely Olah
 	 */
 	private void calculateProbabilities(){
 		pMonopoly = 0.08;
@@ -186,6 +181,7 @@ public class BuildDevelopment {
 		int knightCnt = 0;
 		int plusPointCnt = 0;
 		int twoRoadCnt = 0;
+		int allCnt = 0;
 		
 		// counting how many cards other players played
 		for(Player player : otherPlayers){
@@ -201,6 +197,7 @@ public class BuildDevelopment {
 				} else {
 					inventionCnt++;
 				}
+				allCnt++;
 			}
 		}
 		// counting how many cards we (ai) played
@@ -216,12 +213,21 @@ public class BuildDevelopment {
 			} else {
 				inventionCnt++;
 			}
+			allCnt++;
 		}
-		
-		pKnight = (14 - knightCnt) / 25.0;
-		pInvention = (2 - inventionCnt) / 25.0;
-		pMonopoly = (2 - monopolyCnt) / 25.0;
-		pTwoRoad = (2 - twoRoadCnt) / 25.0;
-		pPlusPoint = (5 - plusPointCnt) / 25.0;
+		// to avoid divide by zero
+		if(allCnt == 0){
+			pKnight = 0;
+			pInvention = 0;
+			pMonopoly = 0;
+			pTwoRoad = 0;
+			pPlusPoint = 0;
+		} else {
+			pKnight = (14 - knightCnt) / (25.0 - allCnt);
+			pInvention = (2 - inventionCnt) / (25.0 - allCnt);
+			pMonopoly = (2 - monopolyCnt) / (25.0 - allCnt);
+			pTwoRoad = (2 - twoRoadCnt) / (25.0 - allCnt);
+			pPlusPoint = (5 - plusPointCnt) / (25.0 - allCnt);
+		}
 	}
 }
