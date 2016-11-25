@@ -66,7 +66,6 @@ public class Vertex {
 						neighbourVertices.add(v);
 			}
 		}
-		System.out.println(neighbourVertices);
 		
 	}
 	
