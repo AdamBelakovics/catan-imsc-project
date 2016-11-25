@@ -7,11 +7,14 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Robot;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import controller.map.Hex;
 import controller.map.Table;
@@ -27,8 +30,9 @@ public class BoardHexRenderer extends ImageRenderer {
 	private double zoomLevel;
 	private HashMap<Hex,HexPoly> hexMap;
 	private HashMap<Resource,Color> colorMap;
-	private HashMap<Point,Vertex> vertexMap;
 	Map.Entry<Hex, HexPoly> selectedTile=null;
+	
+	AffineTransform boardTransformation;
 	
 	BuildingEnum currentlyBuilding;
 
@@ -47,7 +51,7 @@ public class BoardHexRenderer extends ImageRenderer {
 		hexMap=new HashMap<Hex,HexPoly>();
 		colorMap=ResourceXMLReader.readTextureXML("textures.xml");
 		generateHexes();
-		generateVertices();
+		
 		currentlyBuilding=null;
 		rotationLeft=0;
 		zoomLevel=1;
@@ -60,16 +64,6 @@ public class BoardHexRenderer extends ImageRenderer {
 	 */
 	public HexPoly getHexPolyFromHex(Hex hex) {
 		return hexMap.get(hex);
-	}
-
-	private void generateVertices() {
-		//for (Vertex v : board.getNodes())
-			//vertexMap.put(pointFromVertex(v), v);		
-	}
-
-	private Point pointFromVertex(Vertex v) {
-			//TODO
-		return new Point();
 	}
 
 	public void paint(Graphics g) {
@@ -89,17 +83,19 @@ public class BoardHexRenderer extends ImageRenderer {
 	 * @author      Kiss Lorinc
 	 */
 	private void translateBoardCanvas() {
+		boardTransformation=new AffineTransform();
 		//Setting origin to center
-		hexCanvas.translate(width/2, height/2);
+		boardTransformation.translate(width/2, height/2);
 
 		//Isometric tilt
-		hexCanvas.scale(1*zoomLevel, 0.5*zoomLevel);
+		boardTransformation.scale(1*zoomLevel, 0.5*zoomLevel);
 
 		//Applying rotation, if needed
 		if (Math.abs(rotationLeft)>eps) {
-			hexCanvas.rotate((((BoardRenderer)parentRenderer).boardOrientation.ordinal())*Math.PI/3-rotationLeft);
+			boardTransformation.rotate((((BoardRenderer)parentRenderer).boardOrientation.ordinal())*Math.PI/3-rotationLeft);
 			rotationLeft-=Math.signum(rotationLeft)*rotationStep;
 		} else hexCanvas.rotate(((BoardRenderer)parentRenderer).boardOrientation.ordinal()*Math.PI/3);
+		hexCanvas.setTransform(boardTransformation);
 	}
 
 	/**
@@ -156,6 +152,8 @@ public class BoardHexRenderer extends ImageRenderer {
 			hexCanvas.draw(selectedTile.getValue());
 		}
 	}
+	
+	
 
 	/**
 	 * Selects or deselects given hex

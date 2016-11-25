@@ -53,7 +53,7 @@ public class Renderer {
 		mainFrame.setResizable(false);
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		updateTimer=new Timer(15, new ActionListener() {
+		updateTimer=new Timer(30, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				draw();

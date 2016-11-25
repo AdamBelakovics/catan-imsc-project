@@ -27,7 +27,7 @@ public class HexPolyFactory {
 		double baseX=x*distance-offset*distance/2;
 		double baseY=y*(distance*Math.sin(Math.toRadians(30))/2+radius+4);
 		
-		HexPoly hexPoly=new HexPoly(x,y);
+		HexPoly hexPoly=new HexPoly((int)Math.round(baseX),(int)Math.round(baseY));
 		
 		for (int i=0;i!=360;i+=60) hexPoly.addPoint(
 				(int)(baseX+(radius+1)*Math.sin(Math.toRadians(i))), 
