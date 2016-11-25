@@ -40,6 +40,10 @@ public class Vertex {
 		return neighbourVertices;
 	}
 	
+	public ArrayList<Hex> getNeighbourHexes() {
+		return neighbourHexes;
+	}
+	
 	void generateNeighbours(){
 		
 		//Vertices
