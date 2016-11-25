@@ -275,7 +275,7 @@ public class AiController extends PlayerController {
 	}
 	
 	private double nodePersonalValue(Vertex v){
-		if(!(v.isBuildPossile(Settlement.class))){
+		if(!(v.isBuildPossible(new Settlement()))){
 			return 0;
 		}
 		double sum = 0;
