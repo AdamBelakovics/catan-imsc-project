@@ -37,7 +37,7 @@ public class Controller {
 		Renderer renderer = new Renderer(HumanController, board, 1080, 720);
 		
 		for(Hex h : board.hexList){
-			h.setResource(Resource.values()[(int) (Math.random()*5]));
+			h.setResource(Resource.values()[(int) (Math.random()*5)]);
 		}
 		
 		try {
