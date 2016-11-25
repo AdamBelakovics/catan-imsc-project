@@ -22,8 +22,10 @@ public class Vertex {
 	public Map<String, Hex> hexes = new TreeMap<String, Hex>();
 	
 	ArrayList<Edge> edges;
+	
+	private ArrayList<Hex> neighbourHexes = new ArrayList<Hex>();
 
-	private ArrayList<Vertex> neighbours = new ArrayList<Vertex>(); 
+	private ArrayList<Vertex> neighbourVertices = new ArrayList<Vertex>(); 
 	
 	/**
 	 * @return the Settlement contained by this Vertex
@@ -35,7 +37,18 @@ public class Vertex {
 	 * @return List of neighboring Vertexes
 	 */
 	public ArrayList<Vertex> getNeighbours() {
-		return neighbours;
+		return neighbourVertices;
+	}
+	
+	void generateNeighbours(){
+		
+		//Vertices
+		//TODO
+		
+		//Hexes
+		for(Map.Entry<String, Hex> e: hexes.entrySet()){
+			neighbourHexes.add(e.getValue());
+		}
 	}
 	
 	/**

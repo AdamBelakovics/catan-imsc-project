@@ -85,6 +85,7 @@ public class Table{
 		generateVertices();
 		//generateEdges();
 		generateLists();
+		generateAllNeigbours();
 	}
 	
 	/**
@@ -183,13 +184,22 @@ public class Table{
 	}
 	
 	public void generateAllNeigbours(){
+		
+		//for Hexes
 		IteratorHex i = hexIterator();
-		ArrayList<Hex> hexlist = new ArrayList<Hex>();
-		while(i.hasNext()){
+		ArrayList<Hex> tmpNeighbourHexList = new ArrayList<Hex>();
+		for(Hex h: hexList){
 			i.next();
 			for(Orientation o : Orientation.values())
-				hexlist.add(i.getNeighboringHex(o)); //TODO TODO TODO
+				tmpNeighbourHexList.add(i.getNeighboringHex(o));
+			h.generateNeighbours(tmpNeighbourHexList);
 		}
+		
+		//for Vertices
+		for(Vertex v: vertexList){
+			v.generateNeighbours();
+		}
+		
 	}
 	
 	
