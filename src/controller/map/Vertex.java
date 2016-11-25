@@ -10,6 +10,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import controller.player.Building;
+import controller.player.Player;
 import controller.player.Settlement;
 
 public class Vertex implements TableElement{
@@ -23,7 +24,7 @@ public class Vertex implements TableElement{
 		return ID;
 	}
 	
-	private Settlement settlement = new Settlement();
+	private Settlement settlement = null;
 	
 	public Map<String, Hex> hexes = new TreeMap<String, Hex>();
 	
@@ -39,6 +40,13 @@ public class Vertex implements TableElement{
 	public Settlement getSettlement() {
 		return settlement;
 	}
+	
+	public void setSettlement(Player p){
+		settlement = new Settlement();
+		settlement.setOwner(p);
+	}
+	
+	
 	/**
 	 * @return List of neighboring Vertexes
 	 */
@@ -83,7 +91,11 @@ public class Vertex implements TableElement{
 
 	@Override
 	public boolean isBuildPossible(Building what) {
-		// TODO Auto-generated method stub
+		if(what.getClass().equals(Settlement.class)){
+			if(settlement == null){
+				return true;
+			}
+		}
 		return false;
 	}
 }
