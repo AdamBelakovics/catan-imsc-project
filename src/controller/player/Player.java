@@ -45,7 +45,7 @@ public class Player {
 	 * 						 5 Settlements
 	 * 						 4 Cities
 	 */
-	public Player(String name, int id, PlayerController controller, Table t){
+	public Player(String name, int id, Table t){
 		this.name = name;
 		this.id = id;
 		points = 0;
@@ -79,6 +79,16 @@ public class Player {
 	
 	//PLAYER GETTER/SETTER METHODS PRIVATE---------------------------------------------------------------------->
 	//implemented as protected final for JUNIT testing
+	
+	
+	
+	/**
+	 * Setter for PlayerController
+	 * @param PlayerController for the Player
+	 */
+	public void setPlayerController(PlayerController c){
+		controller = c;
+	}
 	
 	/**
 	 * Increase player's points with a value
