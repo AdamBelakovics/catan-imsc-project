@@ -14,5 +14,5 @@ public abstract class Button {
 		selected=false;
 	}
 	
-	void press() {}
+	void press() {};
 }
