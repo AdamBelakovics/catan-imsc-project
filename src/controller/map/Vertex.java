@@ -1,23 +1,29 @@
 package controller.map;
 
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.TreeMap;
 
 import controller.player.Settlement;
 
 public class Vertex {
-	private /*final*/ int ID; //TODO
+	private final String ID; 
 	
-	public int getID() {
+	public Vertex(String id){
+		ID = id;
+	}
+	
+	public String getID() {
 		return ID;
 	}
 	
 	private Settlement settlement = new Settlement();
 	
-	ArrayList<Hex> hexes;
+	public Map<String, Hex> hexes = new TreeMap<String, Hex>();
 	
 	ArrayList<Edge> edges;
 
-	private ArrayList<Vertex> neighbors = new ArrayList<Vertex>(); 
+	private ArrayList<Vertex> neighbours = new ArrayList<Vertex>(); 
 	
 	/**
 	 * @return the Settlement contained by this Vertex
@@ -29,7 +35,7 @@ public class Vertex {
 	 * @return List of neighboring Vertexes
 	 */
 	public ArrayList<Vertex> getNeighbours() {
-		return neighbors;
+		return neighbours;
 	}
 	
 	/**
