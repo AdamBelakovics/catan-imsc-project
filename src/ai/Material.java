@@ -89,7 +89,7 @@ public class Material {
 		double sum = 0;
 		ArrayList<Hex> fields = board.getFields();
 		for(Hex x : fields){
-			List<Vertex> ver = x.getNeighbouringVertexes();
+			List<Vertex> ver = x.getNeighbouringVertices();
 			for(Vertex y : ver){
 				if(x.getOwner().equals(me)){
 					if(x.getResource().equals(myresource)){
@@ -106,7 +106,7 @@ public class Material {
 	 * method for calculating the value of the given material for the player
 	 * @return the value (5 for now)
 	 */
-	public double personalvalue(){
+	public double personalValue(){
 		double value = 0;
 		value = baseValue * factorByNumberInHandLUY(me.getPlayer().getResourceAmount(myresource)) + 2 * globalFrequency();
 		
@@ -124,7 +124,7 @@ public class Material {
 		double sum = 0;
 		ArrayList<Hex> fields = board.getFields();
 		for(Hex x : fields){
-			List<Vertex> ver = x.getNeighbouringVertexes();
+			List<Vertex> ver = x.getNeighbouringVertices();
 			for(Vertex y : ver){
 				if(!(x.getOwner().equals(me))){
 					if(x.getResource().equals(myresource)){
