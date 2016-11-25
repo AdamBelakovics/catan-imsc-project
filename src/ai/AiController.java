@@ -94,10 +94,10 @@ public class AiController extends PlayerController {
 		public List<Buildable> buildPlan = new ArrayList<Buildable>();
 
 		public List<Buildable> buildPlanMax;
+		
+		public Map<Double,Map<Resource, Integer>> goodHands=new HashMap<Double,Map<Resource, Integer>>();
 
-		
-		
-		public AllNeededDataForTurn() {
+			public AllNeededDataForTurn() {
 			for (Resource r : Resource.values()) {
 				rAmount.put(r, me.getResourceAmount(r));
 				rLut.put(r, me.getChangeLUT(r));
@@ -257,8 +257,24 @@ public class AiController extends PlayerController {
 			return found;
 		}
 	
-		public void build(){
+		public void NewHand(){
+			goodHands.clear();
+			double d=0;
+			double max=0;
+			for (Integer key : possibilities.keySet())
+				if(possibilities.get(key).how.containsAll(buildPlanMax)){
+					for (Resource r : Resource.values())
+						d+=resources.get(r).personalValue();
+					goodHands.put(d,possibilities.get(key).hand);
+					if(d>max)
+						max=d;
+					d=0;
+				}
+			Value1 Plan=possibilities.get(max);
+			
 		}
+		
+		public void build(){}
 		
 		public void trade(){}
 	}
