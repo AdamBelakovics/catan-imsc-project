@@ -11,10 +11,10 @@ public class AiController extends PlayerController {
 	private Table map;
 	private int robberSum;
 
-	private BuildCity buildCity= new BuildCity(map,this,me,players);
-	private BuildVillage buildVillage= new BuildVillage(map,this,me,players);
-	private BuildRoad buildRoad= new BuildRoad(map,this,me,players);
-	private BuildDevelopment buildDevelopment= new BuildDevelopment(map,this, me,players);
+	private BuildCity buildCity;
+	private BuildVillage buildVillage;
+	private BuildRoad buildRoad;
+	private BuildDevelopment buildDevelopment;
 
 	private Set<Integer> numbers=new HashSet<Integer>();
 	private Map<Resource, Material> resources = new HashMap<Resource, Material>();
@@ -26,6 +26,10 @@ public class AiController extends PlayerController {
 		me=p;
 		players.addAll(otherPlayers);
 		robberSum=0;
+		buildCity= new BuildCity(map,this,me,players);
+		buildVillage= new BuildVillage(map,this,me,players);
+		buildRoad= new BuildRoad(map,this,me,players);
+		buildDevelopment= new BuildDevelopment(map,this, me,players);
 	}
 
 	public int getKnightDiff() {
