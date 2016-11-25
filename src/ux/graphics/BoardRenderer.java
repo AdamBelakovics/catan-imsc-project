@@ -30,6 +30,7 @@ public class BoardRenderer extends ImageRenderer {
 	BufferedImage hexImage;
 	
 	public BoardHexRenderer hexRenderer;
+	BoardVertexRenderer vertexRenderer;
 
 	public enum BoardOrientation {
 		NORTH,
@@ -48,12 +49,14 @@ public class BoardRenderer extends ImageRenderer {
 		boardOrientation=BoardOrientation.NORTH;
 		hexImage=new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		hexRenderer=new BoardHexRenderer(this, board ,width,height);
+		vertexRenderer=new BoardVertexRenderer(_board, hexRenderer, _height, _width);
 	}
 
 	public void paint(Graphics g) {
 		boardCanvas=(Graphics2D)g;
 		hexRenderer.paint(hexImage.createGraphics());
 		if (hexImage!=null && boardCanvas!=null) boardCanvas.drawImage(hexImage, 0, 0, null);
+		vertexRenderer.paint(boardCanvas);
 		boardCanvas.translate(getWidth()/2, getHeight()/2);
 	}
 }

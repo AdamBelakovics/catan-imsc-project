@@ -18,7 +18,7 @@ public class HexPolyFactory {
 	 */
 	public static HexPoly getHexPoly(Hex sourceHex,int x, int y) {
 		final int radius=50;
-		HexPoly hexPoly=new HexPoly();
+		
 		// distance between hex center points
 		double distance=2*radius*Math.cos(Math.toRadians(30));
 		
@@ -26,6 +26,8 @@ public class HexPolyFactory {
 		int offset=y;
 		double baseX=x*distance-offset*distance/2;
 		double baseY=y*(distance*Math.sin(Math.toRadians(30))/2+radius+4);
+		
+		HexPoly hexPoly=new HexPoly(x,y);
 		
 		for (int i=0;i!=360;i+=60) hexPoly.addPoint(
 				(int)(baseX+(radius+1)*Math.sin(Math.toRadians(i))), 

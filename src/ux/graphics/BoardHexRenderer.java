@@ -52,6 +52,15 @@ public class BoardHexRenderer extends ImageRenderer {
 		rotationLeft=0;
 		zoomLevel=1;
 	}
+	
+	/**
+	 * Returns with the HexPoly of the given hex from the hex map
+	 * @param hex required hex
+	 * @return HexPoly of the given hex
+	 */
+	public HexPoly getHexPolyFromHex(Hex hex) {
+		return hexMap.get(hex);
+	}
 
 	private void generateVertices() {
 		//for (Vertex v : board.getNodes())
