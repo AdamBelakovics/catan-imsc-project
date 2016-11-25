@@ -145,14 +145,14 @@ public class Table{
 				for(Map.Entry<Integer, String> entry : mapForSorting.entrySet()){
 					vertexID = vertexID + entry.getValue();
 				}
-				if (vertexID.length() >= 6){ //az olyan Vertexek amelyeknek az IDje 6 karakternĂ©l rĂ¶videbbek invalidak
+				if (vertexID.length() >= 6){ //az olyan Vertexek amelyeknek az IDje 6 karakternÄ‚Â©l rÄ‚Â¶videbbek invalidak
 					Vertex v = new Vertex(vertexID);
-					if(vertexMap.containsKey(vertexID)){ //ha benne van akkor csak a pointereket ĂˇllĂ­tjuk be
+					if(vertexMap.containsKey(vertexID)){ //ha benne van akkor csak a pointereket Ä‚Ë‡llÄ‚Â­tjuk be
 						h0.vertices.put(vertexID, vertexMap.get(vertexID));
 						vertexMap.get(vertexID).hexes.put(h0.getID(), h0);
 					}
-					else{//ha nincs benne hozzĂˇadjuk a TablehĂ¶z is
-						vertexMap.put(vertexID, v); //ha valid beletesszĂĽk
+					else{//ha nincs benne hozzÄ‚Ë‡adjuk a TablehÄ‚Â¶z is
+						vertexMap.put(vertexID, v); //ha valid beletesszÄ‚Ä˝k
 						h0.vertices.put(vertexID, v);
 						v.hexes.put(h0.getID(), h0);
 					}
@@ -196,7 +196,11 @@ public class Table{
 		
 		//for Vertices
 		for(Vertex v: vertexList){
-			v.generateNeighbours();
+			v.generateNeighbourHexes();
+		}
+		
+		for(Vertex v: vertexList){
+			v.generateNeighbourVertices();
 		}
 		
 	}

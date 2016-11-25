@@ -1,8 +1,13 @@
 package controller.map;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import controller.player.Settlement;
 
@@ -44,17 +49,25 @@ public class Vertex {
 		return neighbourHexes;
 	}
 	
-	void generateNeighbours(){
-		
-		//Vertices
+	void generateNeighbourHexes(){
+				for(Map.Entry<String, Hex> e: hexes.entrySet()){
+					neighbourHexes.add(e.getValue());
+				}
+	}
+	
+	void generateNeighbourVertices(){
+		Set<Hex> base = new HashSet<Hex>(neighbourHexes);
 		for(Hex h : neighbourHexes){
-			h.getNeighbouringVertices(); //TODO befejez
+			for(Vertex v: h.getNeighbouringVertices()){
+				TreeSet<Hex> other = new TreeSet<Hex>(v.getNeighbourHexes());
+				other.retainAll(base);
+				if(other.size() == 2)
+					if(!neighbourVertices.contains(v))
+						neighbourVertices.add(v);
+			}
 		}
+		System.out.println(neighbourVertices);
 		
-		//Hexes
-		for(Map.Entry<String, Hex> e: hexes.entrySet()){
-			neighbourHexes.add(e.getValue());
-		}
 	}
 	
 	/**
