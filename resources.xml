@@ -23,12 +23,4 @@
 		<Resource r="Grain" v="2"/>
 		<Resource r="Wool" v="0"/>
 	</Building>
-	
-	<Building b="Development">
-		<Resource r="Brick" v="0"/>
-		<Resource r="Lumber" v="0"/>
-		<Resource r="Ore" v="1"/>
-		<Resource r="Grain" v="1"/>
-		<Resource r="Wool" v="1"/>
-	</Building>
 </ResourceMap>

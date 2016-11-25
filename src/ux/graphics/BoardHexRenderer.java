@@ -54,8 +54,8 @@ public class BoardHexRenderer extends ImageRenderer {
 	}
 
 	private void generateVertices() {
-		for (Vertex v : board.getNodes())
-			vertexMap.put(pointFromVertex(v), v);		
+		//for (Vertex v : board.getNodes())
+			//vertexMap.put(pointFromVertex(v), v);		
 	}
 
 	private Point pointFromVertex(Vertex v) {
