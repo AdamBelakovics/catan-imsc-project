@@ -7,19 +7,19 @@ import controller.player.*;
 public class AiController extends PlayerController {
 
 	private Player me;
-	Map<Integer, Player> players;
+	ArrayList<Player> players=new ArrayList<Player>();
 	private Table map;
-
-	private BuildCity buildCity;
-	private BuildVillage buildVillage;
-	private BuildRoad buildRoad;
-	private BuildDevelopment buildDevelopment;
-
 	private int robberSum;
-	private Set<Integer> numbers;
-	private Map<Resource, Material> resources;
-	private Map<Resource, Integer> rAmount;
-	private Map<Resource, Integer> rLut;
+
+	private BuildCity buildCity= new BuildCity(map,me,players);
+	private BuildVillage buildVillage= new BuildVillage(map,me,players);
+	private BuildRoad buildRoad= new BuildRoad(map,me,players);
+	private BuildDevelopment buildDevelopment= new BuildDevelopment(map,robberSum, me,players);
+
+	private Set<Integer> numbers=new HashSet<Integer>();
+	private Map<Resource, Material> resources = new HashMap<Resource, Material>();
+	private Map<Resource, Integer> rAmount = new HashMap<Resource, Integer>();
+	private Map<Resource, Integer> rLut = new HashMap<Resource, Integer>();
 
 	public AiController(Table t, Player p, ArrayList<Player> otherPlayers){
 		map=t;
@@ -94,15 +94,16 @@ public class AiController extends PlayerController {
 		public List<Buildable> buildPlan = new ArrayList<Buildable>();
 
 		public List<Buildable> buildPlanMax;
-		
-		public Map<Double,Map<Resource, Integer>> goodHands=new HashMap<Double,Map<Resource, Integer>>();
 
-			public AllNeededDataForTurn() {
+		
+		
+		public AllNeededDataForTurn() {
 			for (Resource r : Resource.values()) {
 				rAmount.put(r, me.getResourceAmount(r));
+				System.out.println(me.getChangeLUT(r));
 				rLut.put(r, me.getChangeLUT(r));
 				seged.put(r, rAmount.get(r));
-				mPValue.put(r, resources.get(Resource.Brick).personalValue());
+				//mPValue.put(r, resources.get(r).personalValue());
 			}
 
 			seged = new HashMap<Resource, Integer>();
@@ -257,24 +258,8 @@ public class AiController extends PlayerController {
 			return found;
 		}
 	
-		public void NewHand(){
-			goodHands.clear();
-			double d=0;
-			double max=0;
-			for (Integer key : possibilities.keySet())
-				if(possibilities.get(key).how.containsAll(buildPlanMax)){
-					for (Resource r : Resource.values())
-						d+=resources.get(r).personalValue();
-					goodHands.put(d,possibilities.get(key).hand);
-					if(d>max)
-						max=d;
-					d=0;
-				}
-			Value1 Plan=possibilities.get(max);
-			
+		public void build(){
 		}
-		
-		public void build(){}
 		
 		public void trade(){}
 	}
