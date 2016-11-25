@@ -1,6 +1,6 @@
 package controller.player;
 
-public class Building {
+abstract public class Building {
 	Player owner;
 	
 	public Player getOwner(){
