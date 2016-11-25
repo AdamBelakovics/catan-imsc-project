@@ -30,7 +30,7 @@ public class BoardHexRenderer extends ImageRenderer {
 	private HashMap<Point,Vertex> vertexMap;
 	Map.Entry<Hex, HexPoly> selectedTile=null;
 	
-	Building currentlyBuilding;
+	BuildingEnum currentlyBuilding;
 
 	//Constants
 	final double eps=0.01;

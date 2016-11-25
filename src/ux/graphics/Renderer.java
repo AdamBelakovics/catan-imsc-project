@@ -22,6 +22,7 @@ import javax.swing.Timer;
 
 import controller.map.*;
 import controller.player.*;
+import controller.player.devcards.*;
 import ux.ui.UIController;
 
 public class Renderer {

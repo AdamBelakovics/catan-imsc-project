@@ -9,7 +9,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import controller.player.DevCard;
+import controller.player.devcards.DevCard;
 import ux.ui.UIController;
 
 public class CardRenderer extends ImageRenderer {

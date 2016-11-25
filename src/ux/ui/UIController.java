@@ -3,7 +3,10 @@ package ux.ui;
 import java.util.ArrayList;
 import java.util.Map;
 
-import controller.player.*;
+import controller.player.Player;
+import controller.player.PlayerController;
+import controller.player.Resource;
+import controller.player.devcards.*;
 
 public class UIController extends PlayerController {
 
@@ -26,7 +29,7 @@ public class UIController extends PlayerController {
 		//TODO
 		ArrayList<DevCard> tempArrayList=new ArrayList();
 		for (int i=0;i<2;i++)
-			tempArrayList.add(new DevCard());
+			tempArrayList.add(new KnightCard());
 		
 		return tempArrayList;
 	}
@@ -35,20 +38,21 @@ public class UIController extends PlayerController {
 		//TODO
 		ArrayList<DevCard> tempArrayList=new ArrayList();
 		for (int i=0;i<2;i++)
-			tempArrayList.add(new DevCard());
+			tempArrayList.add(new KnightCard());
 		
 		return tempArrayList;
 	}
 		
-	@Override
-	public boolean query(Player donor, Map<Resource, Integer> offer, Map<Resource, Integer> demand) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 
 	@Override
 	public void turn() {
 		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public boolean query(Player donor, Map<Resource, Integer> offer, Map<Resource, Integer> demand) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

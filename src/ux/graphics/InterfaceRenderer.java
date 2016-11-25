@@ -13,6 +13,7 @@ import controller.player.Building;
 
 public class InterfaceRenderer extends ImageRenderer {
 	Graphics2D intCanvas;
+	
 	private Hex activeHex;
 	ArrayList<Button> buttonsList;
 	FrameMetrics frameMetrics;
@@ -25,9 +26,9 @@ public class InterfaceRenderer extends ImageRenderer {
 	}
 	private void generateButtons() {
 		buttonsList=new ArrayList();
-		buttonsList.add(new BuildButton("Settlement",Building.Settlement, width*31/40, height*15/20, width*3/20-20, 30));
-		buttonsList.add(new BuildButton("City", Building.City, width*31/40, height*16/20, width*3/20-20, 30));
-		buttonsList.add(new BuildButton("Road",Building.Road, width*31/40, height*17/20, width*3/20-20, 30));
+		buttonsList.add(new BuildButton("Settlement",BuildingEnum.Settlement, width*31/40, height*15/20, width*3/20-20, 30));
+		buttonsList.add(new BuildButton("City", BuildingEnum.City, width*31/40, height*16/20, width*3/20-20, 30));
+		buttonsList.add(new BuildButton("Road",BuildingEnum.Road, width*31/40, height*17/20, width*3/20-20, 30));
 		
 		buttonsList.add(new TradeButton("Trade", width*37/40, height*61/80, width*3/20-20, 40));
 		buttonsList.add(new TradeButton("Dev Card", width*37/40, height*67/80, width*3/20-20, 40));
