@@ -25,7 +25,7 @@ public class UIController extends PlayerController {
 	public ArrayList<DevCard> getDevCards(){
 		//TODO
 		ArrayList<DevCard> tempArrayList=new ArrayList();
-		for (int i=0;i<8;i++)
+		for (int i=0;i<2;i++)
 			tempArrayList.add(new DevCard());
 		
 		return tempArrayList;
@@ -34,7 +34,7 @@ public class UIController extends PlayerController {
 	public ArrayList<DevCard> getPlayedDevCards(){
 		//TODO
 		ArrayList<DevCard> tempArrayList=new ArrayList();
-		for (int i=0;i<5;i++)
+		for (int i=0;i<2;i++)
 			tempArrayList.add(new DevCard());
 		
 		return tempArrayList;

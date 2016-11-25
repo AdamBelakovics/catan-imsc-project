@@ -14,9 +14,6 @@ public class BuildButton extends Button {
 		super(_text, _x, _y, _height, _width);
 		building=_building;
 		buildCost=ResourceXMLReader.readResourceXML("resources.xml", building);
-		for (HashMap.Entry e : buildCost.entrySet()) {
-			System.out.println(e.getKey()+" "+e.getValue());
-		}
 	}
 	
 	@Override

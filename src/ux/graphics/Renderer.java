@@ -97,6 +97,8 @@ public class Renderer {
 				if (selectedButton instanceof BuildButton && selectedButton.selected)
 					boardPanel.hexRenderer.currentlyBuilding=((BuildButton)selectedButton).building;
 			}
+			DevCard selectedCard=hudPanel.cardRenderer.getDevCardUnderCursor(ev.getX(), ev.getY());
+			if (selectedCard!=null) hudPanel.cardRenderer.setSelectedDevCard(selectedCard);
 		}
 
 		@Override
