@@ -33,21 +33,31 @@ public class Table{
 	public Map<String, Vertex> vertexMap = new HashMap<>();
 	
 	/**
-	 * EMPTY container
+	 * List of Hexes
+	 */
+	public ArrayList<Hex> hexList = new ArrayList<Hex>();
+	
+	/**
+	 * List of Vertexes
+	 */
+	public ArrayList<Vertex> vertexList = new ArrayList<Vertex>();
+	
+	/**
+	 * Returns All Vertexes as a List
 	 * Work in progress TODO
 	 * @return List of all Vertexes
 	 */
-	public ArrayList<Vertex> getNodes(){ //TODO convert inner vertexMap to List
-		return new ArrayList<Vertex>(); 
+	public ArrayList<Vertex> getNodes(){ 
+		return vertexList; 
 	}
 	
 	/**
-	 * EMPTY container
+	 * Returns all Hexes as a List
 	 * Work in progress TODO
 	 * @return List of all Hexes
 	 */
-	public ArrayList<Hex> getFields(){ //TODO convert inner hexgrid to List
-		return new ArrayList<Hex>(); 
+	public ArrayList<Hex> getFields(){ 
+		return hexList; 
 	}
 	
 	/**
@@ -73,6 +83,8 @@ public class Table{
 	public Table(){
 		generateHexGrid();
 		generateVertices();
+		//generateEdges();
+		generateLists();
 	}
 	
 	/**
@@ -133,14 +145,14 @@ public class Table{
 				for(Map.Entry<Integer, String> entry : mapForSorting.entrySet()){
 					vertexID = vertexID + entry.getValue();
 				}
-				if (vertexID.length() >= 6){ //az olyan Vertexek amelyeknek az IDje 6 karakternÈl rˆvidebbek invalidak
+				if (vertexID.length() >= 6){ //az olyan Vertexek amelyeknek az IDje 6 karaktern√©l r√∂videbbek invalidak
 					Vertex v = new Vertex(vertexID);
-					if(vertexMap.containsKey(vertexID)){ //ha benne van akkor csak a pointereket ·llÌtjuk be
+					if(vertexMap.containsKey(vertexID)){ //ha benne van akkor csak a pointereket √°ll√≠tjuk be
 						h0.vertices.put(vertexID, v);
 						v.hexes.put(h0.getID(), h0);
 					}
-					else{//ha nincs benne hozz·adjuk a Tablehˆz is
-						vertexMap.put(vertexID, v); //ha valid beletessz¸k
+					else{//ha nincs benne hozz√°adjuk a Tableh√∂z is
+						vertexMap.put(vertexID, v); //ha valid beletessz√ºk
 						h0.vertices.put(vertexID, v);
 						v.hexes.put(h0.getID(), h0);
 					}
@@ -158,6 +170,16 @@ public class Table{
 		/*IteratorHex j = hexIterator();
 		while(j.hasNext())
 			System.out.println(j.next().vertices);*/
+	}
+	
+	private void generateLists(){
+		IteratorHex i = this.hexIterator();
+		while(i.hasNext()){
+			hexList.add(i.next());
+		}
+		for(Map.Entry<String, Vertex> e : vertexMap.entrySet()){
+			vertexList.add(e.getValue());
+		}
 	}
 	
 	public void generateAllNeigbours(){
@@ -267,3 +289,4 @@ public class Table{
 		return where.isBuildPossible(what);
 	}
 }
+
