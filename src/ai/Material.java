@@ -6,7 +6,7 @@ import controller.map.*;
 import controller.player.*;
 
 /**
- * @author Máté Sebestyén
+ * @author MÃ¡tÃ© SebestyÃ©n
  *
  * Class for representing materials in the game Catan
  */
@@ -76,7 +76,7 @@ public class Material {
 		ArrayList<Hex> fields = board.getFields();
 		for(Hex x : fields){
 			if(x.getResource().equals(myresource)){
-				baseFrequency += frequencyLUT(x.getNumber());
+				baseFrequency += frequencyLUT(x.getProsperity());
 			}
 			
 		}
@@ -91,14 +91,14 @@ public class Material {
 		// TODO implement method body
 		
 		double sum = 0;
-		ArrayList<Hex> fields = board.getFields();
-		for(Hex x : fields){
-			if(x.weHaveBuildingOnThisField()){
-				if(x.getResource().equals(myresource)){
-					sum += frequencyLUT(x.getNumber());
-				}
-			}
-		}
+//		ArrayList<Hex> fields = board.getFields();
+//		for(Hex x : fields){
+//			if(x.weHaveBuildingOnThisField()){
+//				if(x.getResource().equals(myresource)){
+//					sum += frequencyLUT(x.getProsperity());
+//				}
+//			}
+//		}
 		return sum;
 		
 	}
@@ -130,14 +130,14 @@ public class Material {
 	private double globalFrequency(){
 		// TODO implement method body
 		double sum = 0;
-		ArrayList<Hex> fields = board.getFields();
-		for(Hex x : fields){
-			if(x.otherPlayersHaveBuildingOnThisField()){
-				if(x.getResource().equals(myresource)){
-					sum += frequencyLUT(x.getNumber());
-				}
-			}
-		}
+//		ArrayList<Hex> fields = board.getFields();
+//		for(Hex x : fields){
+//			if(x.otherPlayersHaveBuildingOnThisField()){
+//				if(x.getResource().equals(myresource)){
+//					sum += frequencyLUT(x.getProsperity());
+//				}
+//			}
+//		}
 		return sum;
 	}
 	
