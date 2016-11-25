@@ -9,6 +9,12 @@ import controller.player.Resource;
 import controller.player.devcards.*;
 
 public class UIController extends PlayerController {
+	
+	Player controlledPlayer;
+	
+	public void setControlledPlayer(Player _controlledPlayer) {
+		controlledPlayer=_controlledPlayer;
+	}
 
 	public int getPlayerResource(Resource r) {
 		//TODO
