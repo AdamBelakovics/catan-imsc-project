@@ -23,7 +23,7 @@ public class Vertex implements TableElement{
 		return ID;
 	}
 	
-	private Settlement settlement = new Settlement();
+	private Building town;
 	
 	public Map<String, Hex> hexes = new TreeMap<String, Hex>();
 	
@@ -36,9 +36,10 @@ public class Vertex implements TableElement{
 	/**
 	 * @return the Settlement contained by this Vertex
 	 */
-	public Settlement getSettlement() {
-		return settlement;
+	public Building getBuilding() {
+		return town;
 	}
+	
 	/**
 	 * @return List of neighboring Vertexes
 	 */
