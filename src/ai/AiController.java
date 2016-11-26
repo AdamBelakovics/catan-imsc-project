@@ -306,15 +306,21 @@ public class AiController extends PlayerController {
 			for (Buildable b : buildPlan)
 				switch (buildPlan.get(0)) {
 				case Village:
-					toBuild = new Settlement();
-					// t=new TableElement();
+					toBuild = new Settlement(me);
 					t = buildVillage.getNode();
-					// me.(buildtoBuild, t);break;
+					try {
+						me.build(toBuild, t);
+					} catch (GameEndsException e1) {
+					}
+					break;
 				case City:
-					toBuild = new City();
-					// t=new TableElement();
+					toBuild = new City(me);
 					t = buildCity.getNode();
-					// me.build(toBuild, t);break;
+					try {
+						me.build(toBuild, t);
+					} catch (GameEndsException e1) {
+					}
+					break;
 				case Development:
 					try {
 						me.buyDevCard();
@@ -322,11 +328,13 @@ public class AiController extends PlayerController {
 					}
 					break;
 				case Road:
-					toBuild = new Road();
-					// t=new TableElement();
+					toBuild = new Road(me);
 					t = buildRoad.getNodeFrom();
-					t = buildRoad.getNodeTo();
-					// me.build(toBuild, t);break;
+					to = buildRoad.getNodeTo();
+					try {
+						me.build(toBuild, t);
+					} catch (GameEndsException e1) {
+					}
 					break;
 				case None:
 					outOfBuildable = false;
