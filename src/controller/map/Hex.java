@@ -18,24 +18,13 @@ public class Hex implements TableElement, Comparable {
 	String id;
 	Resource res = Resource.Lumber;
 	int prosperity = 0;
+	public boolean hasThief = false;
 	
 	public Hex (String identifier){
 		id = identifier;
 	}
 	
-	/**
-	 * Generating all Neighbours. The Table will call this function.
-	 * @param hexNeighbours
-	 */
-	void generateNeighbours(ArrayList<Hex> hexNeighbours){
-		neighbourHexes = hexNeighbours;
-		for(Map.Entry<String, Vertex> v : vertices.entrySet())
-			neighbourVertices.add(v.getValue());
-	}
-	
-	public void setResource(Resource r){
-		res = r;
-	}
+	//INTERFACE public methods -------------------------------------------->
 	
 	public String getID(){
 		return id;
@@ -49,6 +38,10 @@ public class Hex implements TableElement, Comparable {
 		return prosperity;
 	}
 	
+	public boolean hasThief(){
+		return hasThief;
+	}
+	
 	public ArrayList<Hex> getNeighbouringHexes(){
 		return neighbourHexes;
 	}
@@ -59,7 +52,6 @@ public class Hex implements TableElement, Comparable {
 
 	@Override
 	public boolean isBuildPossible(Building what) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -68,6 +60,22 @@ public class Hex implements TableElement, Comparable {
 		if(((Hex) o).getID() == this.getID())
 			return 0;
 		return 1;
+	}
+	
+	//USED for Table generation PRIVATE (mostly) --------------------------------->
+	
+	/**
+	 * Generating all Neighbours. The Table will call this function.
+	 * @param hexNeighbours
+	 */
+	void generateNeighbours(ArrayList<Hex> hexNeighbours){
+		neighbourHexes = hexNeighbours;
+		for(Map.Entry<String, Vertex> v : vertices.entrySet())
+			neighbourVertices.add(v.getValue());
+	}
+	
+	public void setResource(Resource r){
+		res = r;
 	}
 
 }
