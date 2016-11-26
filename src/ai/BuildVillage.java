@@ -1,8 +1,10 @@
 package ai;
 
+import controller.map.Edge;
 import controller.map.Table;
 import controller.map.Vertex;
 import controller.player.Player;
+import controller.player.Road;
 import controller.player.Settlement;
 
 import java.util.ArrayList;
@@ -70,7 +72,7 @@ public class BuildVillage {
 		// TODO this might be different, waiting for Table's implemention
 		
 		for(Vertex n : map.getNodes()){
-			if(n.getRoads(aiPlayer.getId()).size() > 0 && n.isBuildPossible(new Settlement())){
+			if(getPlayerRoadsFromNode(aiPlayer, n).size() > 0 && n.isBuildPossible(new Settlement())){
 				result.add(n);
 			}
 		}
@@ -96,5 +98,27 @@ public class BuildVillage {
 				node = n;
 			}
 		}
+	}
+	
+	/**
+	 * Lists roads starting from the given vertex
+	 * owned by given player as list of Edge-s
+	 * @param p - the player
+	 * @return - the edges from the node the player has roads on,
+	 * empty if no roads
+	 */
+	// TODO this is pretty much the same function as in BuildRoad, 
+	// but it was the easiest to access it here too
+	private ArrayList<Edge> getPlayerRoadsFromNode(Player p, Vertex v){
+		ArrayList<Edge> result = new ArrayList<Edge>();
+		Road tmpRoad = null;
+		for(Edge e : map.getEdges()){
+			tmpRoad = e.getRoad();
+			if(tmpRoad != null && tmpRoad.getOwner().equals(p)){
+				if(e.getEnds().contains(e))
+					result.add(e);
+			}
+		}
+		return result;
 	}
 }
