@@ -7,29 +7,25 @@ import controller.player.*;
 public class AiController extends PlayerController {
 
 	private Player me;
-	ArrayList<Player> players=new ArrayList<Player>();
+	ArrayList<Player> players = new ArrayList<Player>();
 	private Table map;
 	private int robberSum;
 
-	private BuildCity buildCity;
-	private BuildVillage buildVillage;
-	private BuildRoad buildRoad;
-	private BuildDevelopment buildDevelopment;
+	private BuildCity buildCity = new BuildCity(map, me, players);
+	private BuildVillage buildVillage = new BuildVillage(map, me, players);
+	private BuildRoad buildRoad = new BuildRoad(map, me, players);
+	private BuildDevelopment buildDevelopment = new BuildDevelopment(map, robberSum, me, players);
 
-	private Set<Integer> numbers=new HashSet<Integer>();
+	private Set<Integer> numbers = new HashSet<Integer>();
 	private Map<Resource, Material> resources = new HashMap<Resource, Material>();
 	private Map<Resource, Integer> rAmount = new HashMap<Resource, Integer>();
 	private Map<Resource, Integer> rLut = new HashMap<Resource, Integer>();
 
-	public AiController(Table t, Player p, ArrayList<Player> otherPlayers){
-		map=t;
-		me=p;
+	public AiController(Table t, Player p, ArrayList<Player> otherPlayers) {
+		map = t;
+		me = p;
 		players.addAll(otherPlayers);
-		robberSum=0;
-		buildCity= new BuildCity(map,this,me,players);
-		buildVillage= new BuildVillage(map,this,me,players);
-		buildRoad= new BuildRoad(map,this,me,players);
-		buildDevelopment= new BuildDevelopment(map,this, me,players);
+		robberSum = 0;
 	}
 
 	public int getKnightDiff() {
@@ -68,45 +64,50 @@ public class AiController extends PlayerController {
 		public Map<Resource, Integer> rAmount = new HashMap<Resource, Integer>();
 		public Map<Resource, Integer> seged = new HashMap<Resource, Integer>();
 		public Map<Resource, Double> mPValue = new HashMap<Resource, Double>();
-		
-		private class Value1{
+
+		private class Value1 {
 			public Map<Resource, Integer> hand;
-			public List<Map<Resource, Integer>> how;
-			public Value1(Map<Resource, Integer> ha,List<Map<Resource, Integer>>ho){
-				hand=ha;
-				how=ho;
+			public List<List<Resource>> how;
+
+			public Value1(Map<Resource, Integer> ha, List<List<Resource>> ho) {
+				hand = ha;
+				how = ho;
 			}
-			public Value1(Value1 v){
-				hand=new HashMap<Resource, Integer>();
+
+			public Value1(Value1 v) {
+				hand = new HashMap<Resource, Integer>();
 				hand.putAll(v.hand);
-				how=new ArrayList<Map<Resource, Integer>>();
+				how = new ArrayList<List<Resource>>();
 				how.addAll(v.how);
 			}
-			public void add(Map<Resource, Integer> change){
+
+			public void add(List<Resource> change) {
 				how.add(change);
 			}
 		}
-		public Map<Integer,Value1> possibilities = new HashMap<Integer,Value1>();
-		
+
+		public Map<Integer, Value1> possibilities = new HashMap<Integer, Value1>();
+
 		public Map<Buildable, Map<Resource, Integer>> resourceNeed = new HashMap<Buildable, Map<Resource, Integer>>();
 
 		public Map<Buildable, Double> options = new HashMap<Buildable, Double>();
-		public List<Buildable> bList;
+		public List<Buildable> bList = new ArrayList<Buildable>();
+		List<Double> values = new ArrayList<Double>();
 
 		public Map<Integer, List<Buildable>> toDoList = new HashMap<Integer, List<Buildable>>();
 		public List<Buildable> buildPlan = new ArrayList<Buildable>();
 
-		public List<Buildable> buildPlanMax;
+		public Integer buildPlanMax = 0;
 
-		
-		
+		public Map<Buildable, Map<Resource, Integer>> needToBuild = new HashMap<Buildable, Map<Resource, Integer>>();
+
 		public AllNeededDataForTurn() {
 			for (Resource r : Resource.values()) {
 				rAmount.put(r, me.getResourceAmount(r));
 				System.out.println(me.getChangeLUT(r));
 				rLut.put(r, me.getChangeLUT(r));
 				seged.put(r, rAmount.get(r));
-				//mPValue.put(r, resources.get(r).personalValue());
+				// mPValue.put(r, resources.get(r).personalValue());
 			}
 
 			seged = new HashMap<Resource, Integer>();
@@ -139,10 +140,23 @@ public class AiController extends PlayerController {
 			resourceNeed.put(Buildable.Road, seged);
 		}
 
+		public void Refresh() {
+			for (Resource r : Resource.values()) {
+				rAmount.put(r, me.getResourceAmount(r));
+				rLut.put(r, me.getChangeLUT(r));
+				seged.put(r, rAmount.get(r));
+			}
+			possibilities = new HashMap<Integer, Value1>();
+			options = new HashMap<Buildable, Double>();
+			bList = new ArrayList<Buildable>();
+			values = new ArrayList<Double>();
+			toDoList = new HashMap<Integer, List<Buildable>>();
+			buildPlan = new ArrayList<Buildable>();
+			needToBuild = new HashMap<Buildable, Map<Resource, Integer>>();
+		}
+
 		public void setPossibilities() {
-			Value1 data=new Value1(rAmount,new ArrayList<Map<Resource, Integer>>());
-			Map< Map<Resource, Integer>,List<Map<Resource, Integer>>> changes=new HashMap< Map<Resource, Integer>,List<Map<Resource, Integer>>>();
-			List<Map<Resource, Integer>> how=new ArrayList<Map<Resource, Integer>>();
+			Value1 data = new Value1(rAmount, new ArrayList<List<Resource>>());
 			int i = 0;
 			for (Resource r : Resource.values())
 				i = i * 100 + rAmount.get(r);
@@ -159,16 +173,15 @@ public class AiController extends PlayerController {
 		private void setPossibilitiesRec(Value1 data, Resource forChange, Resource getAble) {
 			if (data.hand.get(forChange) < rLut.get(forChange))
 				return;
-			
-			Value1 newData=new Value1(data);
-			Map<Resource, Integer> change = new HashMap<Resource, Integer>();
-			change.put(forChange, rLut.get(forChange));
-			change.put(getAble, 1);
+
+			Value1 newData = new Value1(data);
+			List<Resource> change = new ArrayList<Resource>();
+			change.add(forChange);
+			change.add(getAble);
 			newData.add(change);
 
 			newData.hand.replace(forChange, newData.hand.get(forChange) - rLut.get(forChange));
 			newData.hand.replace(getAble, newData.hand.get(getAble) + 1);
-			
 
 			int i = 0;
 			for (Resource r : Resource.values())
@@ -185,8 +198,6 @@ public class AiController extends PlayerController {
 		}
 
 		public void setBList() {
-			List<Buildable> bList = new ArrayList<Buildable>();
-			List<Double> values = new ArrayList<Double>();
 
 			values.add(buildVillage.getBuildValue());
 			options.put(Buildable.Village, values.get(0));
@@ -199,11 +210,11 @@ public class AiController extends PlayerController {
 			values.add(0.0);
 			options.put(Buildable.None, values.get(4));
 
-			Collections.sort(values, new Comperator());
+			Collections.sort(values, new ComperatorD());
 			for (Double d : values)
 				for (Buildable b : Buildable.values()) {
 					if (d == options.get(b))
-					bList.add(b);
+						bList.add(b);
 				}
 		}
 
@@ -214,7 +225,7 @@ public class AiController extends PlayerController {
 			for (Integer key : possibilities.keySet()) {
 				seged = new HashMap<Resource, Integer>();
 				seged.putAll(possibilities.get(key).hand);
-				while (j <= 3 && i > 0) {
+				while (j < 4 && i > 0) {
 					for (Buildable b : Buildable.values()) {
 						if (bList.get(j) == b) {
 							for (Resource r : Resource.values()) {
@@ -233,11 +244,11 @@ public class AiController extends PlayerController {
 					}
 					enough = true;
 				}
-				while(i > 0){
+				while (i > 0) {
 					buildPlan.add(Buildable.None);
 					i--;
 				}
-				
+
 				toDoList.put(key, buildPlan);
 				buildPlan = new ArrayList<Buildable>();
 				j = 0;
@@ -246,36 +257,172 @@ public class AiController extends PlayerController {
 		}
 
 		public boolean findMaxToDoList() {
-			buildPlanMax = new ArrayList<Buildable>();
 			boolean found = false;
 			for (int i = 0; i < 4; i++)
 				for (int j = i; j < 4; j++) {
 					for (Integer key : toDoList.keySet())
 						if (toDoList.get(key).get(0) == bList.get(i) && toDoList.get(key).get(1) == bList.get(j)
 								&& found == false) {
-							buildPlanMax.add(bList.get(i));
-							buildPlanMax.add(bList.get(j));
+							buildPlanMax = key;
 							found = true;
-						}		
+						}
 				}
-			return found;
+			if (toDoList.get(buildPlanMax).get(0) == Buildable.None)
+				return false;
+			else
+				return true;
 		}
-	
-		public void build(){
+
+		public void inChange() {
+			Value1 job = possibilities.get(buildPlanMax);
+			buildPlan = toDoList.get(buildPlanMax);
+			for (Integer key : possibilities.keySet())
+				if (possibilities.get(key).how.size() < job.how.size() && toDoList.get(key).get(0) == buildPlan.get(0)
+						&& toDoList.get(key).get(1) == buildPlan.get(1)) {
+					job = possibilities.get(key);
+					buildPlan = toDoList.get(key);
+					buildPlanMax = key;
+				}
+
+			for (List<Resource> lr : job.how)
+				me.change(lr.get(0), lr.get(1));
 		}
-		
-		public void trade(){}
-	}
+
+		public boolean letsBuild() {
+			Building toBuild;
+			TableElement t;
+			TableElement to;
+			boolean outOfBuildable = true;
+
+			for (Buildable b : buildPlan)
+				switch (buildPlan.get(0)) {
+				case Village:
+					toBuild = new Settlement();
+					// t=new TableElement();
+					t = buildVillage.getNode();
+					// me.(buildtoBuild, t);break;
+				case City:
+					toBuild = new City();
+					// t=new TableElement();
+					t = buildCity.getNode();
+					// me.build(toBuild, t);break;
+				case Development:
+					try {
+						me.buyDevCard();
+					} catch (NotEnoughResourcesException e) {
+					}
+					break;
+				case Road:
+					toBuild = new Road();
+					// t=new TableElement();
+					t = buildRoad.getNodeFrom();
+					t = buildRoad.getNodeTo();
+					// me.build(toBuild, t);break;
+					break;
+				case None:
+					outOfBuildable = false;
+					break;
+				}
+			return outOfBuildable;
+		}
+
+		public boolean trade() {
+
+			for (Resource r : Resource.values()) {
+				rAmount.put(r, me.getResourceAmount(r));
+			}
+			for (Buildable b : Buildable.values()) {
+				seged.putAll(resourceNeed.get(b));
+				needToBuild.put(b, seged);
+				for (Resource r : Resource.values()) {
+					if (needToBuild.get(b).get(r) >= rAmount.get(r))
+						needToBuild.get(b).replace(r, 0);
+					else
+						needToBuild.get(b).replace(r, rAmount.get(r) - needToBuild.get(b).get(r));
+				}
+			}
+
+			for (int i = 0; i < bList.size(); i++)
+				if (values.get(i) == 0) {
+					needToBuild.remove(bList.get(i));
+					bList.remove(i);
+					values.remove(i);
+					i--;
+				}
+			int hSum = 0;
+			for (Resource r : Resource.values()) {
+				hSum += rAmount.get(r);
+			}
+
+			int ntbSum;
+			for (int i = 0; i < bList.size(); i++) {
+				ntbSum = 0;
+				for (Resource r : Resource.values()) {
+					ntbSum += needToBuild.get(bList.get(i)).get(r);
+				}
+				if (ntbSum >= hSum / 3) {
+					needToBuild.remove(bList.get(i));
+					bList.remove(i);
+					values.remove(i);
+					i--;
+				} else{
+					values.set(i, values.get(i) * (hSum - ntbSum));
+					options.replace(bList.get(i), values.get(i));}
+			}
+			if (bList.size() == 0)
+				return false;
+
+			Collections.sort(values, new ComperatorD());
+			bList.clear();
+			for (Double d : values){
+				for (Buildable b : Buildable.values()) {
+					if (d == options.get(b))
+						bList.add(b);
+				}}
+			
+			int next=0;
+			boolean doneBusiness = false;
+			boolean success = false;
+			for(Resource r:Resource.values()){
+				rAmount.replace(r, rAmount.get(r)-needToBuild.get(bList.get(0)).get(r));
+				seged.putAll(needToBuild.get(bList.get(0)));}
+			for(Resource r1:Resource.values()){
+				for(Resource r2:Resource.values()){
+					if(rAmount.get(r1)!=0&&seged.get(r2)!=0){
+						success=true;
+						while(rAmount.get(r1)!=0&&seged.get(r2)!=0&&success){
+						success=false;
+						next=0;
+					while(success==false&&next!=players.size()){
+						success=me.trade(1, r1, 1, r2,players.get(next));
+						next++;
+					}
+					if(success){
+						rAmount.replace(r1, rAmount.get(r1)-1);
+						seged.replace(r2, seged.get(r2)+1);
+						doneBusiness=true;
+					}}}}}
+			return doneBusiness;
+		}	
+		}
 
 	public void turn() {
+		me.rollTheDice();
 		AllNeededDataForTurn datas = new AllNeededDataForTurn();
+		boolean canBuild = true;
+		boolean canTryAgain = true;
 
-		datas.setPossibilities();
-		datas.setBList();
-		datas.setToDoList();
-		boolean by=datas.findMaxToDoList();
-		
-
+		while (canTryAgain == true) {
+			datas.Refresh();
+			datas.setPossibilities();
+			datas.setBList();
+			datas.setToDoList();
+			canBuild = datas.findMaxToDoList();
+			datas.inChange();
+			canBuild = datas.letsBuild();
+			if (canBuild == false)
+				canTryAgain = datas.trade();
+		}
 	}
 	
 	public double nodePersonalValue(Vertex v){
