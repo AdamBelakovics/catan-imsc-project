@@ -300,7 +300,10 @@ public class AiController extends PlayerController {
 		public boolean letsBuild() {
 			Building toBuild;
 			TableElement t;
-			TableElement to;
+			Vertex tf;
+			Vertex tt;
+			List<Edge> roadWhere=map.getEdges();
+			List<Vertex> roadWhereSeged;
 			boolean outOfBuildable = true;
 
 			for (Buildable b : buildPlan)
@@ -329,8 +332,15 @@ public class AiController extends PlayerController {
 					break;
 				case Road:
 					toBuild = new Road(me);
-					t = buildRoad.getNodeFrom();
-					to = buildRoad.getNodeTo();
+					tf = buildRoad.getNodeFrom();
+					tt = buildRoad.getNodeTo();
+					for(Edge e:roadWhere){
+						roadWhereSeged=e.getEnds();
+						if(roadWhereSeged.get(0)==tt&&roadWhereSeged.get(0)==tf)
+							t=e;
+						if(roadWhereSeged.get(1)==tt&&roadWhereSeged.get(0)==tf)
+							t=e;
+					}
 					try {
 						me.build(toBuild, t);
 					} catch (GameEndsException e1) {
