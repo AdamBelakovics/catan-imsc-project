@@ -5,12 +5,13 @@ import java.awt.Graphics;
 import javax.swing.JPanel;
 
 import controller.player.Resource;
+import ux.graphics.userinterface.StringPainter;
 import ux.ui.UIController;
 
 public class ResourceRenderer extends ImageRenderer {
 	UIController uiController;
 	
-	ResourceRenderer(UIController _uiController, int _width, int _height) {
+	public ResourceRenderer(UIController _uiController, int _width, int _height) {
 		super(_width, _height);
 		uiController=_uiController;
 	}

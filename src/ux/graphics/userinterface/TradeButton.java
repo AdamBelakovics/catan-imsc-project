@@ -1,4 +1,4 @@
-package ux.graphics;
+package ux.graphics.userinterface;
 
 public class TradeButton extends Button {
 

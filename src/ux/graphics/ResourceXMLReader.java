@@ -37,7 +37,8 @@ public class ResourceXMLReader {
 	}
 	
 	/**
-	 * Reads given resource XML file for given building, and returns with a hashmap containing Resource - Integer pairs
+	 * Reads given resource XML file for given building, and returns with a hashmap containing Resource - Integer pairs,
+	 * where the integer represents the building cost of given building
 	 * @param path path of the XML file
 	 * @param building the required building
 	 * @return hashmap of the resource costs

@@ -1,4 +1,4 @@
-package ux.graphics;
+package ux.graphics.userinterface;
 
 import java.awt.Color;
 import java.awt.FontMetrics;

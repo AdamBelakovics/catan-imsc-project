@@ -3,9 +3,9 @@ package ux.graphics;
 import java.awt.Graphics;
 
 public abstract class ImageRenderer {
-	int width;
-	int height;
-	ImageRenderer(int _width, int _height) {
+	protected int width;
+	protected int height;
+	protected ImageRenderer(int _width, int _height) {
 		width=_width;
 		height=_height;
 	}

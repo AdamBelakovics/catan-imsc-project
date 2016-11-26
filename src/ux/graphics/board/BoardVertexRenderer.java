@@ -1,9 +1,11 @@
-package ux.graphics;
+package ux.graphics.board;
 
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.geom.NoninvertibleTransformException;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -13,6 +15,8 @@ import controller.map.Table;
 import controller.map.Vertex;
 import controller.player.Building;
 import controller.player.Settlement;
+import ux.graphics.ImageRenderer;
+import ux.graphics.userinterface.InterfaceColorProfile;
 
 public class BoardVertexRenderer extends ImageRenderer {
 
@@ -22,7 +26,7 @@ public class BoardVertexRenderer extends ImageRenderer {
 	private Graphics2D vertexCanvas;
 	private Table board;
 	
-	private final int eps=3;
+	private final int eps=10;
 
 	BoardVertexRenderer(Table _board, BoardHexRenderer _hexRenderer, int _width, int _height) {
 		super(_width, _height);
@@ -46,8 +50,8 @@ public class BoardVertexRenderer extends ImageRenderer {
 				if (selectedVertex!=null && v.getValue().equals(selectedVertex))
 					vertexCanvas.setColor(InterfaceColorProfile.vertexColor);
 				else vertexCanvas.setColor(InterfaceColorProfile.selectedColor);
-				Point transformedPoint=new Point();
-				hexRenderer.boardTransformation.transform(v.getKey(), transformedPoint);
+				Point2D transformedPoint=new Point();
+					hexRenderer.boardTransformation.transform(v.getKey(), transformedPoint);
 				vertexCanvas.fillOval((int)transformedPoint.getX()-4, (int)transformedPoint.getY()-4, 5, 5);
 			}
 		}
@@ -68,14 +72,25 @@ public class BoardVertexRenderer extends ImageRenderer {
 	}
 	
 	public Vertex getVertexUnderCursor(int x, int y) {
+		Point transformedPoint=new Point();
+		try {
+			hexRenderer.boardTransformation.inverseTransform(new Point(x,y), transformedPoint);
+		} catch (NoninvertibleTransformException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		for (HashMap.Entry<Point,Vertex> e : vertexMap.entrySet()) {
-			if (Math.abs(e.getKey().getX()-x)<eps && Math.abs(e.getKey().getY()-y)<eps) return e.getValue();
+			if (Math.abs(e.getKey().getX()-transformedPoint.x)<eps && Math.abs(e.getKey().getY()-transformedPoint.y)<eps) return e.getValue();
 		}
 		return null;
 	}
 	
-	public void setSelectedVertex(Vertex v) {
-		System.out.println("[BoardVertexRenderer] Selected "+v);		
+	public void selectVertex(Vertex v) {	
 		selectedVertex=v;
+	}
+	
+	public void deselectVertices() {
+		selectedVertex=null;
 	}
 }

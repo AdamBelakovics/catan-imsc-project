@@ -1,4 +1,4 @@
-package ux.graphics;
+package ux.graphics.userinterface;
 
 import java.awt.Color;
 import java.awt.FontMetrics;
@@ -10,6 +10,8 @@ import java.util.HashMap;
 
 import controller.map.Hex;
 import controller.player.Building;
+import ux.graphics.BuildingEnum;
+import ux.graphics.ImageRenderer;
 import ux.ui.UIController;
 
 public class InterfaceRenderer extends ImageRenderer {
@@ -52,7 +54,7 @@ public class InterfaceRenderer extends ImageRenderer {
 	private void paintButtons() {
 		
 		for (Button b : buttonsList) {
-			if (b.selected) {
+			if (b.isSelected()) {
 				intCanvas.setColor(InterfaceColorProfile.selectedColor);
 				if (b instanceof BuildButton) {
 					int i=0;
@@ -63,7 +65,7 @@ public class InterfaceRenderer extends ImageRenderer {
 				}
 			}
 			
-			else intCanvas.setColor(b.selected?InterfaceColorProfile.selectedColor:currUIC.active?InterfaceColorProfile.bgColor:InterfaceColorProfile.inactiveColor);
+			else intCanvas.setColor(b.isSelected()?InterfaceColorProfile.selectedColor:currUIC.active?InterfaceColorProfile.bgColor:InterfaceColorProfile.inactiveColor);
 			intCanvas.fillRect(b.x-b.width/2, b.y-b.height/2, b.width, b.height);
 			
 			intCanvas.setColor(InterfaceColorProfile.fgColor);
@@ -116,12 +118,12 @@ public class InterfaceRenderer extends ImageRenderer {
 	}
 	
 	public void deselectAllButtons() {
-		for (Button b : buttonsList) b.selected=false;
+		for (Button b : buttonsList) b.setSelected(false);
 	}
 	
 	public void pressButton(Button b) {
-		for (Button allB : buttonsList) allB.selected=b.equals(allB)&&!b.selected;
-		if (b.selected) b.press();
+		for (Button allB : buttonsList) allB.setSelected(b.equals(allB)&&!b.isSelected());
+		if (b.isSelected()) b.press();
 	}
 	
 	private class FrameMetrics {

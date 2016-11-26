@@ -1,4 +1,4 @@
-package ux.graphics;
+package ux.graphics.board;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -19,6 +19,7 @@ import javax.swing.JPanel;
 import controller.map.Hex;
 import controller.map.Orientation;
 import controller.map.Table;
+import ux.graphics.ImageRenderer;
 
 /**
  * @author Kiss Lorinc
@@ -59,5 +60,10 @@ public class BoardRenderer extends ImageRenderer {
 		if (hexImage!=null && boardCanvas!=null) boardCanvas.drawImage(hexImage, 0, 0, null);
 	
 		boardCanvas.translate(getWidth()/2, getHeight()/2);
+	}
+	
+	public void resetBoardSelection() {
+		hexRenderer.deselectHexes();
+		vertexRenderer.deselectVertices();
 	}
 }

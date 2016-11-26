@@ -1,4 +1,4 @@
-package ux.graphics;
+package ux.graphics.userinterface;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import controller.player.devcards.DevCard;
+import ux.graphics.ImageRenderer;
 import ux.ui.UIController;
 
 public class CardRenderer extends ImageRenderer {
@@ -90,8 +91,12 @@ public class CardRenderer extends ImageRenderer {
 		return null;
 	}
 	
-	public void setSelectedDevCard(DevCard selected) {
+	public void selectDevCard(DevCard selected) {
 		selectedDevCard=selected;
+	}
+	
+	public void deselectDevCards() {
+		selectDevCard(null);
 	}
 	
 	private class CardMetrics {

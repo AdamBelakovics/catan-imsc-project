@@ -1,4 +1,4 @@
-package ux.graphics;
+package ux.graphics.userinterface;
 
 import ux.ui.UIController;
 
@@ -13,7 +13,7 @@ public class EndTurnButton extends Button {
 	@Override
 	public void press() {
 		uiController.active=false;
-		this.selected=false;
+		this.setSelected(false);
 	}
 
 }

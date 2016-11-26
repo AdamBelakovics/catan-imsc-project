@@ -1,4 +1,4 @@
-package ux.graphics;
+package ux.graphics.board;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -21,7 +21,11 @@ import controller.map.Table;
 import controller.map.Vertex;
 import controller.player.Building;
 import controller.player.Resource;
-import ux.graphics.BoardRenderer.BoardOrientation;
+import ux.graphics.BuildingEnum;
+import ux.graphics.ImageRenderer;
+import ux.graphics.ResourceXMLReader;
+import ux.graphics.board.BoardRenderer.BoardOrientation;
+import ux.graphics.userinterface.InterfaceColorProfile;
 
 public class BoardHexRenderer extends ImageRenderer {
 	private Table board;
@@ -34,7 +38,7 @@ public class BoardHexRenderer extends ImageRenderer {
 	
 	AffineTransform boardTransformation;
 	
-	BuildingEnum currentlyBuilding;
+	public BuildingEnum currentlyBuilding;
 
 	//Constants
 	final double eps=0.01;
@@ -128,7 +132,7 @@ public class BoardHexRenderer extends ImageRenderer {
 
 		for (Map.Entry<Hex, HexPoly> entry : hexMap.entrySet()){
 			try {
-				if (entry.getValue().contains(hexCanvas.getTransform().createInverse().transform(new Point(x,y), null))) return entry.getKey();
+				if (entry.getValue().contains(boardTransformation.inverseTransform(new Point(x,y), null))) return entry.getKey();
 			} catch (NoninvertibleTransformException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -164,10 +168,16 @@ public class BoardHexRenderer extends ImageRenderer {
 	 */
 	public void selectHex(Hex h) {
 		System.out.println("[Renderer]Selected "+hexMap.get(h).toString());
-		for (Map.Entry<Hex, HexPoly> entry : hexMap.entrySet())	if (!entry.getKey().equals(h)) entry.getValue().selected=false;
+		deselectHexes();
 		hexMap.get(h).selected=!(hexMap.get(h).selected);
-		
 	}
+	
+	public void deselectHexes() {
+		for (Map.Entry<Hex, HexPoly> entry : hexMap.entrySet()) entry.getValue().selected=false;
+		selectedTile=null;
+	}
+	
+	
 	/**
 	 * Generates hexes in the HashMap
 	 * 

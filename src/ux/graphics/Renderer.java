@@ -23,6 +23,10 @@ import javax.swing.Timer;
 import controller.map.*;
 import controller.player.*;
 import controller.player.devcards.*;
+import ux.graphics.board.BoardRenderer;
+import ux.graphics.userinterface.BuildButton;
+import ux.graphics.userinterface.Button;
+import ux.graphics.userinterface.HUDRenderer;
 import ux.ui.UIController;
 
 public class Renderer {
@@ -90,15 +94,18 @@ public class Renderer {
 			// Selecting board elements
 			Hex selectedHex=boardPanel.hexRenderer.getHexUnderCursor(ev.getX(), ev.getY());
 			if (selectedHex!=null) {
+				boardPanel.resetBoardSelection();
+				hudPanel.resetInterfaceSelection();
 				boardPanel.hexRenderer.selectHex(selectedHex);
 				hudPanel.interfaceRenderer.setActiveHex(selectedHex);
-				boardPanel.vertexRenderer.setSelectedVertex(null);
 			}
 			
 			Vertex selectedVertex=boardPanel.vertexRenderer.getVertexUnderCursor(ev.getX(), ev.getY());
+			System.out.println(selectedVertex);
 			if (selectedVertex!=null) {
-				boardPanel.hexRenderer.selectHex(null);
-				boardPanel.vertexRenderer.setSelectedVertex(selectedVertex);
+				boardPanel.resetBoardSelection();
+				hudPanel.resetInterfaceSelection();
+				boardPanel.vertexRenderer.selectVertex(selectedVertex);
 			}
 			
 			// Player activity check
@@ -108,16 +115,19 @@ public class Renderer {
 			// Selecting interface elements
 			Button selectedButton=hudPanel.interfaceRenderer.getButtonUnderCursor(ev.getX(), ev.getY());
 			if (selectedButton!=null) {
+				boardPanel.resetBoardSelection();
+				hudPanel.resetInterfaceSelection();
 				hudPanel.pressButton(selectedButton);
-				hudPanel.cardRenderer.setSelectedDevCard(null);
-				if (selectedButton instanceof BuildButton && selectedButton.selected)
+				if (selectedButton instanceof BuildButton && selectedButton.isSelected())
 					boardPanel.hexRenderer.currentlyBuilding=((BuildButton)selectedButton).building;
 			}
 			
-			DevCard selectedCard=hudPanel.cardRenderer.getDevCardUnderCursor(ev.getX(), ev.getY());
+			DevCard selectedCard=hudPanel.getCardRenderer().getDevCardUnderCursor(ev.getX(), ev.getY());
 			if (selectedCard!=null) {
-				hudPanel.interfaceRenderer.deselectAllButtons();
-				hudPanel.cardRenderer.setSelectedDevCard(selectedCard);
+				boardPanel.resetBoardSelection();
+				hudPanel.resetInterfaceSelection();
+				
+				hudPanel.getCardRenderer().selectDevCard(selectedCard);
 			}		
 		}
 

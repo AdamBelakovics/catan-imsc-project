@@ -1,13 +1,15 @@
-package ux.graphics;
+package ux.graphics.userinterface;
 
 import java.util.HashMap;
 
 import controller.player.Building;
 import controller.player.Resource;
+import ux.graphics.BuildingEnum;
+import ux.graphics.ResourceXMLReader;
 
 public class BuildButton extends Button {
 
-	BuildingEnum building;
+	public BuildingEnum building;
 	HashMap<Resource,Integer> buildCost;
 	
 	BuildButton(String _text, BuildingEnum _building, int _x, int _y, int _height, int _width) {
