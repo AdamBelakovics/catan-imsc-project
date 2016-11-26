@@ -86,8 +86,7 @@ public class Renderer {
 	class BoardMouseListener implements MouseListener {
 
 		@Override
-		public void mouseClicked(MouseEvent ev) {
-			
+		public void mouseClicked(MouseEvent ev) {			
 			// Selecting board elements
 			Hex selectedHex=boardPanel.hexRenderer.getHexUnderCursor(ev.getX(), ev.getY());
 			if (selectedHex!=null) {

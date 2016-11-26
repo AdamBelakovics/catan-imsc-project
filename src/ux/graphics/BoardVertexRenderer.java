@@ -42,7 +42,7 @@ public class BoardVertexRenderer extends ImageRenderer {
 	private void paintVertices() {
 
 		for (Entry<Point, Vertex> v : vertexMap.entrySet()) {
-			if (board.isBuildPossibleAt(new Settlement(), v.getValue())) {
+			if (/*board.isBuildPossibleAt(new Settlement(), v.getValue())*/true) {
 				if (selectedVertex!=null && v.getValue().equals(selectedVertex))
 					vertexCanvas.setColor(InterfaceColorProfile.vertexColor);
 				else vertexCanvas.setColor(InterfaceColorProfile.selectedColor);

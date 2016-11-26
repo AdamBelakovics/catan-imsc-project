@@ -20,10 +20,10 @@ public class InterfaceRenderer extends ImageRenderer {
 	private Hex activeHex=null;;
 	ArrayList<Button> buttonsList;
 	FrameMetrics frameMetrics=new FrameMetrics();
-	
-	
+
 	public InterfaceRenderer(UIController _currUIC, int _width, int _height) {
 		super(_width,_height);
+
 		currUIC=_currUIC;
 		generateButtons();
 	}
@@ -36,7 +36,7 @@ public class InterfaceRenderer extends ImageRenderer {
 		
 		buttonsList.add(new TradeButton("Trade", width*37/40, height*61/80, width*3/20-20, 40));
 		buttonsList.add(new TradeButton("Dev Card", width*37/40, height*67/80, width*3/20-20, 40));
-		
+
 		buttonsList.add(new EndTurnButton(currUIC,"End turn", width*17/20,height*26/40,width*3/10-10,50));
 		
 	}
