@@ -54,8 +54,20 @@ public class AiController extends PlayerController {
 	}
 
 	public boolean query(Player donor, Map<Resource, Integer> offer, Map<Resource, Integer> demand) {
-		return false;
+		double demValue=0;
+		double ofValue=0;
+		double materia;
+		for(Resource r:Resource.values()){
+			materia=resources.get(r).personalValue();
+			demValue+=(materia*demand.get(r));
+			ofValue+=(materia*offer.get(r));
+		}
+		if(ofValue>demValue)
+			return true;
+		else
+			return false;
 	}
+
 
 	private class AllNeededDataForTurn {
 		public Map<Resource, Integer> rAmount = new HashMap<Resource, Integer>();
