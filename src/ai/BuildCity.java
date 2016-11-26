@@ -16,7 +16,6 @@ import java.util.ArrayList;
  */
 public class BuildCity {
 	private Table map;
-	// TODO ai
 	private AiController owner;
 	private Vertex node;
 	private double buildValue;
@@ -31,7 +30,6 @@ public class BuildCity {
 	 */
 	public BuildCity(Table map, AiController owner, Player aiPlayer, ArrayList<Player> otherPlayers){
 		this.map = map;
-		// TODO ai
 		this.owner = owner;
 		node = null;
 		buildValue = 0;
@@ -71,12 +69,11 @@ public class BuildCity {
 		buildValue = 0;
 		node = null;
 		// TODO not finished
-		// ArrayList<Vertex> nodes = map.getVillages(aiPlayer.getId());
-		ArrayList<Vertex> nodes = new ArrayList<Vertex>();
+		// table.getVillages(), or implementation of Settlement is needed
+//		ArrayList<Vertex> nodes = map.getVillages(aiPlayer.getId());
+		ArrayList<Vertex> nodes = FunctionsToAdd.getPlayerSettlements(map, aiPlayer); //changed by matesebi
 		for(Vertex n: nodes){
-			// TODO ai
-			//double currentVal = owner.nodePersonalValue(n);
-			double currentVal = 0;
+			double currentVal = owner.nodePersonalValue(n);
 			if(currentVal > buildValue){
 				buildValue = currentVal;
 				node = n;

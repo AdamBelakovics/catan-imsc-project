@@ -3,6 +3,7 @@ package ai;
 import java.util.ArrayList;
 
 import java.util.HashSet;
+import java.util.Set;
 
 import controller.map.Vertex;
 import controller.map.Table;
@@ -18,7 +19,6 @@ import controller.player.Player;
  */
 public class BuildRoad {
 	private Table map;
-	// TODO need ai
 	private AiController owner;
 	private double buildValue;
 	private Vertex nodeFrom;
@@ -34,7 +34,6 @@ public class BuildRoad {
 	 */
 	public BuildRoad(Table map, AiController owner, Player aiPlayer, ArrayList<Player> otherPlayers){
 		this.map = map;
-		// TODO need ai
 		this.owner = owner;
 		nodeFrom = null;
 		nodeTo = null;
@@ -88,19 +87,16 @@ public class BuildRoad {
 		double maxVal = 0;
 		double val;
 		int dif = calculateMaxRoadDifference();
-		int difVal = 1;
-		// n is the node to build the road to
+		double difVal = 1;
 		for(Vertex nodeTo : map.getNodes()){
 			Vertex nodeFrom = fromWhereCanBuildRoad(nodeTo);
 			if(nodeFrom != null){
-				// TODO need ai
-				val = 2;
-				//val = owner.nodePersonalValue(nodeTo);
+				val = nodePersonalValueForRoad(nodeTo);
 				if(dif < 2){
 					if(dif >= -1)
-						difVal = 3;
+						difVal = 1.5;
 					else
-						difVal = 2;
+						difVal = 1.2;
 					if(isMaxRoadStart(nodeFrom))
 						val = difVal * val;
 				}
@@ -116,13 +112,15 @@ public class BuildRoad {
 	
 	/**
 	 * Finds a Node where you can build a road to the given Node.
+	 * It doesn't counts nodes that are already reached, as there
+	 * is no point in building a road to that node.
 	 * @param nodeTo - end of the road
 	 * @return - start of the road, null if can't build any.
 	 * @author Gergely Olah
 	 */
 	private Vertex fromWhereCanBuildRoad(Vertex nodeTo){
 		// TODO getPlayerRoads, getRoadsFromNode, needs some work
-		/*
+		
 		// there is no point in building multiple roads to same node
 		for(Edge r : map.getPlayerRoads(this.aiPlayer.getId())){
 			if(r.getEnds().contains(nodeTo))
@@ -134,20 +132,17 @@ public class BuildRoad {
 				// we have to check whether there is someone else's road there
 				boolean isRoadBuilt = false;
 				
-				// this might not be needed
-				//Edge keyRoad = new Edge(nodeFrom, nodeTo);
-				// check all players
-				for(Player player : otherPlayers){
-					if(map.getPlayerRoads(player.getId()).contains(keyRoad)){
+				// checks all players except ai, as we know we have no road here
+				for(Edge e : map.getEdges()){
+					if(e.getRoad() != null)
 						isRoadBuilt = true;
-					}
 				}
 				// if no road is blocking, we can build
 				if(!isRoadBuilt){
 					return nodeFrom;
 				}
 			}
-		}*/
+		}
 		return null;
 	}
 	
@@ -198,13 +193,12 @@ public class BuildRoad {
 	 */
 	private int calculatePlayerMaxRoadFromNode(Vertex fromNode, int player, HashSet<Vertex> visitedNodes){
 		// TODO needs getRoadsFromNode(player), and Rode.getNodes()
-		/*
-		int dist, max=0;
+		
+		int dist, max = 0;
 	    visitedNodes.add(fromNode);
 	    for(Edge road : fromNode.getRoads(player)){
 	    	Vertex n1, n2;
-	        ArrayList<Vertex> roadNodes = road.getNodes();
-	        //if(roadNodes.size() != 2) throw new Exception();
+	        ArrayList<Vertex> roadNodes = road.getEnds(); //changed by matesebi from getNodes()
 	        n1 = roadNodes.get(0);
 	        n2 = roadNodes.get(1);
 	        // if we havent visited the node yet
@@ -225,8 +219,6 @@ public class BuildRoad {
 
 	    visitedNodes.remove(fromNode);
 	    return max;
-	    */
-		return 0;
 	}
 	
 	/**
@@ -241,5 +233,47 @@ public class BuildRoad {
 		int nodesMaxRoad = calculatePlayerMaxRoadFromNode(fromNode,aiPlayer.getId(), visitedNodes);
 		int maxRoad = calculatePlayerMaxRoad(aiPlayer.getId());
 		return nodesMaxRoad == maxRoad;
+	}
+	/**
+	 * Calculates the value of a node considering the personalValue
+	 * of the node itself, and its neighbors.
+	 * @param n - the node
+	 * @return - the personal value from 0 to 10
+	 */
+	private double nodePersonalValueForRoad(Vertex n){
+		HashSet<Vertex> visitedNodes = new HashSet<Vertex>();
+		return nodePersonalValueForRoadRecursive(n, visitedNodes, 3);
+	}
+	
+	/**
+	 * Helper function for nodePersonalValueForRode(Vertex n).
+	 * Recursive function, calculates given node's own personal
+	 * value plus it's first 'cnt' neighbors personal value.
+	 * The function is 'optimized' for a starter value of cnt = 3.
+	 * with a magic formula.
+	 * @param n - the node
+	 * @param visitedNodes - nodes that we already counted in
+	 * @param cnt - distance of neighbors that should be counted in
+	 * @return - the personal value of the given node
+	 */
+	private double nodePersonalValueForRoadRecursive(Vertex n, Set<Vertex> visitedNodes, int cnt){
+		// if we should not go further
+		if(cnt < 0 || visitedNodes.contains(n) || n.getSettlement() != null)
+			return 0;
+		double result = 0;
+		visitedNodes.add(n);
+		ArrayList<Double> persValues = new ArrayList<Double>();
+		for(Vertex next : n.getNeighbours()){
+			persValues.add(nodePersonalValueForRoadRecursive(next, visitedNodes, cnt - 1));
+		}
+		double ownPersVal = owner.nodePersonalValue(n);
+		if(ownPersVal == 0)
+			return 0;
+		// some magic formula, looks useable
+		result += Math.min(1, ownPersVal - 2) * (ownPersVal + 2) * (0.1) * (cnt + 1) * (cnt + 1) * (cnt + 1) * 0.0156215;
+		for(Double val : persValues){
+			result += val;
+		}
+		return Math.max(10, result);
 	}
 }
