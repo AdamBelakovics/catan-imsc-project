@@ -1,14 +1,14 @@
 package controller.player;
 
 abstract public class Building {
-	Player owner;
+	private final Player owner;
+	
+	public Building(Player p){
+		owner = p;
+	}
 	
 	public Player getOwner(){
 		return owner;
-	}
-	
-	void setOwner(Player p){
-		owner = p;
 	}
 	
 }

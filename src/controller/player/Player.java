@@ -60,15 +60,15 @@ public class Player {
 		}
 		
 		for(int i = 0; i < 15; i++){
-			availableBuildings.add(new Road());
+			availableBuildings.add(new Road(this));
 		}
 		
 		for(int i = 0; i < 5; i++){
-			availableBuildings.add(new Settlement());
+			availableBuildings.add(new Settlement(this));
 		}
 		
 		for(int i = 0; i < 4; i++){
-			availableBuildings.add(new City());
+			availableBuildings.add(new City(this));
 		}
 		
 		devCards = null;
@@ -279,7 +279,6 @@ public class Player {
 		Resource b = Resource.Brick;
 		
 		if(what.getClass().equals(Road.class)){
-
 			try {
 				decResourceAmount(b, 1);
 				decResourceAmount(l, 1);
@@ -287,8 +286,8 @@ public class Player {
 				e1.printStackTrace();
 			}
 			availableBuildings.remove(what);
+			
 			erectedBuildings.add(what);
-			what.setOwner(this);
 															//TODO Player can take it's new Road to map
 															//Then TODO check if with this new Road have 5 continuous road segments (or longer then the previous longest road owner's)
 			
@@ -307,7 +306,6 @@ public class Player {
 			
 			//HERE											TODO Player can take it's new Settlement to map
 			erectedBuildings.add(what);
-			what.setOwner(this);
 			this.incPoints(1);
 		}
 		if(what.getClass().equals(City.class)){
@@ -321,7 +319,6 @@ public class Player {
 			
 			//HERE											TODO Player can take it's new City to a Settlement's place
 			erectedBuildings.add(what);
-			what.setOwner(this);
 			this.incPoints(1);		//Inc 1, cause the Settlement became City (-1+2=+1)
 		}
 		
