@@ -1,15 +1,18 @@
 package ai;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import controller.map.*;
-import controller.player.*;
+import controller.map.Hex;
+import controller.map.Table;
+import controller.map.Vertex;
+import controller.player.City;
+import controller.player.Player;
+import controller.player.Resource;
+import controller.player.Settlement;
 
 /**
- * @author Máté Sebestyén
+ * @author Mate Sebestyen
  *
- * Class for representing materials in the game Catan
+ * Class for representing materials in the game Catan, used by the 
+ * AI player for making decisions
  */
 public class Material {
 	
@@ -20,18 +23,31 @@ public class Material {
 	
 	/**
 	 * variable to store base value of specific material
-	 * basically a magic number by the creators
 	 */
 	private double baseValue;
 	
 	/**
-	 * the chance of getting the material in a turn on all the territories combined 
+	 * the chance of getting the material in a turn on all the territories combined
 	 */
+	@SuppressWarnings("unused")
 	private double baseFrequency;
 	
+	/**
+	 * the playing board 
+	 */
 	private Table board;
+	
+	/**
+	 * the Player for whom the values are calculated 
+	 */
 	private Player me;
 	
+	/**
+	 * constructor, initializes board me and myresource 
+	 * @param t - board
+	 * @param pc - me
+	 * @param r - myresource
+	 */
 	public Material(Table t, Player pc, Resource r){
 		
 		me = pc;
@@ -67,10 +83,8 @@ public class Material {
 		/*
 		 * initializing baseFrequency
 		 */
-		
 		baseFrequency = 0;
-		ArrayList<Hex> fields = board.getFields();
-		for(Hex x : fields){
+		for(Hex x : board.getFields()){
 			if(x.getResource().equals(myresource)){
 				baseFrequency += frequencyLUT(x.getProsperity());
 			}
@@ -80,53 +94,46 @@ public class Material {
 	/**
 	 * method for calculating the chance of the player to get the material in the turn 
 	 * @return the chance
-	 * not available or implemented methods are needed
 	 */
 	public double personalFrequency(){
-		
 		double sum = 0;
-		ArrayList<Hex> fields = board.getFields();
-		for(Hex x : fields){
-			List<Vertex> ver = x.getNeighbouringVertices();
-			for(Vertex y : ver){
-				if(y.getSettlement().getOwner().equals(me)){
-					if(x.getResource().equals(myresource)){
-						sum += frequencyLUT(x.getProsperity());
+		for(Hex field : board.getFields()){
+			if(field.getResource().equals(myresource)){
+				for(Vertex node : field.getNeighbouringVertices()){
+					if((node.getBuilding() != null) && (node.getBuilding().getOwner().equals(me))){
+						if(node.getBuilding().getClass().equals(Settlement.class)){
+						sum += frequencyLUT(field.getProsperity());
+						}else if(node.getBuilding().getClass().equals(City.class)){
+						sum += 2.0 * frequencyLUT(field.getProsperity());
+						}
 					}
 				}
 			}
 		}
 		return sum;
-		
 	}
 	
 	/**
 	 * method for calculating the value of the given material for the player
-	 * @return the value (5 for now)
+	 * @return the value
 	 */
 	public double personalValue(){
-		double value = 0;
-		value = baseValue * factorByNumberInHandLUY(me.getResourceAmount(myresource)) + 2 * globalFrequency();
-		
-		
-		//returning a value randomly chosen for now
-		return value;
+		return baseValue * factorByNumberInHandLUY(me.getResourceAmount(myresource)) + 2 * globalFrequency();
 	}
 	
 	/**
 	 * the chance of all players getting the material combined
 	 * @return the chance
-	 * not available or implemented methods are needed
 	 */
 	public double globalFrequency(){
 		double sum = 0;
-		ArrayList<Hex> fields = board.getFields();
-		for(Hex x : fields){
-			List<Vertex> ver = x.getNeighbouringVertices();
-			for(Vertex y : ver){
-				if(!(y.getSettlement().getOwner().equals(me))){
-					if(x.getResource().equals(myresource)){
-						sum += frequencyLUT(x.getProsperity());
+		for(Hex field : board.getFields()){
+			if(field.getResource().equals(myresource)){
+				for(Vertex node : field.getNeighbouringVertices()){
+					if((node.getBuilding() != null) && (node.getBuilding().getClass().equals(Settlement.class))){
+						sum += frequencyLUT(field.getProsperity());
+					}else if((node.getBuilding() != null) && (node.getBuilding().getClass().equals(City.class))){
+						sum += 2.0 * frequencyLUT(field.getProsperity());
 					}
 				}
 			}
@@ -134,10 +141,9 @@ public class Material {
 		return sum;
 	}
 	
-	
 	/**
 	 * method for getting the chance of rolling a given number if we roll two dice
-	 * @param a the number in question
+	 * @param a the rolled number
 	 * @return the chance of rolling it
 	 */
 	public static double frequencyLUT(int a){
@@ -159,17 +165,16 @@ public class Material {
 			return 5.0/36.0;
 		case 7:
 			return 6.0/36.0;
-
 		default:
-			System.out.println("argument is not a valid dice roll from Material.frequencyLUT");
+			System.out.println("Material.frequencyLUT: argument is not a valid dice roll.");
 			return 1;
 		}
 	}
 	
 	/**
 	 * look up table for factors in calculating personal vale
-	 * @param inhand number of given material in hand
-	 * @return a factor for the calculation
+	 * @param number of given material in hand
+	 * @return a factor for the calculation of the value of the material
 	 */
 	private double factorByNumberInHandLUY(int inhand){
 		switch(inhand){
