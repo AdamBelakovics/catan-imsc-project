@@ -44,14 +44,6 @@ public class AiController extends PlayerController {
 		return 0;
 	}
 
-	public double nodePersonalValue() {
-		return 0;
-	}
-
-	public double territoryPersonalValue() {
-		return 0;
-	}
-
 	public Map<Resource, Material> getResources() {
 		return resources;
 	}
