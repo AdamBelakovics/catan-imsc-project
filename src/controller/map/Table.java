@@ -9,6 +9,9 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import controller.player.Building;
+import controller.player.City;
+import controller.player.OutOfRangeException;
+import controller.player.Settlement;
 import controller.map.TableElement;
 import controller.map.Table.IteratorHex;
 
@@ -344,8 +347,34 @@ public class Table{
 
 	}
 	
+	/**
+	 * increases the players resource pools if they have settlement or city next to a field with the
+	 * number rolled with the dice
+	 * @param result the dice roll
+	 */
 	public void allocateResources(int result){
-		
+		for(Hex field : this.getFields()){
+			if(field.getProsperity() == result){
+				for(Vertex node : field.getNeighbouringVertices()){
+					Building building = node.getBuilding();
+					if(building != null){
+						if(building.getClass().equals(Settlement.class)){
+							try {
+								building.getOwner().incResourceAmount(field.getResource(), 1);
+							} catch (OutOfRangeException e) {
+								e.printStackTrace(); //this should only run if incResourceAmount is broken
+							}
+						}else if(building.getClass().equals(City.class)){
+							try {
+								building.getOwner().incResourceAmount(field.getResource(), 2);
+							} catch (OutOfRangeException e) {
+								e.printStackTrace(); //this should only run if incResourceAmount is broken
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 	
 	
