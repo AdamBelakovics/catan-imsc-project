@@ -8,7 +8,7 @@ import controller.player.Road;
 public class Edge implements TableElement {
 	Vertex first; 
 	Vertex second;
-	Road road = new Road();
+	Road road;
 	
 	
 	public Edge(Vertex f, Vertex s){
