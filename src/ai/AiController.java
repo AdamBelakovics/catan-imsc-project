@@ -11,10 +11,10 @@ public class AiController extends PlayerController {
 	private Table map;
 	private int robberSum;
 
-	private BuildCity buildCity = new BuildCity(map, me, players);
-	private BuildVillage buildVillage = new BuildVillage(map, me, players);
-	private BuildRoad buildRoad = new BuildRoad(map, me, players);
-	private BuildDevelopment buildDevelopment = new BuildDevelopment(map, robberSum, me, players);
+	private BuildCity buildCity;
+	private BuildVillage buildVillage;
+	private BuildRoad buildRoad;
+	private BuildDevelopment buildDevelopment;
 
 	private Set<Integer> numbers = new HashSet<Integer>();
 	private Map<Resource, Material> resources = new HashMap<Resource, Material>();
@@ -26,6 +26,11 @@ public class AiController extends PlayerController {
 		me = p;
 		players.addAll(otherPlayers);
 		robberSum = 0;
+		// these should be here, so they don't initialize with null pointers
+		buildCity = new BuildCity(t, this, p, otherPlayers);
+		buildVillage = new BuildVillage(t, this, p, otherPlayers);
+		buildRoad = new BuildRoad(t, this, p, otherPlayers);
+		buildDevelopment = new BuildDevelopment(t, this, p, otherPlayers);
 	}
 
 	public int getKnightDiff() {
