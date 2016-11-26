@@ -192,13 +192,13 @@ public class BuildRoad {
 	 * @author Gergely Olah
 	 */
 	private int calculatePlayerMaxRoadFromNode(Vertex fromNode, int player, HashSet<Vertex> visitedNodes){
-		// TODO needs getRoadsFromNode(player), and Rode.getNodes()
+		// TODO needs getRoadsFromNode(player) (as Edges), and Rode.getNodes() if getRoads..() returns with Road-s
 		
 		int dist, max = 0;
 	    visitedNodes.add(fromNode);
 	    for(Edge road : fromNode.getRoads(player)){
 	    	Vertex n1, n2;
-	        ArrayList<Vertex> roadNodes = road.getNodes();
+	        ArrayList<Vertex> roadNodes = road.getEnds();
 	        n1 = roadNodes.get(0);
 	        n2 = roadNodes.get(1);
 	        // if we havent visited the node yet
