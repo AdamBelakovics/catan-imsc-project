@@ -333,8 +333,9 @@ public class Player {
 	 * Uses the PlayerController.query() function to make offers.
 	 * Modifies resources accordingly.
 	 */
-	public void trade(){
-		
+	public boolean trade(int amountW, Resource What, int amountFW, Resource ForWhat,Player with){
+		boolean succesfull=false;
+		return succesfull;
 	}
 	
 	public void change(Resource give , Resource get){}
