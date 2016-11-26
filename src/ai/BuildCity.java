@@ -3,6 +3,7 @@ package ai;
 import controller.map.Table;
 import controller.map.Vertex;
 import controller.player.Player;
+import controller.player.Settlement;
 
 import java.util.ArrayList;
 
@@ -68,9 +69,7 @@ public class BuildCity {
 	public void refresh(){		
 		buildValue = 0;
 		node = null;
-		// TODO not finished
-		// table.getVillages(), or implementation of Settlement is needed
-		ArrayList<Vertex> nodes = map.getVillages(aiPlayer.getId());
+		ArrayList<Vertex> nodes = getVillages();
 		for(Vertex n: nodes){
 			double currentVal = owner.nodePersonalValue(n);
 			if(currentVal > buildValue){
@@ -78,5 +77,20 @@ public class BuildCity {
 				node = n;
 			}
 		}
+	}
+	/**
+	 * The vertexes the ai has villages (settlements) on. 
+	 * @return  - list of the vertexes
+	 */
+	private ArrayList<Vertex> getVillages(){
+		ArrayList<Vertex> result = new ArrayList<Vertex>();
+		Settlement what;
+		for(Vertex v : map.getNodes()){
+			what = v.getSettlement();
+			if(what != null && what.getOwner().equals(aiPlayer)){
+				result.add(v);
+			}
+		}
+		return result;
 	}
 }
