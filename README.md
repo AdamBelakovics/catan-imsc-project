@@ -11,6 +11,7 @@
     
 ##in class Table
 ###-allocateResources() implementálása a rollTheDice hívja meg onnantól csak favágás (:D)
+kész
   
 
 # catan-imsc-project
