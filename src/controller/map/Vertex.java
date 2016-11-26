@@ -27,7 +27,7 @@ public class Vertex implements TableElement{
 	
 	public Map<String, Hex> hexes = new TreeMap<String, Hex>();
 	
-	ArrayList<Edge> edges;
+	ArrayList<Edge> edges = new ArrayList<Edge>();
 	
 	private ArrayList<Hex> neighbourHexes = new ArrayList<Hex>();
 

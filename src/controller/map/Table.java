@@ -2,9 +2,11 @@ package controller.map;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import controller.player.Building;
 import controller.map.TableElement;
@@ -19,6 +21,58 @@ import controller.map.Table.IteratorHex;
  * @author AdamBelakovics
  */
 public class Table{
+	
+	//INTERFACE public methods -------------------------------------->
+	
+	/**
+	 * Returns All Vertexes as an ArrayList
+	 * @return List of all Vertexes
+	 */
+	public ArrayList<Vertex> getNodes(){ 
+		return vertexList; 
+	}
+	
+	/**
+	 * Returns all Hexes as an ArrayList
+	 * @return List of all Hexes
+	 */
+	public ArrayList<Hex> getFields(){ 
+		return hexList; 
+	}
+	
+	/**
+	 * Returns all Edges as an ArrayList
+	 * @return List of all Edges
+	 */
+	public ArrayList<Edge> getEdges(){ //TODO create inner container for Edges
+		return edgeList; 
+	}
+	
+	/**
+	 * Creates a new iterator.
+	 * @return iteratorHex The iterator of hexGrid. The next() method returns reference for current Hex.
+	 */
+	public IteratorHex hexIterator() {
+		return new IteratorHex();
+	}
+	
+	/**
+	 * Calls the isBuildPossible() of a given TableElement which tells if the specified Building can
+	 * built there. 
+	 * Returns false if at least ONE of the following conditions fulfilled 
+	 * -TableElement is not Empty, 
+	 * -Building is not the right type for the TableElement, 
+	 * -Another Settlement is nearby
+	 * @param what the Building
+	 * @param where the TableElement where you want to build
+	 * @return true/false
+	 */
+	public boolean isBuildPossibleAt(Building what, TableElement where) {
+		return where.isBuildPossible(what);
+	}
+	
+	
+	//USED FOR GENERATION ONLY PRIVATE methods (mostly) -------------------------------------->
 	
 	/**
 	 * hexGrid
@@ -43,37 +97,9 @@ public class Table{
 	public ArrayList<Vertex> vertexList = new ArrayList<Vertex>();
 	
 	/**
-	 * Returns All Vertexes as a List
-	 * @return List of all Vertexes
+	 * List of Edges
 	 */
-	public ArrayList<Vertex> getNodes(){ 
-		return vertexList; 
-	}
-	
-	/**
-	 * Returns all Hexes as a List
-	 * @return List of all Hexes
-	 */
-	public ArrayList<Hex> getFields(){ 
-		return hexList; 
-	}
-	
-	/**
-	 * EMPTY container
-	 * Work in progress TODO
-	 * @return List of all Edges
-	 */
-	public ArrayList<Edge> getEdges(){ //TODO create inner container for Edges
-		return new ArrayList<Edge>(); 
-	}
-	
-	/**
-	 * hexIterator
-	 * @return iteratorHex The iterator of hexGrid. The next() method returns reference for current Hex.
-	 */
-	public IteratorHex hexIterator() {
-		return new IteratorHex();
-	};
+	public ArrayList<Edge> edgeList = new ArrayList<Edge>();
 	
 	/**
 	 * The constructor generates all the Hexes, Vertices and Edges of the Table.
@@ -81,10 +107,12 @@ public class Table{
 	public Table(){
 		generateHexGrid();
 		generateVertices();
-		//generateEdges();
 		generateLists();
 		generateAllNeigbours();
+		generateEdges();
 	}
+	
+	
 	
 	/**
 	 * This private function generates Hex grid this way:
@@ -145,14 +173,14 @@ public class Table{
 				for(Map.Entry<Integer, String> entry : mapForSorting.entrySet()){
 					vertexID = vertexID + entry.getValue();
 				}
-				if (vertexID.length() >= 6){ //az olyan Vertexek amelyeknek az IDje 6 karakternÄ‚Â©l rÄ‚Â¶videbbek invalidak
+				if (vertexID.length() >= 6){ //az olyan Vertexek amelyeknek az IDje 6 karakternel rovidebbek invalidak
 					Vertex v = new Vertex(vertexID);
-					if(vertexMap.containsKey(vertexID)){ //ha benne van akkor csak a pointereket Ä‚Ë‡llÄ‚Â­tjuk be
+					if(vertexMap.containsKey(vertexID)){ //ha benne van akkor csak a pointereket allitjuk be
 						h0.vertices.put(vertexID, vertexMap.get(vertexID));
 						vertexMap.get(vertexID).hexes.put(h0.getID(), h0);
 					}
-					else{//ha nincs benne hozzÄ‚Ë‡adjuk a TablehÄ‚Â¶z is
-						vertexMap.put(vertexID, v); //ha valid beletesszÄ‚Ä˝k
+					else{//ha nincs benne hozzaadjuk a Tablehoz is
+						vertexMap.put(vertexID, v); //ha valid beletesszuk
 						h0.vertices.put(vertexID, v);
 						v.hexes.put(h0.getID(), h0);
 					}
@@ -172,6 +200,23 @@ public class Table{
 			System.out.println(j.next().vertices);*/
 	}
 	
+	private void generateEdges(){
+		for (Vertex v: vertexList){
+			for(Vertex other: v.getNeighbours()){
+				Edge newEdge = new Edge(v, other);
+				if (!edgeList.contains(newEdge)){
+					edgeList.add(newEdge);
+					v.edges.add(newEdge);
+					other.edges.add(newEdge);
+				}
+			}
+		}
+		System.out.println(edgeList.size());
+	}
+	
+	/**
+	 * Generates Hex and Vertex Lists for the public INTERFACE methods
+	 */
 	private void generateLists(){
 		IteratorHex i = this.hexIterator();
 		while(i.hasNext()){
@@ -182,6 +227,9 @@ public class Table{
 		}
 	}
 	
+	/**
+	 * Sets all the references for all the TableElements
+	 */
 	public void generateAllNeigbours(){
 		
 		//for Hexes
@@ -301,8 +349,6 @@ public class Table{
 		
 	}
 	
-	public boolean isBuildPossibleAt(Building what, TableElement where) {
-		return where.isBuildPossible(what);
-	}
+	
 }
 
