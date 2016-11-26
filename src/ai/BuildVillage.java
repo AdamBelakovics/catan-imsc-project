@@ -3,6 +3,7 @@ package ai;
 import controller.map.Table;
 import controller.map.Vertex;
 import controller.player.Player;
+import controller.player.Settlement;
 
 import java.util.ArrayList;
 
@@ -16,7 +17,7 @@ import java.util.ArrayList;
 public class BuildVillage {
 	private Table map;
 	// TODO needs ai
-	//private AI owner;
+	private AiController owner;
 	private Vertex node;
 	private double buildValue;
 	private Player aiPlayer;
@@ -28,11 +29,9 @@ public class BuildVillage {
 	 * @param owner - the ai player who uses this class
 	 * @author Gergely Olah
 	 */
-	// TODO contructor should get ai
-	public BuildVillage(Table map, Player aiPlayer, ArrayList<Player> otherPlayers){
+	public BuildVillage(Table map, AiController owner, Player aiPlayer, ArrayList<Player> otherPlayers){
 		this.map = map;
-		// need ai
-		//this.owner = owner;
+		this.owner = owner;
 		node = null;
 		buildValue = 0;
 		this.aiPlayer = aiPlayer;
@@ -64,17 +63,18 @@ public class BuildVillage {
 	/**
 	 * Lists all nodes the AI can build a village on.
 	 * @return - the list of the nodes
+	 * @author Gergely Olah
 	 */
 	private ArrayList<Vertex> listValidNodes(){
 		ArrayList<Vertex> result = new ArrayList<Vertex>();
 		// TODO this might be different, waiting for Table's implemention
-		/*
+		
 		for(Vertex n : map.getNodes()){
-			if(n.getRoads(aiPlayer.getId()).size() > 0 && n.isValid()){
+			if(n.getRoads(aiPlayer.getId()).size() > 0 && n.isBuildPossible(new Settlement())){
 				result.add(n);
 			}
 		}
-		*/
+		
 		return result;
 	}
 	
@@ -82,7 +82,7 @@ public class BuildVillage {
 	 * Refreshes the node and the buildValue. Must call this before
 	 * before calling the getter methods, as they may not return
 	 * up to date values. 
-	 * @author Gergely
+	 * @author Gergely Olah
 	 */
 	public void refresh(){
 		buildValue = 0;
@@ -90,8 +90,7 @@ public class BuildVillage {
 		ArrayList<Vertex> nodes = listValidNodes();		
 		for(Vertex n : nodes){
 			// TODO need ai
-			//double currentValue = owner.nodePersonalValue(n);
-			double currentValue = 0;
+			double currentValue = owner.nodePersonalValue(n);
 			if(currentValue > buildValue){
 				buildValue = currentValue;
 				node = n;

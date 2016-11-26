@@ -1,12 +1,11 @@
-package ux.graphics.userinterface;
+package ux.ui;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
-import ux.graphics.ImageRenderer;
-import ux.graphics.ResourceRenderer;
-import ux.ui.UIController;
+import ux.ImageRenderer;
+import ux.ResourceRenderer;
 
 public class HUDRenderer extends ImageRenderer {
 	Graphics2D hudCanvas;

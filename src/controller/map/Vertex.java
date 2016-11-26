@@ -9,9 +9,10 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import controller.player.Building;
 import controller.player.Settlement;
 
-public class Vertex {
+public class Vertex implements TableElement{
 	private final String ID; 
 	
 	public Vertex(String id){
@@ -77,6 +78,12 @@ public class Vertex {
 		if (ID == other.getID()){
 			return true;
 		}
+		return false;
+	}
+
+	@Override
+	public boolean isBuildPossible(Building what) {
+		// TODO Auto-generated method stub
 		return false;
 	}
 }

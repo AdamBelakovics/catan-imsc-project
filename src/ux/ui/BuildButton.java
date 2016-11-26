@@ -1,11 +1,11 @@
-package ux.graphics.userinterface;
+package ux.ui;
 
 import java.util.HashMap;
 
 import controller.player.Building;
 import controller.player.Resource;
-import ux.graphics.BuildingEnum;
-import ux.graphics.ResourceXMLReader;
+import ux.BuildingEnum;
+import ux.ResourceXMLReader;
 
 public class BuildButton extends Button {
 

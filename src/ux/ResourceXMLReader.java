@@ -1,4 +1,4 @@
-package ux.graphics;
+package ux;
 
 import java.awt.Color;
 import java.io.File;

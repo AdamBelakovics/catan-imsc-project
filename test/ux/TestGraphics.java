@@ -2,8 +2,8 @@ package ux;
 
 import controller.map.Table;
 import controller.player.Player;
-import ux.graphics.Renderer;
-import ux.graphics.ResourceXMLReader;
+import ux.Renderer;
+import ux.ResourceXMLReader;
 import ux.ui.UIController;
 
 public class TestGraphics {

@@ -1,4 +1,4 @@
-package ux.graphics;
+package ux;
 
 import java.awt.Graphics;
 import java.awt.Image;
@@ -23,10 +23,10 @@ import javax.swing.Timer;
 import controller.map.*;
 import controller.player.*;
 import controller.player.devcards.*;
-import ux.graphics.board.BoardRenderer;
-import ux.graphics.userinterface.BuildButton;
-import ux.graphics.userinterface.Button;
-import ux.graphics.userinterface.HUDRenderer;
+import ux.board.BoardRenderer;
+import ux.ui.BuildButton;
+import ux.ui.Button;
+import ux.ui.HUDRenderer;
 import ux.ui.UIController;
 
 public class Renderer {

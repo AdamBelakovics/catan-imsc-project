@@ -1,4 +1,4 @@
-package ux.graphics.board;
+package ux.board;
 
 import java.awt.Polygon;
 

@@ -1,4 +1,4 @@
-package ux.graphics.board;
+package ux.board;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -19,7 +19,7 @@ import javax.swing.JPanel;
 import controller.map.Hex;
 import controller.map.Orientation;
 import controller.map.Table;
-import ux.graphics.ImageRenderer;
+import ux.ImageRenderer;
 
 /**
  * @author Kiss Lorinc

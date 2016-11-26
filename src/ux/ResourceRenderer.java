@@ -1,11 +1,11 @@
-package ux.graphics;
+package ux;
 
 import java.awt.Graphics;
 
 import javax.swing.JPanel;
 
 import controller.player.Resource;
-import ux.graphics.userinterface.StringPainter;
+import ux.ui.StringPainter;
 import ux.ui.UIController;
 
 public class ResourceRenderer extends ImageRenderer {

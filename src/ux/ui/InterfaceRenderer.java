@@ -1,4 +1,4 @@
-package ux.graphics.userinterface;
+package ux.ui;
 
 import java.awt.Color;
 import java.awt.FontMetrics;
@@ -10,9 +10,8 @@ import java.util.HashMap;
 
 import controller.map.Hex;
 import controller.player.Building;
-import ux.graphics.BuildingEnum;
-import ux.graphics.ImageRenderer;
-import ux.ui.UIController;
+import ux.BuildingEnum;
+import ux.ImageRenderer;
 
 public class InterfaceRenderer extends ImageRenderer {
 	

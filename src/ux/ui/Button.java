@@ -1,4 +1,4 @@
-package ux.graphics.userinterface;
+package ux.ui;
 
 public abstract class Button {
 	int x,y,width,height;

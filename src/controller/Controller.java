@@ -9,7 +9,7 @@ import controller.map.Hex;
 import controller.map.Table;
 import controller.player.Player;
 import controller.player.Resource;
-import ux.graphics.Renderer;
+import ux.Renderer;
 import ux.ui.UIController;
 
 public class Controller {

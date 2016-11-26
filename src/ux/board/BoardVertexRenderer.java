@@ -1,4 +1,4 @@
-package ux.graphics.board;
+package ux.board;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -15,8 +15,8 @@ import controller.map.Table;
 import controller.map.Vertex;
 import controller.player.Building;
 import controller.player.Settlement;
-import ux.graphics.ImageRenderer;
-import ux.graphics.userinterface.InterfaceColorProfile;
+import ux.ImageRenderer;
+import ux.ui.InterfaceColorProfile;
 
 public class BoardVertexRenderer extends ImageRenderer {
 

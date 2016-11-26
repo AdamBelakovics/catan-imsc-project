@@ -1,4 +1,4 @@
-package ux.graphics.userinterface;
+package ux.ui;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -10,8 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import controller.player.devcards.DevCard;
-import ux.graphics.ImageRenderer;
-import ux.ui.UIController;
+import ux.ImageRenderer;
 
 public class CardRenderer extends ImageRenderer {
 	Graphics2D cardCanvas;

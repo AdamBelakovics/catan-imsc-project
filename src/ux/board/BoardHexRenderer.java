@@ -1,4 +1,4 @@
-package ux.graphics.board;
+package ux.board;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -21,11 +21,11 @@ import controller.map.Table;
 import controller.map.Vertex;
 import controller.player.Building;
 import controller.player.Resource;
-import ux.graphics.BuildingEnum;
-import ux.graphics.ImageRenderer;
-import ux.graphics.ResourceXMLReader;
-import ux.graphics.board.BoardRenderer.BoardOrientation;
-import ux.graphics.userinterface.InterfaceColorProfile;
+import ux.BuildingEnum;
+import ux.ImageRenderer;
+import ux.ResourceXMLReader;
+import ux.board.BoardRenderer.BoardOrientation;
+import ux.ui.InterfaceColorProfile;
 
 public class BoardHexRenderer extends ImageRenderer {
 	private Table board;

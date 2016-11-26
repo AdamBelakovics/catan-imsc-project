@@ -1,6 +1,4 @@
-package ux.graphics.userinterface;
-
-import ux.ui.UIController;
+package ux.ui;
 
 public class EndTurnButton extends Button {
 	UIController uiController;
