@@ -85,7 +85,6 @@ public class BuildDevelopment {
 			difVal = 5;
 		else if(dif < -2)
 			difVal = 3;
-		r.refresh();
 		return r.getBuildValue() + difVal;
 	}
 	

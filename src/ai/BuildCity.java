@@ -47,6 +47,7 @@ public class BuildCity {
 	 * @author Gergely Olah
 	 */
 	public double getBuildValue(){
+		refresh();
 		return buildValue;
 	}
 	
@@ -58,6 +59,7 @@ public class BuildCity {
 	 * @author Gergely Olah
 	 */
 	public Vertex getNode(){
+		refresh();
 		return node;
 	}
 	
@@ -67,7 +69,7 @@ public class BuildCity {
 	 * up to date values. 
 	 * @author Gergely Olah
 	 */
-	public void refresh(){		
+	private void refresh(){		
 		buildValue = 0;
 		node = null;
 		ArrayList<Vertex> nodes = getVillages();

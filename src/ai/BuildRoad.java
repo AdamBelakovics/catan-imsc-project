@@ -51,6 +51,7 @@ public class BuildRoad {
 	 * @author Gergely Olah
 	 */
 	public double getBuildValue(){
+		refresh();
 		return buildValue;
 	}
 	
@@ -62,6 +63,7 @@ public class BuildRoad {
 	 * @author Gergely Olah
 	 */
 	public Vertex getNodeFrom(){
+		refresh();
 		return nodeFrom;
 	}
 	
@@ -73,6 +75,7 @@ public class BuildRoad {
 	 * @author Gergely Olah
 	 */
 	public Vertex getNodeTo(){
+		refresh();
 		return nodeTo;
 	}
 	
@@ -82,7 +85,7 @@ public class BuildRoad {
 	 * up to date values. 
 	 * @author Gergely Olah
 	 */
-	public void refresh(){
+	private void refresh(){
 		this.nodeFrom = null;
 		this.nodeTo = null;
 		double maxVal = 0;
