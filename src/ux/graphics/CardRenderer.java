@@ -30,22 +30,22 @@ public class CardRenderer extends ImageRenderer {
 
 	private void calculateCardMetrics() {
 		CardMetrics cardMetrics=new CardMetrics();
-		int i=0;
+		int i=1;
 		
 		devCards=new HashMap();
 		ArrayList<DevCard> devCardsArray=uiPlayer.getDevCards();
 		for (DevCard dc : devCardsArray) {
 			devCards.put(dc, 
-					new Rectangle(width*13/40+i*width*14/40/(devCardsArray.size()-1)-cardMetrics.width/2, height*17/20-cardMetrics.height/2, cardMetrics.width, cardMetrics.height));
+					new Rectangle(width*13/40+i*width*14/40/(devCardsArray.size()+1)-cardMetrics.width/2, height*17/20-cardMetrics.height/2, cardMetrics.width, cardMetrics.height));
 			i++;
 		}
 		
 		usedDevCards=new HashMap();
-		i=0;
+		i=1;
 		ArrayList<DevCard> usedDevCardsArray=uiPlayer.getPlayedDevCards();
 		for (DevCard udc : uiPlayer.getPlayedDevCards()) {
 			usedDevCards.put(udc, 
-					new Rectangle(width*13/40+i*width*14/40/(usedDevCardsArray.size()-1)-cardMetrics.width/2, height*15/20-cardMetrics.height/2, cardMetrics.width, cardMetrics.height));		
+					new Rectangle(width*13/40+i*width*14/40/(usedDevCardsArray.size()+1)-cardMetrics.width/2, height*15/20-cardMetrics.height/2, cardMetrics.width, cardMetrics.height));		
 			i++;
 		}
 }
@@ -60,20 +60,25 @@ public class CardRenderer extends ImageRenderer {
 		//TODO print card info
 		
 		for (HashMap.Entry<DevCard,Rectangle> dc : devCards.entrySet()) {
-			cardCanvas.setColor(dc.getKey().equals(selectedDevCard)?Color.red:Color.white);
+			cardCanvas.setColor(
+					dc.getKey().equals(selectedDevCard)?
+							InterfaceColorProfile.selectedColor:
+							uiPlayer.active?
+								InterfaceColorProfile.bgColor:
+								InterfaceColorProfile.inactiveColor);
 			cardCanvas.fill(dc.getValue());
 
-			cardCanvas.setColor(Color.black);
+			cardCanvas.setColor(InterfaceColorProfile.fgColor);
 			cardCanvas.draw(dc.getValue());			
 		}
 		
 		//TODO print card info
 		
 		for (HashMap.Entry<DevCard,Rectangle> udc : usedDevCards.entrySet()) {
-			cardCanvas.setColor(Color.white);
+			cardCanvas.setColor(InterfaceColorProfile.bgColor);
 			cardCanvas.fill(udc.getValue());
 
-			cardCanvas.setColor(Color.black);
+			cardCanvas.setColor(InterfaceColorProfile.fgColor);
 			cardCanvas.draw(udc.getValue());			
 				}
 	}

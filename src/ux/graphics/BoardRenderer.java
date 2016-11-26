@@ -30,7 +30,7 @@ public class BoardRenderer extends ImageRenderer {
 	BufferedImage hexImage;
 	
 	public BoardHexRenderer hexRenderer;
-	private BoardVertexRenderer vertexRenderer;
+	public BoardVertexRenderer vertexRenderer;
 
 	public enum BoardOrientation {
 		NORTH,

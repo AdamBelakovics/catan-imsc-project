@@ -30,7 +30,7 @@ public class BoardHexRenderer extends ImageRenderer {
 	private double zoomLevel;
 	private HashMap<Hex,HexPoly> hexMap;
 	private HashMap<Resource,Color> colorMap;
-	Map.Entry<Hex, HexPoly> selectedTile=null;
+	private Hex selectedTile=null;
 	
 	AffineTransform boardTransformation;
 	
@@ -124,11 +124,11 @@ public class BoardHexRenderer extends ImageRenderer {
 		if (zoomLevel<0.8) zoomLevel=0.8;
 	}
 
-	public Map.Entry<Hex, HexPoly> getHexUnderCursor(int x, int y) {
+	public Hex getHexUnderCursor(int x, int y) {
 
 		for (Map.Entry<Hex, HexPoly> entry : hexMap.entrySet()){
 			try {
-				if (entry.getValue().contains(hexCanvas.getTransform().createInverse().transform(new Point(x,y), null))) return entry;
+				if (entry.getValue().contains(hexCanvas.getTransform().createInverse().transform(new Point(x,y), null))) return entry.getKey();
 			} catch (NoninvertibleTransformException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -146,11 +146,12 @@ public class BoardHexRenderer extends ImageRenderer {
 			hexCanvas.setPaint(colorMap.get(entry.getKey().getResource()));
 			hexCanvas.draw(entry.getValue());
 			hexCanvas.fillPolygon(entry.getValue());
-			if (entry.getValue().selected) selectedTile=entry;
+			if (entry.getValue().selected) selectedTile=entry.getKey();
 		}
+		
 		if (selectedTile!=null) {
-			hexCanvas.setPaint(Color.black);
-			hexCanvas.draw(selectedTile.getValue());
+			hexCanvas.setPaint(InterfaceColorProfile.fgColor);
+			hexCanvas.draw(hexMap.get(selectedTile));
 		}
 	}
 	

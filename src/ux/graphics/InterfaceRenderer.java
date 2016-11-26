@@ -17,17 +17,17 @@ public class InterfaceRenderer extends ImageRenderer {
 	UIController currUIC;
 	Graphics2D intCanvas;
 	
-	private Hex activeHex;
+	private Hex activeHex=null;;
 	ArrayList<Button> buttonsList;
-	FrameMetrics frameMetrics;
+	FrameMetrics frameMetrics=new FrameMetrics();
+	
 	
 	public InterfaceRenderer(UIController _currUIC, int _width, int _height) {
 		super(_width,_height);
-		activeHex=null;
 		currUIC=_currUIC;
 		generateButtons();
-		frameMetrics=new FrameMetrics();
 	}
+	
 	private void generateButtons() {
 		buttonsList=new ArrayList();
 		buttonsList.add(new BuildButton("Settlement",BuildingEnum.Settlement, width*31/40, height*15/20, width*3/20-20, 30));
@@ -37,13 +37,13 @@ public class InterfaceRenderer extends ImageRenderer {
 		buttonsList.add(new TradeButton("Trade", width*37/40, height*61/80, width*3/20-20, 40));
 		buttonsList.add(new TradeButton("Dev Card", width*37/40, height*67/80, width*3/20-20, 40));
 		
-		buttonsList.add(new EndTurnButton(currUIC,"End turn", 600,600,200,100));
+		buttonsList.add(new EndTurnButton(currUIC,"End turn", width*17/20,height*26/40,width*3/10-10,50));
 		
 	}
 	@Override
 	public void paint(Graphics g) {
 		intCanvas=(Graphics2D)g;
-		intCanvas.setColor(Color.black);
+		intCanvas.setColor(InterfaceColorProfile.fgColor);
 		paintFrames();
 		paintHexInfo();
 		paintButtons();
@@ -53,7 +53,7 @@ public class InterfaceRenderer extends ImageRenderer {
 		
 		for (Button b : buttonsList) {
 			if (b.selected) {
-				intCanvas.setColor(Color.red);
+				intCanvas.setColor(InterfaceColorProfile.selectedColor);
 				if (b instanceof BuildButton) {
 					int i=0;
 					for (HashMap.Entry e : ((BuildButton)b).buildCost.entrySet())
@@ -61,21 +61,21 @@ public class InterfaceRenderer extends ImageRenderer {
 								frameMetrics.leftRect.width/2, 
 								frameMetrics.leftRect.y+50+frameMetrics.leftRect.height*(i++)/8);
 				}
-			} 
-			else intCanvas.setColor(b.selected?Color.red:Color.white);
+			}
+			
+			else intCanvas.setColor(b.selected?InterfaceColorProfile.selectedColor:currUIC.active?InterfaceColorProfile.bgColor:InterfaceColorProfile.inactiveColor);
 			intCanvas.fillRect(b.x-b.width/2, b.y-b.height/2, b.width, b.height);
 			
-			intCanvas.setColor(Color.black);
+			intCanvas.setColor(InterfaceColorProfile.fgColor);
 			intCanvas.drawRect(b.x-b.width/2, b.y-b.height/2, b.width, b.height);
 			
 			StringPainter.printString(intCanvas, b.text, b.x, b.y);
-			
 		}
 	}
 	
 	private void paintHexInfo() {
 		if (activeHex!=null) {
-			intCanvas.drawString("Selected "+activeHex.getID(), (width*3/10)+20, (height*9/10)+30);
+			intCanvas.drawString("Selected "+activeHex.getID()+", resource: "+ activeHex.getResource().toString(), (width*3/10)+20, (height*9/10)+30);
 		} else {
 			intCanvas.drawString("No field selected", (width*3/10)+20, (height*9/10)+30);
 		}
@@ -83,14 +83,14 @@ public class InterfaceRenderer extends ImageRenderer {
 	}
 	
 	private void paintFrames() {
-		intCanvas.setBackground(Color.white);
+		intCanvas.setBackground(InterfaceColorProfile.bgColor);
 		
-		intCanvas.setColor(Color.white);
+		intCanvas.setColor(InterfaceColorProfile.bgColor);
 		intCanvas.fill(frameMetrics.leftRect);
 		intCanvas.fill(frameMetrics.centerRect);
 		intCanvas.fill(frameMetrics.rightRect);
 		
-		intCanvas.setColor(Color.black);
+		intCanvas.setColor(InterfaceColorProfile.fgColor);
 		intCanvas.draw(frameMetrics.leftRect);
 		intCanvas.draw(frameMetrics.centerRect);
 		intCanvas.draw(frameMetrics.rightRect);
@@ -113,6 +113,10 @@ public class InterfaceRenderer extends ImageRenderer {
 				return b;
 			}
 		return null;
+	}
+	
+	public void deselectAllButtons() {
+		for (Button b : buttonsList) b.selected=false;
 	}
 	
 	public void pressButton(Button b) {

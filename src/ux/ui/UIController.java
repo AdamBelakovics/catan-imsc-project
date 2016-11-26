@@ -18,8 +18,7 @@ public class UIController extends PlayerController {
 	}
 
 	public int getPlayerResource(Resource r) {
-		//TODO
-		return 10+r.ordinal();
+		return controlledPlayer.getResourceAmount(r);
 	}
 	
 	public int getPoints(){
@@ -35,7 +34,7 @@ public class UIController extends PlayerController {
 	public ArrayList<DevCard> getDevCards(){
 		//TODO
 		ArrayList<DevCard> tempArrayList=new ArrayList();
-		for (int i=0;i<2;i++)
+		for (int i=0;i<3;i++)
 			tempArrayList.add(new KnightCard());
 		
 		return tempArrayList;
@@ -44,13 +43,11 @@ public class UIController extends PlayerController {
 	public ArrayList<DevCard> getPlayedDevCards(){
 		//TODO
 		ArrayList<DevCard> tempArrayList=new ArrayList();
-		for (int i=0;i<2;i++)
-			tempArrayList.add(new KnightCard());
+		for (int i=0;i<5;i++) tempArrayList.add(new KnightCard());
 		
 		return tempArrayList;
 	}
 		
-
 	@Override
 	public void turn() {
 		active=true;

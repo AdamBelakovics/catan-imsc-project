@@ -87,20 +87,39 @@ public class Renderer {
 
 		@Override
 		public void mouseClicked(MouseEvent ev) {
-			if (!currUIC.active) return;
-			Map.Entry<Hex,HexPoly> selectedHex=boardPanel.hexRenderer.getHexUnderCursor(ev.getX(), ev.getY());
+			
+			// Selecting board elements
+			Hex selectedHex=boardPanel.hexRenderer.getHexUnderCursor(ev.getX(), ev.getY());
 			if (selectedHex!=null) {
-				boardPanel.hexRenderer.selectHex(selectedHex.getKey());
-				hudPanel.interfaceRenderer.setActiveHex(selectedHex.getKey());
+				boardPanel.hexRenderer.selectHex(selectedHex);
+				hudPanel.interfaceRenderer.setActiveHex(selectedHex);
+				boardPanel.vertexRenderer.setSelectedVertex(null);
 			}
+			
+			Vertex selectedVertex=boardPanel.vertexRenderer.getVertexUnderCursor(ev.getX(), ev.getY());
+			if (selectedVertex!=null) {
+				boardPanel.hexRenderer.selectHex(null);
+				boardPanel.vertexRenderer.setSelectedVertex(selectedVertex);
+			}
+			
+			// Player activity check
+			if (!currUIC.active) return;
+			
+			
+			// Selecting interface elements
 			Button selectedButton=hudPanel.interfaceRenderer.getButtonUnderCursor(ev.getX(), ev.getY());
 			if (selectedButton!=null) {
 				hudPanel.pressButton(selectedButton);
+				hudPanel.cardRenderer.setSelectedDevCard(null);
 				if (selectedButton instanceof BuildButton && selectedButton.selected)
 					boardPanel.hexRenderer.currentlyBuilding=((BuildButton)selectedButton).building;
 			}
+			
 			DevCard selectedCard=hudPanel.cardRenderer.getDevCardUnderCursor(ev.getX(), ev.getY());
-			if (selectedCard!=null) hudPanel.cardRenderer.setSelectedDevCard(selectedCard);
+			if (selectedCard!=null) {
+				hudPanel.interfaceRenderer.deselectAllButtons();
+				hudPanel.cardRenderer.setSelectedDevCard(selectedCard);
+			}		
 		}
 
 		@Override
@@ -124,12 +143,12 @@ public class Renderer {
 			switch (ev.getKeyChar()) {
 			case 'q':
 			case 'Q':
-				System.out.println("[BoardRenderer]Rotated board to left");
+				//System.out.println("[BoardRenderer]Rotated board to left");
 				boardPanel.hexRenderer.cycleOrientation(-1);
 				break;
 			case 'e':
 			case 'E':
-				System.out.println("[BoardRenderer]Rotated board to right");
+				//System.out.println("[BoardRenderer]Rotated board to right");
 				boardPanel.hexRenderer.cycleOrientation(1);
 				break;
 			}
@@ -146,7 +165,7 @@ public class Renderer {
 
 		@Override
 		public void mouseWheelMoved(MouseWheelEvent ev) {
-			System.out.println("[BoardWheelListener] Used mousewheel for "+ev.getWheelRotation()+" clicks.");
+			//System.out.println("[BoardWheelListener] Used mousewheel for "+ev.getWheelRotation()+" clicks.");
 			boardPanel.hexRenderer.zoomBoard(ev.getWheelRotation());			
 		}
 		
