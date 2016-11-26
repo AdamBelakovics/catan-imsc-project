@@ -211,7 +211,6 @@ public class Table{
 				}
 			}
 		}
-		System.out.println(edgeList.size());
 	}
 	
 	/**
