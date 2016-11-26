@@ -259,7 +259,7 @@ public class BuildRoad {
 	 */
 	private double nodePersonalValueForRoadRecursive(Vertex n, Set<Vertex> visitedNodes, int cnt){
 		// if we should not go further
-		if(cnt < 0 || visitedNodes.contains(n) || n.getSettlement() != null)
+		if(cnt < 0 || visitedNodes.contains(n) || n.getBuilding() != null)
 			return 0;
 		double result = 0;
 		visitedNodes.add(n);

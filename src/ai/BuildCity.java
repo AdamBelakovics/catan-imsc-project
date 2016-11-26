@@ -2,6 +2,7 @@ package ai;
 
 import controller.map.Table;
 import controller.map.Vertex;
+import controller.player.Building;
 import controller.player.Player;
 import controller.player.Settlement;
 
@@ -84,13 +85,19 @@ public class BuildCity {
 	 */
 	private ArrayList<Vertex> getVillages(){
 		ArrayList<Vertex> result = new ArrayList<Vertex>();
-		Settlement what;
+		Building what;
+		Settlement tmpSet;
 		for(Vertex v : map.getNodes()){
-			what = v.getSettlement();
-			if(what != null && what.getOwner().equals(aiPlayer)){
-				result.add(v);
+			what = v.getBuilding();
+			if(what != null && what.getClass().equals(Settlement.class)){
+				tmpSet = (Settlement)what;
+				if(tmpSet.getOwner().equals(aiPlayer)){
+					result.add(v);
+				}
 			}
 		}
 		return result;
 	}
+	
+	
 }

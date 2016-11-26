@@ -72,7 +72,7 @@ public class BuildVillage {
 		// TODO this might be different, waiting for Table's implemention
 		
 		for(Vertex n : map.getNodes()){
-			if(getPlayerRoadsFromNode(aiPlayer, n).size() > 0 && n.isBuildPossible(new Settlement())){
+			if(getPlayerRoadsFromNode(aiPlayer, n).size() > 0 && n.isBuildPossible(new Settlement(aiPlayer))){
 				result.add(n);
 			}
 		}
