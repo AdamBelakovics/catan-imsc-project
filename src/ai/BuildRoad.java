@@ -9,6 +9,7 @@ import controller.map.Vertex;
 import controller.map.Table;
 import controller.map.Edge;
 import controller.player.Player;
+import controller.player.Road;
 
 /**
  * Building a road
@@ -122,13 +123,13 @@ public class BuildRoad {
 		// TODO getPlayerRoads, getRoadsFromNode, needs some work
 		
 		// there is no point in building multiple roads to same node
-		for(Edge r : map.getPlayerRoads(this.aiPlayer.getId())){
+		for(Edge r : getPlayerRoads(this.aiPlayer)){
 			if(r.getEnds().contains(nodeTo))
 				return null;
 		}
 		for(Vertex nodeFrom : nodeTo.getNeighbours()){
 			// if there is at least one road to this node
-			if(nodeFrom.getRoads(this.aiPlayer.getId()).size() > 0){
+			if(getPlayerRoadsFromNode(aiPlayer, nodeFrom).size() > 0){
 				// we have to check whether there is someone else's road there
 				boolean isRoadBuilt = false;
 				
@@ -155,11 +156,11 @@ public class BuildRoad {
 	public int calculateMaxRoadDifference(){
 		int maxRoadVal = 0;
 		for(Player player : otherPlayers){
-			int playersMax = calculatePlayerMaxRoad(player.getId());
+			int playersMax = calculatePlayerMaxRoad(player);
 			if(playersMax > maxRoadVal)
 				maxRoadVal = playersMax;
 		}
-		int AIMaxVal = calculatePlayerMaxRoad(aiPlayer.getId());
+		int AIMaxVal = calculatePlayerMaxRoad(aiPlayer);
 		return maxRoadVal - AIMaxVal;
 	}
 	
@@ -169,7 +170,7 @@ public class BuildRoad {
 	 * @return - length of the maximum road
 	 * @author Gergely Olah
 	 */
-	private int calculatePlayerMaxRoad(int player){
+	private int calculatePlayerMaxRoad(Player player){
 		int max = 0;
 		HashSet<Vertex> visitedNodes = new HashSet<Vertex>();
 		for(Vertex n : map.getNodes()){
@@ -191,12 +192,12 @@ public class BuildRoad {
 	 * @return - the length of the longest road
 	 * @author Gergely Olah
 	 */
-	private int calculatePlayerMaxRoadFromNode(Vertex fromNode, int player, HashSet<Vertex> visitedNodes){
+	private int calculatePlayerMaxRoadFromNode(Vertex fromNode, Player player, HashSet<Vertex> visitedNodes){
 		// TODO needs getRoadsFromNode(player) (as Edges), and Rode.getNodes() if getRoads..() returns with Road-s
 		
 		int dist, max = 0;
 	    visitedNodes.add(fromNode);
-	    for(Edge road : fromNode.getRoads(player)){
+	    for(Edge road : getPlayerRoadsFromNode(player, fromNode)){
 	    	Vertex n1, n2;
 	        ArrayList<Vertex> roadNodes = road.getEnds();
 	        n1 = roadNodes.get(0);
@@ -230,8 +231,8 @@ public class BuildRoad {
 	 */
 	private boolean isMaxRoadStart(Vertex fromNode){
 		HashSet<Vertex> visitedNodes = new HashSet<Vertex>();
-		int nodesMaxRoad = calculatePlayerMaxRoadFromNode(fromNode,aiPlayer.getId(), visitedNodes);
-		int maxRoad = calculatePlayerMaxRoad(aiPlayer.getId());
+		int nodesMaxRoad = calculatePlayerMaxRoadFromNode(fromNode,aiPlayer, visitedNodes);
+		int maxRoad = calculatePlayerMaxRoad(aiPlayer);
 		return nodesMaxRoad == maxRoad;
 	}
 	/**
@@ -275,5 +276,41 @@ public class BuildRoad {
 			result += val;
 		}
 		return Math.max(10, result);
+	}
+	/**
+	 * Lists roads owned by given player as list of Edge-s
+	 * @param p - the player
+	 * @return - the edges the player has roads on
+	 */
+	private ArrayList<Edge> getPlayerRoads(Player p){
+		ArrayList<Edge> result = new ArrayList<Edge>();
+		Road tmpRoad = null;
+		for(Edge e : map.getEdges()){
+			tmpRoad = e.getRoad();
+			if(tmpRoad != null && tmpRoad.getOwner().equals(p)){
+				result.add(e);
+			}
+		}
+		return result;
+	}
+	
+	/**
+	 * Lists roads starting from the given vertex
+	 * owned by given player as list of Edge-s
+	 * @param p - the player
+	 * @return - the edges from the node the player has roads on,
+	 * empty if no roads
+	 */
+	private ArrayList<Edge> getPlayerRoadsFromNode(Player p, Vertex v){
+		ArrayList<Edge> result = new ArrayList<Edge>();
+		Road tmpRoad = null;
+		for(Edge e : map.getEdges()){
+			tmpRoad = e.getRoad();
+			if(tmpRoad != null && tmpRoad.getOwner().equals(p)){
+				if(e.getEnds().contains(e))
+					result.add(e);
+			}
+		}
+		return result;
 	}
 }
