@@ -313,7 +313,7 @@ public class AiController extends PlayerController {
 				seged.putAll(possibilities.get(key).hand);
 				while (j < 4 && i > 0) {
 					for (Buildable b : Buildable.values()) {
-						if (bList.get(j) == b) {
+						if (bList.get(j).equals(b)) {
 							for (Resource r : Resource.values()) {
 								if (seged.get(r) < resourceNeed.get(b).get(r))
 									enough = false;
@@ -347,13 +347,13 @@ public class AiController extends PlayerController {
 			for (int i = 0; i < 4; i++)
 				for (int j = i; j < 4; j++) {
 					for (Integer key : toDoList.keySet())
-						if (toDoList.get(key).get(0) == bList.get(i) && toDoList.get(key).get(1) == bList.get(j)
+						if (toDoList.get(key).get(0).equals(bList.get(i)) && toDoList.get(key).get(1).equals(bList.get(j))
 								&& found == false) {
 							buildPlanMax = key;
 							found = true;
 						}
 				}
-			if (toDoList.get(buildPlanMax).get(0) == Buildable.None)
+			if (toDoList.get(buildPlanMax).get(0).equals(Buildable.None))
 				return false;
 			else
 				return true;
@@ -363,8 +363,8 @@ public class AiController extends PlayerController {
 			Value1 job = possibilities.get(buildPlanMax);
 			buildPlan = toDoList.get(buildPlanMax);
 			for (Integer key : possibilities.keySet())
-				if (possibilities.get(key).how.size() < job.how.size() && toDoList.get(key).get(0) == buildPlan.get(0)
-						&& toDoList.get(key).get(1) == buildPlan.get(1)) {
+				if (possibilities.get(key).how.size() < job.how.size() && toDoList.get(key).get(0).equals(buildPlan.get(0))
+						&& toDoList.get(key).get(1).equals(buildPlan.get(1))) {
 					job = possibilities.get(key);
 					buildPlan = toDoList.get(key);
 					buildPlanMax = key;
@@ -411,11 +411,10 @@ public class AiController extends PlayerController {
 					toBuild = new Road(me);
 					tf = buildRoad.getNodeFrom();
 					tt = buildRoad.getNodeTo();
+					t=roadWhere.get(0);
 					for(Edge e:roadWhere){
 						roadWhereSeged=e.getEnds();
-						if(roadWhereSeged.get(0)==tt&&roadWhereSeged.get(0)==tf)
-							t=e;
-						if(roadWhereSeged.get(1)==tt&&roadWhereSeged.get(0)==tf)
+						if(roadWhereSeged.contains(tt)&&roadWhereSeged.contains(tf))
 							t=e;
 					}
 					try {
@@ -530,7 +529,7 @@ public class AiController extends PlayerController {
 	}
 	
 	public double nodePersonalValue(Vertex v){
-		if(!(v.isBuildPossible(new Settlement()))){
+		if(!(v.isBuildPossible(new Settlement(me)))){
 			return 0;
 		}
 		double sum = 0;
