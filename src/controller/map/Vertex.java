@@ -51,6 +51,10 @@ public class Vertex implements TableElement{
 		return neighbourHexes;
 	}
 	
+	public ArrayList<Edge> getNeighbourEdges() {
+		return edges;
+	}
+	
 	void generateNeighbourHexes(){
 				for(Map.Entry<String, Hex> e: hexes.entrySet()){
 					neighbourHexes.add(e.getValue());
