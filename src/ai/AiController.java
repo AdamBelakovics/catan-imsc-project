@@ -34,19 +34,96 @@ public class AiController extends PlayerController {
 	}
 
 	public int getKnightDiff() {
-		return 0;
+		Map<Player, Integer> amountoKnightsperPlayer = new HashMap<Player, Integer>();
+		int max = 3;
+
+		for (Player p : players) {
+			amountoKnightsperPlayer.put(p, p.getActiveKnights());
+			if (amountoKnightsperPlayer.get(p) > max && !p.equals(me))
+				max = amountoKnightsperPlayer.get(p);
+		}
+
+		if (amountoKnightsperPlayer.get(me) <= max)
+			return max - amountoKnightsperPlayer.get(me);
+		else
+			return -1;
 	}
 
-	public Boolean isNodeBuildable() {
+	public Boolean isNodeBuildable(Vertex vIn) {
+		if (!vIn.isBuildPossible(new Settlement(me)))
+			return false;
+
+		List<Vertex> neighbours = new ArrayList<Vertex>();
+		List<Vertex> neighboursoNeioghbours = new ArrayList<Vertex>();
+		List<Edge> edges = new ArrayList<Edge>();
+
+		neighbours = vIn.getNeighbours();
+		for (Vertex v : neighbours)
+			neighboursoNeioghbours.addAll(v.getNeighbours());
+
+		for (int i = 0; i < neighboursoNeioghbours.size(); i++) {
+			if (neighbours.contains(neighboursoNeioghbours.get(i)) || neighboursoNeioghbours.get(i).equals(vIn)) {
+				neighboursoNeioghbours.remove(i);
+				i--;
+			}
+		}
+
+		for (Vertex v : neighboursoNeioghbours)
+			if (!v.getBuilding().equals(null))
+				return false;
+
+		edges = vIn.getNeighbourEdges();
+		for (Edge e : edges)
+			if (e.getRoad() != null && e.getRoad().getOwner().equals(me))
+				return true;
+
 		return false;
 	}
 
 	public Boolean isRobbed() {
+		boolean Robbed;
+		List<Vertex> all = new ArrayList<Vertex>();
+		List<Hex> neighbours = new ArrayList<Hex>();
+		all.addAll(map.getNodes());
+
+		for (Vertex v : all) {
+			if (!v.getBuilding().equals(null) && v.getBuilding().getOwner().equals(me)) {
+				neighbours = v.getNeighbourHexes();
+				/*
+				 * for(Hex h:neighbours){ if(map.getRobberPossision().equals(h))
+				 * return true; }
+				 */}
+		}
 		return false;
 	}
 
-	public int nodePersonalDistance() {
-		return 0;
+	public int nodePersonalDistance(Vertex vIn) {
+		List<Edge> edges = map.getEdges();
+		List<Vertex> myVertexs = new ArrayList<Vertex>();
+		List<Vertex> VertexsNeighbours1 = new ArrayList<Vertex>();
+		List<Vertex> VertexsNeighbours2 = new ArrayList<Vertex>();
+
+		for (Edge e : edges)
+			if (!e.getRoad().equals(null) && e.getRoad().getOwner().equals(me))
+				myVertexs.addAll(e.getEnds());
+		if (myVertexs.contains(vIn))
+			return 0;
+		for (Vertex v : myVertexs)
+			VertexsNeighbours1.addAll(v.getNeighbours());
+		if (VertexsNeighbours1.contains(vIn))
+			return 1;
+		int i = 1;
+		while (i < 20) {
+			for (Vertex v : VertexsNeighbours1)
+				VertexsNeighbours2.addAll(v.getNeighbours());
+			if (VertexsNeighbours2.contains(vIn))
+				return ++i;
+			for (Vertex v : VertexsNeighbours2)
+				VertexsNeighbours1.addAll(v.getNeighbours());
+			if (VertexsNeighbours1.contains(vIn))
+				return ++i;
+		}
+		return -1;
 	}
 
 	public Map<Resource, Material> getResources() {
