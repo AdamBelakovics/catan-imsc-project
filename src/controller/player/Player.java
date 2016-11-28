@@ -208,6 +208,14 @@ public class Player {
 	}
 	
 	/**
+	 * Getter for DevCards list
+	 * @return devCards
+	 */
+	public ArrayList<DevCard> getDevCards(){
+		return devCards;
+	}
+	
+	/**
 	 * Getter for PlayerController.
 	 * @return PlayerController associated with this player.
 	 */
