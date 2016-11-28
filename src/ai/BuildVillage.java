@@ -3,6 +3,8 @@ package ai;
 import controller.map.Edge;
 import controller.map.Table;
 import controller.map.Vertex;
+import controller.player.Building;
+import controller.player.City;
 import controller.player.Player;
 import controller.player.Road;
 import controller.player.Settlement;
@@ -89,13 +91,15 @@ public class BuildVillage {
 	public void refresh(){
 		buildValue = 0;
 		node = null;
-		ArrayList<Vertex> nodes = listValidNodes();		
-		for(Vertex n : nodes){
-			// TODO need ai
-			double currentValue = owner.nodePersonalValue(n);
-			if(currentValue > buildValue){
-				buildValue = currentValue;
-				node = n;
+		if(isVillageAvailable()){
+			ArrayList<Vertex> nodes = listValidNodes();		
+			for(Vertex n : nodes){
+				// TODO need ai
+				double currentValue = owner.nodePersonalValue(n);
+				if(currentValue > buildValue){
+					buildValue = currentValue;
+					node = n;
+				}
 			}
 		}
 	}
@@ -120,5 +124,23 @@ public class BuildVillage {
 			}
 		}
 		return result;
+	}
+	
+	/**
+	 * Counts ai's villages on the map, and returns true if
+	 * less than 5, returns false otherwise
+	 * @return - whether we have village available to build
+	 * @author Gergely Olah
+	 */
+	private boolean isVillageAvailable(){
+		int cnt = 0;
+		Building tmpBuild;
+		for(Vertex v : map.getNodes()){
+			tmpBuild = v.getBuilding();
+			if(tmpBuild != null && tmpBuild.getClass().equals(Settlement.class) && tmpBuild.getOwner().equals(aiPlayer)){
+				cnt++;
+			}
+		}
+		return cnt < 5;
 	}
 }
