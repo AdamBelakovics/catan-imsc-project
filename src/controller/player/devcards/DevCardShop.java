@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import controller.player.OutOfRangeException;
 
 public class DevCardShop {
-	static ArrayList<DevCard> devCardList;
+	static ArrayList<DevCard> devCardList = new ArrayList<DevCard>();
 	
 	/**
-	 * Initialize DevCardList to:	- 25 KnightCard
+	 * Initialize DevCardList to:	- 14 KnightCard
 	 * 								- 5 VictoryPointCard
 	 *								- 2 MonopolyCard
 	 *								- 2 YearOfPlentyCard
