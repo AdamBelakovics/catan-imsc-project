@@ -1,5 +1,5 @@
 package controller.player;
 
 public enum Resource {
-	Brick, Lumber, Ore, Grain, Wool;
+	Brick, Lumber, Ore, Grain, Wool, Desert;
 }
