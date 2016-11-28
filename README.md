@@ -1,9 +1,9 @@
 #TODO
 ##Player ACTIONS in class Player
 ###-rollTheDice:
-    -implementálni kéne a nyersanyagfelezést (egyenlőre random is jó)
+    -KÉSZ
 ###-handleThief:
-    -itt kéne megkérdezni a játékost h hova akarja tenni és áthelyezni a rablót (még eléggé kidolgozatlan) edit: minden Hexnek van        hasThief adattagja
+    -KÉSZ
 ###-build
     -ezt most csinálom
 ###-playDevCard
