@@ -20,7 +20,6 @@ import java.util.ArrayList;
  */
 public class BuildVillage {
 	private Table map;
-	// TODO needs ai
 	private AiController owner;
 	private Vertex node;
 	private double buildValue;
@@ -43,24 +42,22 @@ public class BuildVillage {
 	}
 	
 	/**
-	 * Determines the value of the best village the AI can build. The refresh
-	 * function should be called before if the table have been changed since
-	 * last call, or if no refresh function was called before.
+	 * Determines the value of the best village the AI can build.
 	 * @return - the value
 	 * @author Gergely Olah
 	 */
 	public double getBuildValue(){
+		refresh();
 		return buildValue;
 	}
 	
 	/**
-	 * Determines the best place to build a village. The refresh
-	 * function should be called before if the table have been changed since
-	 * last call, or if no refresh function was called before.
+	 * Determines the best place to build a village.
 	 * @return - the node to build the village on, null if can't build any
 	 * @author Gergely Olah
 	 */
 	public Vertex getNode(){
+		refresh();
 		return node;
 	}
 	
@@ -71,7 +68,6 @@ public class BuildVillage {
 	 */
 	private ArrayList<Vertex> listValidNodes(){
 		ArrayList<Vertex> result = new ArrayList<Vertex>();
-		// TODO this might be different, waiting for Table's implemention
 		
 		for(Vertex n : map.getNodes()){
 			if(getPlayerRoadsFromNode(aiPlayer, n).size() > 0 && n.isBuildPossible(new Settlement(aiPlayer))){
@@ -88,13 +84,12 @@ public class BuildVillage {
 	 * up to date values. 
 	 * @author Gergely Olah
 	 */
-	public void refresh(){
+	private void refresh(){
 		buildValue = 0;
 		node = null;
 		if(isVillageAvailable()){
 			ArrayList<Vertex> nodes = listValidNodes();		
 			for(Vertex n : nodes){
-				// TODO need ai
 				double currentValue = owner.nodePersonalValue(n);
 				if(currentValue > buildValue){
 					buildValue = currentValue;
@@ -117,7 +112,7 @@ public class BuildVillage {
 		ArrayList<Edge> result = new ArrayList<Edge>();
 		Road tmpRoad = null;
 		for(Edge e : map.getEdges()){
-			tmpRoad = e.getRoad();
+			tmpRoad = (Road)e.getBuilding();
 			if(tmpRoad != null && tmpRoad.getOwner().equals(p)){
 				if(e.getEnds().contains(e))
 					result.add(e);
@@ -142,5 +137,50 @@ public class BuildVillage {
 			}
 		}
 		return cnt < 5;
+	}
+	
+	
+	/**
+	 * This must be used for the first turn!!
+	 * Determines the value of the best village the AI can build.
+	 * This function might not be needed.
+	 * @return - the value
+	 * @author Gergely Olah
+	 */
+	public double getBuildValueFirstTurn(){
+		refreshFirstTurn();
+		return buildValue;
+	}
+	
+	/**
+	 * This must be used for the first turn!!
+	 * Determines the best place to build a village.
+	 * @return - the node to build the village on, null if can't build any
+	 * @author Gergely Olah
+	 */
+	public Vertex getNodeFirstTurn(){
+		refreshFirstTurn();
+		return node;
+	}
+	
+	/**
+	 * This function must be used at the first and second turn!
+	 * Refreshes the node and the buildValue. Must call this before
+	 * before calling the getter methods, as they may not return
+	 * up to date values. 
+	 * @author Gergely Olah
+	 */
+	private void refreshFirstTurn(){
+		buildValue = 0;
+		node = null;		
+		for(Vertex n : map.getNodes()){
+			if(n.isBuildPossible(new Settlement(aiPlayer))){
+				double currentValue = owner.nodePersonalValue(n);
+				if(currentValue > buildValue){
+					buildValue = currentValue;
+					node = n;
+				}
+			}
+		}
 	}
 }

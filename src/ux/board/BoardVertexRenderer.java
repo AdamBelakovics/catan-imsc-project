@@ -21,7 +21,7 @@ import ux.ui.InterfaceColorProfile;
 public class BoardVertexRenderer extends ImageRenderer {
 
 	private BoardHexRenderer hexRenderer;
-	private HashMap<Point,Vertex> vertexMap=new HashMap();
+	HashMap<Vertex,Point> vertexMap=new HashMap();
 	private Vertex selectedVertex=null;
 	private Graphics2D vertexCanvas;
 	private Table board;
@@ -45,13 +45,16 @@ public class BoardVertexRenderer extends ImageRenderer {
 
 	private void paintVertices() {
 
-		for (Entry<Point, Vertex> v : vertexMap.entrySet()) {
+		for (Entry<Vertex,Point> v : vertexMap.entrySet()) {
+			// TODO rendering buildings and roads			
+			
+			
 			if (/*board.isBuildPossibleAt(new Settlement(), v.getValue())*/true) {
-				if (selectedVertex!=null && v.getValue().equals(selectedVertex))
+				if (selectedVertex!=null && v.getKey().equals(selectedVertex))
 					vertexCanvas.setColor(InterfaceColorProfile.vertexColor);
 				else vertexCanvas.setColor(InterfaceColorProfile.selectedColor);
 				Point2D transformedPoint=new Point();
-					hexRenderer.boardTransformation.transform(v.getKey(), transformedPoint);
+					hexRenderer.boardTransformation.transform(v.getValue(), transformedPoint);
 				vertexCanvas.fillOval((int)transformedPoint.getX()-4, (int)transformedPoint.getY()-4, 5, 5);
 			}
 		}
@@ -67,7 +70,7 @@ public class BoardVertexRenderer extends ImageRenderer {
 			HexPoly A=hexRenderer.getHexPolyFromHex(neighbourHexes.get(0));
 			HexPoly B=hexRenderer.getHexPolyFromHex(neighbourHexes.get(1));
 			HexPoly C=hexRenderer.getHexPolyFromHex(neighbourHexes.get(2));
-			vertexMap.put(new Point((A.x+B.x+C.x)/3,(A.y+B.y+C.y)/3),v);
+			vertexMap.put(v,new Point((A.x+B.x+C.x)/3,(A.y+B.y+C.y)/3));
 		}
 	}
 	
@@ -80,8 +83,8 @@ public class BoardVertexRenderer extends ImageRenderer {
 			e1.printStackTrace();
 		}
 		
-		for (HashMap.Entry<Point,Vertex> e : vertexMap.entrySet()) {
-			if (Math.abs(e.getKey().getX()-transformedPoint.x)<eps && Math.abs(e.getKey().getY()-transformedPoint.y)<eps) return e.getValue();
+		for (HashMap.Entry<Vertex,Point> e : vertexMap.entrySet()) {
+			if (Math.abs(e.getValue().getX()-transformedPoint.x)<eps && Math.abs(e.getValue().getY()-transformedPoint.y)<eps) return e.getKey();
 		}
 		return null;
 	}

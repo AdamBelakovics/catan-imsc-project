@@ -26,7 +26,6 @@ import controller.player.Resource;
  */
 public class BuildDevelopment {
 	private Table map;
-	// TODO ai
 	private AiController owner;
 	private int player;
 	private Player aiPlayer;
@@ -46,7 +45,6 @@ public class BuildDevelopment {
 	 */
 	public BuildDevelopment(Table map, AiController owner, Player aiPlayer, ArrayList<Player> otherPlayers){
 		this.map = map;
-		// TODO ai
 		this.owner = owner;
 		this.aiPlayer = aiPlayer;
 		this.otherPlayers = otherPlayers;

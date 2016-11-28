@@ -72,5 +72,9 @@ public class Hex implements Comparable {
 	public void setResource(Resource r){
 		res = r;
 	}
+	
+	public void setProsperity(int i){
+		prosperity = i;
+	}
 
 }

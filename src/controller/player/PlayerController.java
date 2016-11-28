@@ -9,5 +9,6 @@ public abstract class PlayerController {
 	Table board;
 	abstract public boolean query(Player donor, Map<Resource,Integer> offer, Map<Resource,Integer> demand);
 	abstract public void turn();
+	abstract public void firstturn();
 	
 }
