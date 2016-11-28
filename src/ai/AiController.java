@@ -20,23 +20,6 @@ public class AiController extends PlayerController {
 	private Map<Resource, Material> resources = new HashMap<Resource, Material>();
 	private Map<Resource, Integer> rAmount = new HashMap<Resource, Integer>();
 	private Map<Resource, Integer> rLut = new HashMap<Resource, Integer>();
-
-	public class AiController extends PlayerController {
-
-	private Player me;
-	ArrayList<Player> players = new ArrayList<Player>();
-	private Table map;
-	private int robberSum;
-
-	private BuildCity buildCity;
-	private BuildVillage buildVillage;
-	private BuildRoad buildRoad;
-	private BuildDevelopment buildDevelopment;
-
-	private Set<Integer> numbers = new HashSet<Integer>();
-	private Map<Resource, Material> resources = new HashMap<Resource, Material>();
-	private Map<Resource, Integer> rAmount = new HashMap<Resource, Integer>();
-	private Map<Resource, Integer> rLut = new HashMap<Resource, Integer>();
 	
 	/**
 	 * Constructor. Initializes attributes.
@@ -253,7 +236,6 @@ public class AiController extends PlayerController {
 				System.out.println(me.getChangeLUT(r));
 				rLut.put(r, me.getChangeLUT(r));
 				seged.put(r, rAmount.get(r));
-				// mPValue.put(r, resources.get(r).personalValue());
 			}
 
 			seged = new HashMap<Resource, Integer>();
@@ -367,15 +349,17 @@ public class AiController extends PlayerController {
 			options.put(Buildable.City, values.get(1));
 			values.add(buildRoad.getBuildValue());
 			options.put(Buildable.Road, values.get(2));
-			values.add(buildDevelopment.getBuildValue());
-			options.put(Buildable.Development, values.get(3));
+			//values.add(buildDevelopment.getBuildValue());
+			//options.put(Buildable.Development, values.get(3));
+			values.add(0.0);
+			options.put(Buildable.Development, 0.0);
 			values.add(0.0);
 			options.put(Buildable.None, values.get(4));
 
 			Collections.sort(values, new ComperatorD());
 			for (Double d : values)
 				for (Buildable b : Buildable.values()) {
-					if (d == options.get(b))
+					if (d == options.get(b)&&!bList.contains(b))
 						bList.add(b);
 				}
 		}
@@ -407,8 +391,8 @@ public class AiController extends PlayerController {
 							} else
 								j++;
 						}
+						enough = true;
 					}
-					enough = true;
 				}
 				while (i > 0) {
 					buildPlan.add(Buildable.None);
@@ -428,8 +412,8 @@ public class AiController extends PlayerController {
 		 */
 		public boolean findMaxToDoList() {
 			boolean found = false;
-			for (int i = 0; i < 4; i++)
-				for (int j = i; j < 4; j++) {
+			for (int i = 0; i < bList.size(); i++)
+				for (int j = i; j < bList.size(); j++) {
 					for (Integer key : toDoList.keySet())
 						if (toDoList.get(key).get(0).equals(bList.get(i)) && toDoList.get(key).get(1).equals(bList.get(j))
 								&& found == false) {
@@ -473,6 +457,7 @@ public class AiController extends PlayerController {
 			Vertex tt;
 			List<Edge> roadWhere=map.getEdges();
 			List<Vertex> roadWhereSeged;
+			List<Hex> sourceOfNewNumbers=new ArrayList<Hex>();
 			boolean outOfBuildable = true;
 
 				switch (buildPlan.get(0)) {
@@ -481,6 +466,10 @@ public class AiController extends PlayerController {
 					t = buildVillage.getNode();
 					try {
 						me.build(toBuild, t);
+						sourceOfNewNumbers=((Vertex)t).getNeighbourHexes();
+						for(Hex h:sourceOfNewNumbers)
+							if(!numbers.contains(h.getProsperity()))
+								numbers.add(h.getProsperity());
 					} catch (GameEndsException e1) {
 					}
 					break;
@@ -489,6 +478,10 @@ public class AiController extends PlayerController {
 					t = buildCity.getNode();
 					try {
 						me.build(toBuild, t);
+						sourceOfNewNumbers=((Vertex)t).getNeighbourHexes();
+						for(Hex h:sourceOfNewNumbers)
+							if(!numbers.contains(h.getProsperity()))
+								numbers.add(h.getProsperity());
 					} catch (GameEndsException e1) {
 					}
 					break;
