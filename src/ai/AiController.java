@@ -618,22 +618,26 @@ public class AiController extends PlayerController {
 	public void firstturn(){
 		try {
 		List<Double> Values=new ArrayList<Double>();
-		List<Vertex> SettlementPlace=map.getNodes();
+		List<Vertex> settlementPlace=map.getNodes();
 		Vertex placeofSettlement=new Vertex(null);
 		List<Hex> sourceOfNewNumbers=new ArrayList<Hex>();
 		List<Edge> roadPlaces=new ArrayList<Edge>();
 		List<Vertex> settlementPlaceNN=new ArrayList<Vertex>();
 		List<Edge> edgesinNeighbour=new ArrayList<Edge>();
 		
-		for(Vertex v:SettlementPlace)
-			Values.add(nodePersonalValue(v));
+		for(int i=0;i<settlementPlace.size();i++){
+			if(me.isFirstBuildPossible(Buildable.Settlement, settlementPlace.get(i))){
+				System.out.println("value:"+nodeFirstPersonalValue(settlementPlace.get(i)));
+				Values.add(nodeFirstPersonalValue(settlementPlace.get(i)));}
+			else{settlementPlace.remove(i);
+				i--;}}
 		double max=-1;
 		int index=-1;
 		for(double d:Values)
 		if(d>max){
 			max=d;
 			index=Values.indexOf(d);
-			placeofSettlement=SettlementPlace.get(index);
+			placeofSettlement=settlementPlace.get(index);
 		}
 		
 			me.firstBuild(Buildable.Settlement, placeofSettlement);
@@ -642,15 +646,19 @@ public class AiController extends PlayerController {
 				if(!numbers.contains(h.getProsperity()))
 					numbers.add(h.getProsperity());
 			
-			SettlementPlace=placeofSettlement.getNeighbours();
-			for(Vertex v:SettlementPlace)
+			settlementPlace=placeofSettlement.getNeighbours();
+			for(Vertex v:settlementPlace)
 				settlementPlaceNN.addAll(v.getNeighbours());
 			for(int i=0;i<6;i++)
 				settlementPlaceNN.remove(placeofSettlement);
 			Values=new ArrayList<Double>();
 			
-			for(Vertex v:settlementPlaceNN)
-				Values.add(nodePersonalValue(v));
+			for(int i=0;i<settlementPlaceNN.size();i++){
+				if(me.isFirstBuildPossible(Buildable.Settlement, settlementPlaceNN.get(i))){
+					System.out.println("value:"+nodeFirstPersonalValue(settlementPlaceNN.get(i)));
+					Values.add(nodeFirstPersonalValue(settlementPlaceNN.get(i)));}
+				else{settlementPlaceNN.remove(i);
+					i--;}}
 			max=-1;
 			index=-1;
 			for(double d:Values)
@@ -660,6 +668,7 @@ public class AiController extends PlayerController {
 			}
 			
 			roadPlaces=placeofSettlement.getNeighbourEdges();
+			System.out.println(index);
 			edgesinNeighbour=settlementPlaceNN.get(index).getNeighbourEdges();
 			for(Edge e1:roadPlaces)
 				for(Edge e2:edgesinNeighbour)
@@ -673,6 +682,18 @@ public class AiController extends PlayerController {
 	
 	public double nodePersonalValue(Vertex v){
 		if(!(v.isBuildPossible(new Settlement(me)))){
+			return 0;
+		}
+		double sum = 0;
+		ArrayList<Hex> terrytories = v.getNeighbourHexes();
+		for(Hex x : terrytories){
+			sum += territoryPersonalValue(x);
+		}
+		return sum;
+	}
+	
+	public double nodeFirstPersonalValue(Vertex v){
+		if(!(v.isFirstBuildPossible(new Settlement(me)))){
 			return 0;
 		}
 		double sum = 0;
