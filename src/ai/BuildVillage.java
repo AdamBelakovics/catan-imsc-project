@@ -109,16 +109,13 @@ public class BuildVillage {
 	// TODO this is pretty much the same function as in BuildRoad, 
 	// but it was the easiest to access it here too
 	private ArrayList<Edge> getPlayerRoadsFromNode(Player p, Vertex v){
-		ArrayList<Edge> result = new ArrayList<Edge>();
-		Road tmpRoad = null;
-		for(Edge e : map.getEdges()){
-			tmpRoad = (Road)e.getBuilding();
-			if(tmpRoad != null && tmpRoad.getOwner().equals(p)){
-				if(e.getEnds().contains(e))
-					result.add(e);
-			}
+		ArrayList<Edge> edgeList = new ArrayList<Edge>(); 
+		for(Edge e : v.getNeighbourEdges()){
+			if((e.getBuilding() != null) && (e.getBuilding().getOwner() == p))
+			edgeList.add(e);
 		}
-		return result;
+			
+		return edgeList;
 	}
 	
 	/**
