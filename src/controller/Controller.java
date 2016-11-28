@@ -13,27 +13,57 @@ import ux.ui.UIController;
 
 public class Controller {
 	public static void main(String[] args) throws InterruptedException{
-		//MENĂś lĂ©trehoz
-		//MENĂśnek Ăˇtadjuk az irĂˇnyĂ­tĂˇst
-		//MENĂś visszatĂ©r TODO kezelni
-		Table gameTable = new Table();
-		ArrayList<Player> players = new ArrayList<Player>();
-		players.add(new Player("Alfonz", 0, gameTable));
-		players.add(new Player("Bela", 1, gameTable));
-		players.add(new Player("Cela", 2,  gameTable));
-		players.add(new Player("Dalma", 3, gameTable));
-		UIController u = new UIController();
-		players.get(0).setPlayerController(u);
-		players.get(1).setPlayerController(u);
-		players.get(2).setPlayerController(u);
-		players.get(3).setPlayerController(u);
-		Renderer renderer = new Renderer((UIController) players.get(0).getPlayerController(), gameTable, 800, 600);
-		for(Hex h : gameTable.hexList){
-			h.setResource(Resource.values()[(int) (Math.random()*5)]);		
+		Table board = new Table();
+		MapXMLParser.readCatanMap(new File(System.getProperty("user.dir") + System.getProperty("file.separator") + "catan_base_map.xml"), board);
+		
+		Player AI01 = new Player("AI01", 01, board);
+		Player AI02 = new Player("AI02", 02, board);
+		Player AI03 = new Player("AI03", 03, board);
+		Player HUMAN = new Player("HUMAN", 04, board);
+		
+		ArrayList<Player> playerList = new ArrayList<Player>();
+		playerList.add(AI01);
+		playerList.add(AI02);
+		playerList.add(AI03);
+		playerList.add(HUMAN);
+		
+		Game game = new Game(board, playerList);
+		
+		AiController AICONT01 = new AiController(board, AI01, playerList);
+		AiController AICONT02 = new AiController(board, AI02, playerList);
+		AiController AICONT03 = new AiController(board, AI03, playerList);
+		UIController HUMCONT = new UIController(HUMAN);
+		
+		ArrayList<PlayerController> pclist = new ArrayList<PlayerController>();
+		pclist.add(HUMCONT);
+		pclist.add(AICONT01);
+		pclist.add(AICONT02);
+		pclist.add(AICONT03);
+		
+		AI01.setPlayerController(AICONT01);
+		AI02.setPlayerController(AICONT02);
+		AI03.setPlayerController(AICONT03);
+		HUMAN.setPlayerController(HUMCONT);
+		
+		Renderer rend = new Renderer(HUMCONT, board, 1024, 768);
+		
+		for(int i = 0; i < pclist.size(); i++){
+			pclist.get(i).firstturn();
 		}
+		
+		for(int i = pclist.size()-1; i > 0; i--){
+			pclist.get(i).firstturn();
+		}
+		
 		while(true){
-			for(Player p : players)
-				p.controller.turn();
+			for(PlayerController pc : pclist){
+				try {
+					pc.turn();
+				} catch (GameEndsException e) {
+					e.printStackTrace();
+					
+				}
+			}
 		}
 	}
 }
