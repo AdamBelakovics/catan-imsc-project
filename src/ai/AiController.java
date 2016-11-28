@@ -590,7 +590,12 @@ public class AiController extends PlayerController {
 	 * @author Hollo-Szabo Akos
 	 */
 	public void turn() throws GameEndsException{
-		me.rollTheDice();
+		try {
+			me.rollTheDice();
+		} catch (OutOfRangeException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		AllNeededDataForTurn datas = new AllNeededDataForTurn();
 		boolean canBuild = true;
 		boolean canTryAgain = true;
@@ -634,7 +639,7 @@ public class AiController extends PlayerController {
 			placeofSettlement=SettlementPlace.get(index);
 		}
 		
-			me.build(Buildable.Settlement, placeofSettlement);
+			me.firstBuild(Buildable.Settlement, placeofSettlement);
 			sourceOfNewNumbers=placeofSettlement.getNeighbourHexes();
 			for(Hex h:sourceOfNewNumbers)
 				if(!numbers.contains(h.getProsperity()))
@@ -662,7 +667,7 @@ public class AiController extends PlayerController {
 			for(Edge e1:roadPlaces)
 				for(Edge e2:edgesinNeighbour)
 					if(e1.getEnds().contains(placeofSettlement)&&(e1.getEnds().contains(e2.getEnds().get(0))||e1.getEnds().contains(e2.getEnds().get(1))))
-						me.build(Buildable.Road, e1);
+						me.firstBuild(Buildable.Road, e1);
 			} catch (GameEndsException e) {
 		}
 		
@@ -682,6 +687,7 @@ public class AiController extends PlayerController {
 	}
 	
 	public double territoryPersonalValue(Hex h){
+		ArrayList<Hex> valid = map.
 		return Material.frequencyLUT(h.getProsperity()) * resources.get(h.getResource()).personalValue(); 
 	}
 
