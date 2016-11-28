@@ -11,6 +11,7 @@ import java.util.TreeSet;
 import controller.player.Building;
 import controller.player.City;
 import controller.player.OutOfRangeException;
+import controller.player.Resource;
 import controller.player.Settlement;
 import controller.map.TableElement;
 import controller.map.Table.IteratorHex;
@@ -41,6 +42,20 @@ public class Table{
 	 */
 	public ArrayList<Hex> getFields(){ 
 		return hexList; 
+	}
+	
+	/**
+	 * Returns all the valid Hexes of the Map
+	 * @return Valid Hexes
+	 */
+	public ArrayList<Hex> getValidFields() {
+		ArrayList<Hex> validHexes = new ArrayList<Hex>();
+		for(Hex h : hexList){
+			if(h.getNeighbouringVertices().size() == 6){
+				validHexes.add(h);
+			}
+		}
+		return validHexes;
 	}
 	
 	/**
@@ -376,7 +391,5 @@ public class Table{
 			}
 		}
 	}
-	
-	
 }
 
