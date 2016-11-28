@@ -11,7 +11,7 @@ import controller.player.Building;
 import controller.player.Resource;
 
 
-public class Hex implements TableElement, Comparable {
+public class Hex implements Comparable {
 	public HashMap<String, Vertex> vertices = new HashMap<String, Vertex>();
 	public ArrayList<Hex> neighbourHexes = new ArrayList<Hex>();
 	public ArrayList<Vertex> neighbourVertices = new ArrayList<Vertex>();
@@ -48,11 +48,6 @@ public class Hex implements TableElement, Comparable {
 	
 	public ArrayList<Vertex> getNeighbouringVertices(){
 		return neighbourVertices;
-	}
-
-	@Override
-	public boolean isBuildPossible(Building what) {
-		return false;
 	}
 
 	@Override

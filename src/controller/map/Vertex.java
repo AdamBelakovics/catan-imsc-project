@@ -41,6 +41,13 @@ public class Vertex implements TableElement{
 	}
 	
 	/**
+	 * @return the Settlement contained by this Vertex
+	 */
+	public void setBuilding(Building b) {
+		town = b;
+	}
+	
+	/**
 	 * @return List of neighboring Vertexes
 	 */
 	public ArrayList<Vertex> getNeighbours() {
@@ -88,7 +95,13 @@ public class Vertex implements TableElement{
 
 	@Override
 	public boolean isBuildPossible(Building what) {
-		// TODO Auto-generated method stub
+		for(Vertex v : getNeighbours())
+			if(v.getBuilding() != null)
+				return false;
+		for(Edge e : getNeighbourEdges())
+			if(e.getBuilding() != null)//just to avoid nullpointers
+				if(e.getBuilding().getOwner().equals(what.getOwner()))
+				return true;
 		return false;
 	}
 }

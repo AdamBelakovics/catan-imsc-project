@@ -1,5 +1,7 @@
 package controller.player;
 
+import controller.map.TableElement;
+
 abstract public class Building {
 	private final Player owner;
 	
@@ -10,5 +12,7 @@ abstract public class Building {
 	public Player getOwner(){
 		return owner;
 	}
+	
+	abstract public boolean build(TableElement t);
 	
 }
