@@ -417,6 +417,33 @@ public class Player {
 		return succesful;
 	}
 	
+	public boolean isBuildPossible(Buildable what, TableElement where){
+		if(what == Buildable.Road){
+			Road r = availableRoads.get(0);
+			if(where.getBuilding() == null && where.isBuildPossible(r) && where.getClass().equals(Edge.class)){
+				return true;
+			}
+			return false;
+		}
+		else if(what == Buildable.Settlement){
+			Settlement s = availableSettlements.get(0);
+			if(where.getBuilding() == null && where.isBuildPossible(s) && where.getClass().equals(Vertex.class)){
+				return true;
+			}
+			return false;
+		}
+		else if(what == Buildable.City){
+			City c = availableCities.get(0);
+			if(where.getBuilding() != null){ //to avoid null pointers
+				if(where.getBuilding().getClass().equals(Settlement.class) && where.getBuilding().getOwner().equals(this) && where.isBuildPossible(c) && where.getClass().equals(Vertex.class)){
+					return true;
+				}
+			}
+			return false;
+		}	
+		return false;
+	}
+	
 	/**
 	 * PLAYER ACTION
 	 * Builds a Building to a specific TableElement
