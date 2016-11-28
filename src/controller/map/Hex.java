@@ -76,5 +76,10 @@ public class Hex implements Comparable {
 	public void setProsperity(int i){
 		prosperity = i;
 	}
+	
+		public void setHasThief(boolean bool){
+		hasThief = bool;
+	}
+
 
 }
