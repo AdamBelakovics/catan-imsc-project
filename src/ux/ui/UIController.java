@@ -12,6 +12,7 @@ public class UIController extends PlayerController {
 	
 	Player controlledPlayer;
 	public volatile boolean active;
+	public volatile boolean firstturnactive;
 	
 	public void setControlledPlayer(Player _controlledPlayer) {
 		controlledPlayer=_controlledPlayer;
@@ -53,7 +54,7 @@ public class UIController extends PlayerController {
 		active=true;
 		while (active);
 	}
-
+	
 	@Override
 	public boolean query(Player donor, Map<Resource, Integer> offer, Map<Resource, Integer> demand) {
 		// TODO Auto-generated method stub
@@ -64,4 +65,9 @@ public class UIController extends PlayerController {
 		active=false;
 	}
 
+	@Override
+	public void firstturn() {
+		firstturnactive = true;
+		while (firstturnactive);
+	}
 }

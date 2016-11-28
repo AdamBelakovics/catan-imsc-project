@@ -52,7 +52,14 @@ public class InterfaceRenderer extends ImageRenderer {
 
 	private void paintButtons() {
 		
+		
 		for (Button b : buttonsList) {
+			if (!currUIC.active) intCanvas.setColor(InterfaceColorProfile.inactiveColor);
+			if (currUIC.firstturnactive &&(b.text.equals("Settlement") || b.text.equals("Road") || b.text.equals("End turn")))
+				intCanvas.setColor(InterfaceColorProfile.bgColor);
+			if (currUIC.active) intCanvas.setColor(InterfaceColorProfile.bgColor);
+			
+			
 			if (b.isSelected()) {
 				intCanvas.setColor(InterfaceColorProfile.selectedColor);
 				if (b instanceof BuildButton) {
@@ -64,7 +71,6 @@ public class InterfaceRenderer extends ImageRenderer {
 				}
 			}
 			
-			else intCanvas.setColor(b.isSelected()?InterfaceColorProfile.selectedColor:currUIC.active?InterfaceColorProfile.bgColor:InterfaceColorProfile.inactiveColor);
 			intCanvas.fillRect(b.x-b.width/2, b.y-b.height/2, b.width, b.height);
 			
 			intCanvas.setColor(InterfaceColorProfile.fgColor);

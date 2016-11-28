@@ -14,6 +14,7 @@ import controller.map.Hex;
 import controller.map.Table;
 import controller.map.Vertex;
 import controller.player.Building;
+import controller.player.City;
 import controller.player.Settlement;
 import ux.ImageRenderer;
 import ux.ui.InterfaceColorProfile;
@@ -46,15 +47,25 @@ public class BoardVertexRenderer extends ImageRenderer {
 	private void paintVertices() {
 
 		for (Entry<Vertex,Point> v : vertexMap.entrySet()) {
-			// TODO rendering buildings and roads			
 			
+			Point2D transformedPoint=new Point();
+			hexRenderer.boardTransformation.transform(v.getValue(), transformedPoint);
 			
-			if (/*board.isBuildPossibleAt(new Settlement(), v.getValue())*/true) {
+			Building detectedBuilding=v.getKey().getBuilding();
+			if (detectedBuilding!=null) {
+				vertexCanvas.setColor(InterfaceColorProfile.vertexColor);
+				if (detectedBuilding instanceof Settlement) {
+					vertexCanvas.fillOval((int)transformedPoint.getX()-7, (int)transformedPoint.getY()-7, 10, 10);
+				}
+				else if (detectedBuilding instanceof City) {
+					vertexCanvas.fillOval((int)transformedPoint.getX()-14, (int)transformedPoint.getY()-14, 20, 20);
+				}
+					
+			}
+			if (/*board.isBuildPossibleAt(new Settlement(), v.getValue())*/false) {
 				if (selectedVertex!=null && v.getKey().equals(selectedVertex))
 					vertexCanvas.setColor(InterfaceColorProfile.vertexColor);
 				else vertexCanvas.setColor(InterfaceColorProfile.selectedColor);
-				Point2D transformedPoint=new Point();
-					hexRenderer.boardTransformation.transform(v.getValue(), transformedPoint);
 				vertexCanvas.fillOval((int)transformedPoint.getX()-4, (int)transformedPoint.getY()-4, 5, 5);
 			}
 		}

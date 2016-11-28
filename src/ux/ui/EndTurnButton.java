@@ -12,6 +12,7 @@ public class EndTurnButton extends Button {
 	public void press() {
 		uiController.active=false;
 		this.setSelected(false);
+		uiController.firstturnactive=false;
 	}
 
 }

@@ -109,7 +109,7 @@ public class Renderer {
 			}
 			
 			// Player activity check
-			if (!currUIC.active) return;
+			if (!currUIC.active && !currUIC.firstturnactive) return;
 			
 			
 			// Selecting interface elements
