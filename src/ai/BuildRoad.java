@@ -45,9 +45,7 @@ public class BuildRoad {
 	}
 	
 	/**
-	 * Determines the value of the best road the AI can build. The refresh
-	 * function should be called before if the table have been changed since
-	 * last call, or if no refresh function was called before.
+	 * Determines the value of the best road the AI can build.
 	 * @return - the value
 	 * @author Gergely Olah
 	 */
@@ -57,9 +55,7 @@ public class BuildRoad {
 	}
 	
 	/**
-	 * Determines a node to build the best road from. The refresh function
-	 * should be called before if the table have been changed since last
-	 * call, or if no refresh function was called before.
+	 * Determines a node to build the best road from.
 	 * @return - the node to build the road from, null if can't build any
 	 * @author Gergely Olah
 	 */
@@ -69,9 +65,7 @@ public class BuildRoad {
 	}
 	
 	/**
-	 * Returns the best node to build a road to. The refresh function
-	 * should be called before if the table have been changed since last
-	 * call, or if no refresh function was called before.
+	 * Returns the best node to build a road to.
 	 * @return - the node to build the road to, null if can't build any
 	 * @author Gergely Olah
 	 */
@@ -127,7 +121,6 @@ public class BuildRoad {
 	 * @author Gergely Olah
 	 */
 	private Vertex fromWhereCanBuildRoad(Vertex nodeTo){
-		// TODO getPlayerRoads, getRoadsFromNode, needs some work
 		
 		// there is no point in building multiple roads to same node
 		for(Edge r : getPlayerRoads(this.aiPlayer)){
@@ -200,7 +193,6 @@ public class BuildRoad {
 	 * @author Gergely Olah
 	 */
 	private int calculatePlayerMaxRoadFromNode(Vertex fromNode, Player player, HashSet<Vertex> visitedNodes){
-		// TODO needs getRoadsFromNode(player) (as Edges), and Rode.getNodes() if getRoads..() returns with Road-s
 		
 		int dist, max = 0;
 	    visitedNodes.add(fromNode);
