@@ -9,6 +9,7 @@ import controller.map.Buildable;
 import controller.map.Hex;
 import controller.map.Table;
 import controller.map.TableElement;
+import controller.map.Vertex;
 import controller.player.devcards.DevCard;
 import controller.player.devcards.DevCardShop;
 import controller.player.devcards.KnightCard;
@@ -267,9 +268,42 @@ public class Player {
 		
 	}
 	
-	/*public boolean firstBuild(Buildable what, TableElement where) throws GameEndsException{
+	public boolean firstBuild(Buildable what, TableElement where) throws GameEndsException{
+		Resource w = Resource.Wool;
+		Resource o = Resource.Ore;
+		Resource g = Resource.Grain;
+		Resource l = Resource.Lumber;
+		Resource b = Resource.Brick;
+		boolean succesful = false;
 		
-	}*/
+		if(what == Buildable.Road){
+			Road u = availableRoads.remove(0);
+			succesful = where.getClass().equals(Road.class) && where.getBuilding() == null;
+			if(succesful){
+				where.setBuilding(u);
+				erectedBuildings.add(u);
+			}
+			else
+				availableRoads.add(u);
+		}
+		else if(what == Buildable.Settlement){
+			Settlement s = availableSettlements.remove(0);
+			succesful = where.getClass().equals(Vertex.class) && where.getBuilding() == null;
+			if(succesful){
+				where.setBuilding(s);
+				erectedBuildings.add(s);
+				this.incPoints(1);
+			}
+			else
+				availableSettlements.add(s);
+				
+		}
+		else if(what == Buildable.City){
+			succesful = false;
+		}
+		return succesful;
+	}
+	
 	/**
 	 * PLAYER ACTION
 	 * Builds a Building to a specific TableElement
@@ -318,7 +352,6 @@ public class Player {
 			}
 			Settlement s = availableSettlements.remove(0);
 			succesful = s.build(where);
-			erectedBuildings.add(s);
 			if(succesful){
 				erectedBuildings.add(s);
 				this.incPoints(1);
