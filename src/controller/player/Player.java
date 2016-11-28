@@ -402,6 +402,26 @@ public class Player {
 		}
 	}
 	
+	public boolean isFirstBuildPossible(Buildable what, TableElement where){
+		if(what == Buildable.Road){
+			Road r = availableRoads.get(0);
+			if(where.getBuilding() == null  && where.getClass().equals(Edge.class) && where.isFirstBuildPossible(r)){
+				return true;
+			}
+			return false;
+		}
+		else if(what == Buildable.Settlement){
+			Settlement s = availableSettlements.get(0);
+			if(where.getBuilding() == null && where.getClass().equals(Vertex.class) && where.isFirstBuildPossible(s)){
+				return true;
+			}
+			return false;
+		}
+		else if(what == Buildable.City){
+			return false;
+		}	
+		return false;
+	}
 	
 	public boolean firstBuild(Buildable what, TableElement where) throws GameEndsException{
 		boolean succesful = false;	
