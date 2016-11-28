@@ -54,6 +54,7 @@ public class Controller {
 		Renderer rend = new Renderer(HUMCONT, board, 1024, 768);
 		
 		for(int i = 0; i < pclist.size(); i++){
+			System.out.println("Hello from player " + i);
 			pclist.get(i).firstturn();
 		}
 		

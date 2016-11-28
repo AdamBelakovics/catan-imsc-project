@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import controller.player.Building;
 import controller.player.Road;
+import controller.player.Settlement;
 
 public class Edge implements TableElement {
 	Vertex first; 
@@ -63,5 +64,14 @@ public class Edge implements TableElement {
 	@Override
 	public Building getBuilding() {
 		return road;
+	}
+
+	@Override
+	public boolean isFirstBuildPossible(Building r) {
+		for(Vertex v : getEnds())
+			if(v.getBuilding() != null)
+				if(getBuilding().getClass().equals(Settlement.class) && getBuilding().getOwner().equals(r.getOwner()))
+					return true;
+		return false;
 	}
 }
