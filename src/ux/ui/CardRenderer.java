@@ -67,6 +67,9 @@ public class CardRenderer extends ImageRenderer {
 								InterfaceColorProfile.bgColor:
 								InterfaceColorProfile.inactiveColor);
 			cardCanvas.fill(dc.getValue());
+			String cardText;
+			
+			StringPainter.printString(cardCanvas, "C", dc.getValue().x+dc.getValue().width/2, dc.getValue().y+dc.getValue().height/2);
 
 			cardCanvas.setColor(InterfaceColorProfile.fgColor);
 			cardCanvas.draw(dc.getValue());			
@@ -81,6 +84,10 @@ public class CardRenderer extends ImageRenderer {
 			cardCanvas.setColor(InterfaceColorProfile.fgColor);
 			cardCanvas.draw(udc.getValue());			
 				}
+	}
+	
+	private void paintOpponentCards() {
+		// TODO
 	}
 	
 	public DevCard getDevCardUnderCursor(int x, int y) {
