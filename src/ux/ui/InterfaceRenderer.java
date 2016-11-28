@@ -8,9 +8,10 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import controller.map.Buildable;
 import controller.map.Hex;
 import controller.player.Building;
-import ux.BuildingEnum;
+import ux.FirstTurnState;
 import ux.ImageRenderer;
 
 public class InterfaceRenderer extends ImageRenderer {
@@ -31,9 +32,9 @@ public class InterfaceRenderer extends ImageRenderer {
 	
 	private void generateButtons() {
 		buttonsList=new ArrayList();
-		buttonsList.add(new BuildButton("Settlement",BuildingEnum.Settlement, width*31/40, height*15/20, width*3/20-20, 30));
-		buttonsList.add(new BuildButton("City", BuildingEnum.City, width*31/40, height*16/20, width*3/20-20, 30));
-		buttonsList.add(new BuildButton("Road",BuildingEnum.Road, width*31/40, height*17/20, width*3/20-20, 30));
+		buttonsList.add(new BuildButton("Settlement",Buildable.Settlement, width*31/40, height*15/20, width*3/20-20, 30));
+		buttonsList.add(new BuildButton("City", Buildable.City, width*31/40, height*16/20, width*3/20-20, 30));
+		buttonsList.add(new BuildButton("Road",Buildable.Road, width*31/40, height*17/20, width*3/20-20, 30));
 		
 		buttonsList.add(new TradeButton("Trade", width*37/40, height*61/80, width*3/20-20, 40));
 		buttonsList.add(new TradeButton("Dev Card", width*37/40, height*67/80, width*3/20-20, 40));
@@ -55,7 +56,10 @@ public class InterfaceRenderer extends ImageRenderer {
 		
 		for (Button b : buttonsList) {
 			if (!currUIC.active) intCanvas.setColor(InterfaceColorProfile.inactiveColor);
-			if (currUIC.firstturnactive &&(b.text.equals("Settlement") || b.text.equals("Road") || b.text.equals("End turn")))
+			if (currUIC.firstturnactive && 
+					((b.text.equals("Settlement") && currUIC.state==FirstTurnState.STARTED) || 
+					((b.text.equals("Road") && currUIC.state==FirstTurnState.CITYBUILT))|| 
+					b.text.equals("End turn")))
 				intCanvas.setColor(InterfaceColorProfile.bgColor);
 			if (currUIC.active) intCanvas.setColor(InterfaceColorProfile.bgColor);
 			

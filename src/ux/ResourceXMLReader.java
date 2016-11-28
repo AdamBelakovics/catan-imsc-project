@@ -8,6 +8,7 @@ import javax.xml.parsers.*;
 
 import org.w3c.dom.*;
 
+import controller.map.Buildable;
 import controller.player.Building;
 import controller.player.Resource;
 
@@ -43,13 +44,13 @@ public class ResourceXMLReader {
 	 * @param building the required building
 	 * @return hashmap of the resource costs
 	 */
-	public static HashMap<Resource, Integer> readResourceXML(String path, BuildingEnum building) {
+	public static HashMap<Resource, Integer> readResourceXML(String path, Buildable building) {
 		HashMap<Resource,Integer> resourceMap=new HashMap();
 		try {
 			Document resourceXML=DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new File(path));
 			NodeList nodes=resourceXML.getDocumentElement().getElementsByTagName("Building");
 			for (int i=0;i<nodes.getLength();i++) {
-				if (BuildingEnum.valueOf(nodes.item(i).getAttributes().getNamedItem("b").getNodeValue()).equals(building)) {
+				if (Buildable.valueOf(nodes.item(i).getAttributes().getNamedItem("b").getNodeValue()).equals(building)) {
 					NodeList resourceNodes=nodes.item(i).getChildNodes();
 					for (int j=0;j<resourceNodes.getLength();j++) {
 						 if (resourceNodes.item(j) instanceof Element == false)

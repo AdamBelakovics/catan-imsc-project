@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import controller.map.Buildable;
 import controller.map.Hex;
 import controller.map.Table;
 import controller.map.Vertex;
@@ -18,23 +19,29 @@ import controller.player.City;
 import controller.player.Player;
 import controller.player.Settlement;
 import ux.ImageRenderer;
+import ux.Renderer;
 import ux.ui.InterfaceColorProfile;
+import ux.ui.UIController;
 
 public class BoardVertexRenderer extends ImageRenderer {
 
-	private BoardHexRenderer hexRenderer;
+	private UIController uiController;
+	private BoardHexRenderer hexRenderer; 
 	HashMap<Vertex,Point> vertexMap=new HashMap();
 	private Vertex selectedVertex=null;
 	private Graphics2D vertexCanvas;
 	private Table board;
 	
+
+	public Buildable currentlyBuilding=null;
+	
 	private final int eps=10;
 
-	BoardVertexRenderer(Table _board, BoardHexRenderer _hexRenderer, int _width, int _height) {
+	BoardVertexRenderer(Table _board, BoardHexRenderer _hexRenderer, UIController _currUIC, int _width, int _height) {
 		super(_width, _height);
 		board=_board;
+		uiController=_currUIC;
 		hexRenderer=_hexRenderer;
-		
 		generateVertices();
 	}
 
@@ -61,9 +68,7 @@ public class BoardVertexRenderer extends ImageRenderer {
 				else if (detectedBuilding instanceof City) {
 					vertexCanvas.fillOval((int)transformedPoint.getX()-14, (int)transformedPoint.getY()-14, 20, 20);
 				}
-					
-			}
-			if (board.isBuildPossibleAt(new Settlement(new Player(null, eps, board)), v.getKey())) {
+			} else if (selectedVertex!=null && uiController.controlledPlayer.isBuildPossible(currentlyBuilding, selectedVertex)) {
 				if (selectedVertex!=null && v.getKey().equals(selectedVertex))
 					vertexCanvas.setColor(InterfaceColorProfile.vertexColor);
 				else vertexCanvas.setColor(InterfaceColorProfile.selectedColor);
