@@ -112,7 +112,7 @@ public class BuildVillage {
 		ArrayList<Edge> result = new ArrayList<Edge>();
 		Road tmpRoad = null;
 		for(Edge e : map.getEdges()){
-			tmpRoad = e.getRoad();
+			tmpRoad = (Road)e.getBuilding();
 			if(tmpRoad != null && tmpRoad.getOwner().equals(p)){
 				if(e.getEnds().contains(e))
 					result.add(e);

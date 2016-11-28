@@ -135,7 +135,7 @@ public class BuildRoad {
 				
 				// checks all players except ai, as we know we have no road here
 				for(Edge e : map.getEdges()){
-					if(e.getRoad() != null)
+					if(e.getBuilding() != null)
 						isRoadBuilt = true;
 				}
 				// if no road is blocking, we can build
@@ -285,7 +285,7 @@ public class BuildRoad {
 		ArrayList<Edge> result = new ArrayList<Edge>();
 		Road tmpRoad = null;
 		for(Edge e : map.getEdges()){
-			tmpRoad = e.getRoad();
+			tmpRoad = (Road)e.getBuilding();
 			if(tmpRoad != null && tmpRoad.getOwner().equals(p)){
 				result.add(e);
 			}
@@ -304,7 +304,7 @@ public class BuildRoad {
 		ArrayList<Edge> result = new ArrayList<Edge>();
 		Road tmpRoad = null;
 		for(Edge e : map.getEdges()){
-			tmpRoad = e.getRoad();
+			tmpRoad = (Road)e.getBuilding();
 			if(tmpRoad != null && tmpRoad.getOwner().equals(p)){
 				if(e.getEnds().contains(e))
 					result.add(e);
@@ -323,7 +323,7 @@ public class BuildRoad {
 		int cnt = 0;
 		Building tmpRoad;
 		for(Edge e : map.getEdges()){
-			tmpRoad = e.getRoad();
+			tmpRoad = (Road)e.getBuilding();
 			if(tmpRoad != null && tmpRoad.getOwner().equals(aiPlayer)){
 				cnt++;
 			}
