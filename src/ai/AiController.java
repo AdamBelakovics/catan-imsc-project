@@ -33,6 +33,8 @@ public class AiController extends PlayerController {
 		me = p;
 		players.addAll(otherPlayers);
 		robberSum = 0;
+		for(Resource r:Resource.values())
+			resources.put(r,new Material(map,me,r));
 		// these should be here, so they don't initialize with null pointers
 		buildCity = new BuildCity(t, this, p, otherPlayers);
 		buildVillage = new BuildVillage(t, this, p, otherPlayers);
@@ -590,12 +592,7 @@ public class AiController extends PlayerController {
 	 * @author Hollo-Szabo Akos
 	 */
 	public void turn() throws GameEndsException{
-		try {
-			me.rollTheDice();
-		} catch (OutOfRangeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		me.rollTheDice();
 		AllNeededDataForTurn datas = new AllNeededDataForTurn();
 		boolean canBuild = true;
 		boolean canTryAgain = true;
@@ -687,8 +684,11 @@ public class AiController extends PlayerController {
 	}
 	
 	public double territoryPersonalValue(Hex h){
-		ArrayList<Hex> valid = map.
-		return Material.frequencyLUT(h.getProsperity()) * resources.get(h.getResource()).personalValue(); 
+		ArrayList<Hex> valid = map.getValidFields();
+		if(valid.contains(h)){
+		return Material.frequencyLUT(h.getProsperity()) * resources.get(h.getResource()).personalValue();
+		}
+		return 0;
 	}
 
 }
