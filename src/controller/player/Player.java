@@ -154,7 +154,7 @@ public class Player {
 	 * @param int value 
 	 * @throws OutOfRangeException if value is negative OR with this value, player's stuff goes below 0
 	 */
-	protected final void decResourceAmount(Resource r, int value) throws OutOfRangeException{
+	public final void decResourceAmount(Resource r, int value) throws OutOfRangeException{
 		if(value < 0) throw new OutOfRangeException("Value can't be negative.");
 		if((resourcePool.get(r)-value) < 0) throw new OutOfRangeException("It can not be much reduced");
 		resourcePool.replace(r, (resourcePool.get(r)-value));		
