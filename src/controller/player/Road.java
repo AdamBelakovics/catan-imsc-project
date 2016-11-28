@@ -15,6 +15,7 @@ public class Road extends Building {
 	public boolean build(TableElement t) {
 		if(t.getBuilding() == null && t.isBuildPossible(this) && t.getClass().equals(Edge.class)){
 			t.setBuilding(this);
+			return true;
 		}
 		return false;
 	}
