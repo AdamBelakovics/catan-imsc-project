@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import controller.Game;
 import controller.map.Buildable;
 import controller.map.Edge;
 import controller.map.Hex;
@@ -334,7 +335,7 @@ public class Player {
 	 * If 7 is rolled calls the handleThief method and calls
 	 * @throws OutOfRangeException 
 	 */
-	public void rollTheDice() throws OutOfRangeException {
+	public void rollTheDice() {
 		Resource w = Resource.Wool;
 		Resource o = Resource.Ore;
 		Resource g = Resource.Grain;
@@ -350,7 +351,12 @@ public class Player {
 					while(cnt!=0){
 						Resource randRes = Resource.values()[(int) Math.random()*5];
 						if(a.getResourceAmount(randRes)>0){
-						a.decResourceAmount(randRes, 1);
+						try {
+							a.decResourceAmount(randRes, 1);
+						} catch (OutOfRangeException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 						cnt--;
 					}
 				}		
@@ -371,10 +377,12 @@ public class Player {
 	 */
 	public void handleThief(){
 		for(int i = 0; i < table.getFields().size(); i++){
-			table.getFields().get(i).setHasThief(false);
+			if(table.getFields().get(i).hasThief() == true){
+				table.getFields().get(i).setHasThief(false);
+			}
 		}
 		
-		Hex hex = table.getFields().get((int)Math.random()*table.getFields().size());
+		Hex hex = table.getValidFields().get((int)Math.random()*table.getFields().size());
 		hex.setHasThief(true);
 		
 		Resource Res = hex.getResource();
