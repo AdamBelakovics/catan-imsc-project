@@ -1,9 +1,6 @@
 #TODO
 ##Player ACTIONS in class Player
-###-rollTheDice:
-    -KÉSZ
-###-handleThief:
-    -KÉSZ
+
 ###-build
     -ezt most csinálom
 ###-playDevCard
