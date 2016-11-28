@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import controller.map.Buildable;
 import controller.map.Hex;
 import controller.map.Table;
 import controller.map.TableElement;
@@ -28,7 +29,9 @@ public class Player {
 	HashMap<Resource, Integer> resourcePool = new HashMap<Resource, Integer>();
 	ArrayList<DevCard> devCards = new ArrayList<DevCard>();
 	ArrayList<DevCard> playedDevCards = new ArrayList<DevCard>();
-	ArrayList<Building> availableBuildings = new ArrayList<Building>();
+	ArrayList<Road> availableRoads = new ArrayList<Road>();
+	ArrayList<Settlement> availableSettlements = new ArrayList<Settlement>();
+	ArrayList<City> availableCities = new ArrayList<City>();
 	ArrayList<Building> erectedBuildings = new ArrayList<Building>();
 	ArrayList<Player> otherPlayers = new ArrayList<Player>();
 	
@@ -60,15 +63,15 @@ public class Player {
 		}
 		
 		for(int i = 0; i < 15; i++){
-			availableBuildings.add(new Road(this));
+			availableRoads.add(new Road(this));
 		}
 		
 		for(int i = 0; i < 5; i++){
-			availableBuildings.add(new Settlement(this));
+			availableSettlements.add(new Settlement(this));
 		}
 		
 		for(int i = 0; i < 4; i++){
-			availableBuildings.add(new City(this));
+			availableCities.add(new City(this));
 		}
 		
 		devCards = null;
@@ -264,6 +267,9 @@ public class Player {
 		
 	}
 	
+	/*public boolean firstBuild(Buildable what, TableElement where) throws GameEndsException{
+		
+	}*/
 	/**
 	 * PLAYER ACTION
 	 * Builds a Building to a specific TableElement
@@ -271,30 +277,38 @@ public class Player {
 	 * @param where Reference to the TableElement
 	 * @throws GameEndsException Building Settlement or City increases Player's points.
 	 */
-	public void build(Building what, TableElement where) throws GameEndsException{
+	public boolean build(Buildable what, TableElement where) throws GameEndsException{
 		Resource w = Resource.Wool;
 		Resource o = Resource.Ore;
 		Resource g = Resource.Grain;
 		Resource l = Resource.Lumber;
 		Resource b = Resource.Brick;
+		boolean succesful = false;
 		
-		if(what.getClass().equals(Road.class)){
+		if(what == Buildable.Road){
 			try {
 				decResourceAmount(b, 1);
 				decResourceAmount(l, 1);
 			} catch (OutOfRangeException e1) {
 				e1.printStackTrace();
 			}
-			availableBuildings.remove(what);
-			
-			erectedBuildings.add(what);
-															//TODO Player can take it's new Road to map
-															//Then TODO check if with this new Road have 5 continuous road segments (or longer then the previous longest road owner's)
-			
+			Road u = availableRoads.remove(0);
+			succesful = u.build(where);
+			if(succesful)
+				erectedBuildings.add(u);
+			else{
+				availableRoads.add(u);
+				try {
+					incResourceAmount(b, 1);
+					incResourceAmount(l, 1);
+				} catch (OutOfRangeException e) {
+					e.printStackTrace();
+				}
+			}
 		}
-		if(what.getClass().equals(Settlement.class)){
+		else if(what == Buildable.Settlement){
 			
-			try {											//TODO maybe here check is there any place to built Settlement at all
+			try {										
 				decResourceAmount(b, 1);
 				decResourceAmount(l, 1);
 				decResourceAmount(g, 1);
@@ -302,26 +316,51 @@ public class Player {
 			} catch (OutOfRangeException e1) {
 				e1.printStackTrace();
 			}
-			availableBuildings.remove(what);
-			
-			//HERE											TODO Player can take it's new Settlement to map
-			erectedBuildings.add(what);
-			this.incPoints(1);
+			Settlement s = availableSettlements.remove(0);
+			succesful = s.build(where);
+			erectedBuildings.add(s);
+			if(succesful){
+				erectedBuildings.add(s);
+				this.incPoints(1);
+			}
+			else{
+				availableSettlements.add(s);
+				try {										
+					incResourceAmount(b, 1);
+					incResourceAmount(l, 1);
+					incResourceAmount(g, 1);
+					incResourceAmount(w, 1);
+				} catch (OutOfRangeException e1) {
+					e1.printStackTrace();
+				}
+			}
 		}
-		if(what.getClass().equals(City.class)){
+		else if(what == Buildable.City){
 			try {
 				decResourceAmount(g, 2);
 				decResourceAmount(o, 3);
 			} catch (OutOfRangeException e1) {
 				e1.printStackTrace();
 			}
-			availableBuildings.remove(what);
-			
-			//HERE											TODO Player can take it's new City to a Settlement's place
-			erectedBuildings.add(what);
-			this.incPoints(1);		//Inc 1, cause the Settlement became City (-1+2=+1)
+			City c = availableCities.remove(0);
+			succesful = c.build(where);
+			if(succesful){
+				availableSettlements.add((Settlement) where.getBuilding());
+				erectedBuildings.remove(where.getBuilding());
+				erectedBuildings.add(c);
+				this.incPoints(1);
+			}
+			else{
+				availableCities.add(c);
+				try {										
+					incResourceAmount(g, 2);
+					incResourceAmount(o, 3);
+				} catch (OutOfRangeException e1) {
+					e1.printStackTrace();
+				}
+			}
 		}
-		
+		return succesful;
 	}
 	
 	/**
