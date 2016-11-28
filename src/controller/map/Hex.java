@@ -11,7 +11,7 @@ import controller.player.Building;
 import controller.player.Resource;
 
 
-public class Hex implements Comparable {
+public class Hex implements TableElement, Comparable {
 	public HashMap<String, Vertex> vertices = new HashMap<String, Vertex>();
 	public ArrayList<Hex> neighbourHexes = new ArrayList<Hex>();
 	public ArrayList<Vertex> neighbourVertices = new ArrayList<Vertex>();
@@ -51,6 +51,11 @@ public class Hex implements Comparable {
 	}
 
 	@Override
+	public boolean isBuildPossible(Building what) {
+		return false;
+	}
+
+	@Override
 	public int compareTo(Object o) {
 		if(((Hex) o).getID() == this.getID())
 			return 0;
@@ -71,6 +76,10 @@ public class Hex implements Comparable {
 	
 	public void setResource(Resource r){
 		res = r;
+	}
+	
+	public void setProsperity(int i){
+		prosperity = i;
 	}
 
 }
