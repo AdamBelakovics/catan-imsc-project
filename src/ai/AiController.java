@@ -26,7 +26,7 @@ public class AiController extends PlayerController {
 	 * @param t - the table
 	 * @param p - the player's datas and control possibilities
 	 * @param otherPlayers - the ather players data's
-	 * @author Holló-Szabó Ákos
+	 * @author @author Hollo-Szabo Akos
 	 */
 	public AiController(Table t, Player p, ArrayList<Player> otherPlayers) {
 		map = t;
@@ -42,7 +42,7 @@ public class AiController extends PlayerController {
 
 	/**
 	 * getKnightDiff. Calculates:How money KnightCard do you need to get the 2 pints?
-	 * @author Holló-Szabó Ákos
+	 * @author Hollo-Szabo Akos
 	 */
 	public int getKnightDiff() {
 		Map<Player, Integer> amountoKnightsperPlayer = new HashMap<Player, Integer>();
@@ -63,7 +63,7 @@ public class AiController extends PlayerController {
 	/**
 	 * isNodeBuildable. Calculates:Can we build there a Village?
 	 * @param vIn - The node for check.
-	 * @author Holló-Szabó Ákos
+	 * @author @author Hollo-Szabo Akos
 	 */
 	public Boolean isNodeBuildable(Vertex vIn) {
 		if (!vIn.isBuildPossible(new Settlement(me)))
@@ -90,7 +90,7 @@ public class AiController extends PlayerController {
 
 		edges = vIn.getNeighbourEdges();
 		for (Edge e : edges)
-			if (e.getRoad() != null && e.getRoad().getOwner().equals(me))
+			if (e.getBuilding() != null && e.getBuilding().getOwner().equals(me))
 				return true;
 
 		return false;
@@ -98,7 +98,7 @@ public class AiController extends PlayerController {
 
 	/**
 	 * isRobbed. Calculates:Is the robber on a field next to one of our town?
-	 * @author Holló-Szabó Ákos
+	 * @author Hollo-Szabo Akos
 	 */
 	public Boolean isRobbed() {
 		List<Vertex> all = new ArrayList<Vertex>();
@@ -119,7 +119,7 @@ public class AiController extends PlayerController {
 	/**
 	 * nodePersonalDistance. Calculates:How far is an exact node?
 	 * @param vIn - The node for check.
-	 * @author Holló-Szabó Ákos
+	 * @author Hollo-Szabo Akos
 	 */
 	public int nodePersonalDistance(Vertex vIn) {
 		List<Edge> edges = map.getEdges();
@@ -128,7 +128,7 @@ public class AiController extends PlayerController {
 		List<Vertex> VertexsNeighbours2 = new ArrayList<Vertex>();
 
 		for (Edge e : edges)
-			if (!e.getRoad().equals(null) && e.getRoad().getOwner().equals(me))
+			if (!e.getBuilding().equals(null) && e.getBuilding().getOwner().equals(me))
 				myVertexs.addAll(e.getEnds());
 		if (myVertexs.contains(vIn))
 			return 0;
@@ -152,7 +152,7 @@ public class AiController extends PlayerController {
 
 	/**
 	 * getResources. Get:the map of Metirials
-	 * @author Holló-Szabó Ákos
+	 * @author Hollo-Szabo Akos
 	 */
 	public Map<Resource, Material> getResources() {
 		return resources;
@@ -163,7 +163,7 @@ public class AiController extends PlayerController {
 	 * @param donor - The donor.
 	 * @param offer - Map of the offered resources.
 	 * @param demand - The demand in change.
-	 * @author Holló-Szabó Ákos
+	 * @author Hollo-Szabo Akos
 	 */
 	public boolean query(Player donor, Map<Resource, Integer> offer, Map<Resource, Integer> demand) {
 		double demValue=0;
@@ -182,14 +182,14 @@ public class AiController extends PlayerController {
 
 	/**
 	 * AllNeededDataForTurn. Class:To assist the complicate turn()
-	 * @author Holló-Szabó Ákos
+	 * @author Hollo-Szabo Akos
 	 */
 	private class AllNeededDataForTurn {
 		public Map<Resource, Integer> seged = new HashMap<Resource, Integer>();
 
 		/**
 		 * Value1. Class:To make simple the use of setPossibilities
-		 * @author Holló-Szabó Ákos
+		 * @author Hollo-Szabo Akos
 		 */
 		private class Value1 {
 			public Map<Resource, Integer> hand;
@@ -229,6 +229,7 @@ public class AiController extends PlayerController {
 
 		/**
 		 * Constructor. Initialize main datarelations
+		 * @author Hollo-Szabo Akos
 		 */
 		public AllNeededDataForTurn() {
 			for (Resource r : Resource.values()) {
@@ -244,7 +245,7 @@ public class AiController extends PlayerController {
 			seged.put(Resource.Ore, 0);
 			seged.put(Resource.Grain, 1);
 			seged.put(Resource.Wool, 1);
-			resourceNeed.put(Buildable.Village, seged);
+			resourceNeed.put(Buildable.Settlement, seged);
 			seged = new HashMap<Resource, Integer>();
 			seged.put(Resource.Brick, 0);
 			seged.put(Resource.Lumber, 0);
@@ -270,7 +271,7 @@ public class AiController extends PlayerController {
 		
 		/**
 		 * Refresh. Resets main datarelations
-		 * @author Holló-Szabó Ákos
+		 * @author Hollo-Szabo Akos
 		 */
 		public void Refresh() {
 			for (Resource r : Resource.values()) {
@@ -289,7 +290,7 @@ public class AiController extends PlayerController {
 		
 		/**
 		 * setPossibilities. Calculates:What Hand can we reach and how?
-		 * @author Holló-Szabó Ákos
+		 * @author Hollo-Szabo Akos
 		 */
 		public void setPossibilities() {
 			Value1 data = new Value1(rAmount, new ArrayList<List<Resource>>());
@@ -308,7 +309,7 @@ public class AiController extends PlayerController {
 		
 		/**
 		 * setPossibilitiesRec. Assists: setPossibilities
-		 * @author Holló-Szabó Ákos
+		 * @author Hollo-Szabo Akos
 		 */
 		private void setPossibilitiesRec(Value1 data, Resource forChange, Resource getAble) {
 			if (data.hand.get(forChange) < rLut.get(forChange))
@@ -339,12 +340,12 @@ public class AiController extends PlayerController {
 		
 		/**
 		 * setBList. Calculates: What is the order of buildinges by value?
-		 * @author Holló-Szabó Ákos
+		 * @author Hollo-Szabo Akos
 		 */
 		public void setBList() {
 
 			values.add(buildVillage.getBuildValue());
-			options.put(Buildable.Village, values.get(0));
+			options.put(Buildable.Settlement, values.get(0));
 			values.add(buildCity.getBuildValue());
 			options.put(Buildable.City, values.get(1));
 			values.add(buildRoad.getBuildValue());
@@ -366,7 +367,7 @@ public class AiController extends PlayerController {
 		
 		/**
 		 * setToDoList. Calculates: What could we build from an factual hand?
-		 * @author Holló-Szabó Ákos
+		 * @author Hollo-Szabo Akos
 		 */
 		public void setToDoList() {
 			int i = 2;
@@ -408,7 +409,7 @@ public class AiController extends PlayerController {
 		
 		/**
 		 * findMaxToDoList. Calculates: Which hand is the most advantageous?
-		 * @author Holló-Szabó Ákos
+		 * @author Hollo-Szabo Akos
 		 */
 		public boolean findMaxToDoList() {
 			boolean found = false;
@@ -429,7 +430,7 @@ public class AiController extends PlayerController {
 		
 		/**
 		 * inChange. Calculates,does: What change do we have to do by the bank to get the most advantageous hand?
-		 * @author Holló-Szabó Ákos
+		 * @author Hollo-Szabo Akos
 		 */
 		public void inChange() {
 			Value1 job = possibilities.get(buildPlanMax);
@@ -448,10 +449,9 @@ public class AiController extends PlayerController {
 		
 		/**
 		 * letsBuild. Calculates,does: What should we build?
-		 * @author Holló-Szabó Ákos
+		 * @author Hollo-Szabo Akos
 		 */
-		public boolean letsBuild() {
-			Building toBuild;
+		public boolean letsBuild() throws GameEndsException{
 			TableElement t;
 			Vertex tf;
 			Vertex tt;
@@ -461,38 +461,29 @@ public class AiController extends PlayerController {
 			boolean outOfBuildable = true;
 
 				switch (buildPlan.get(0)) {
-				case Village:
-					toBuild = new Settlement(me);
+				case Settlement:
 					t = buildVillage.getNode();
-					try {
-						me.build(toBuild, t);
+						me.build(Buildable.Settlement, t);
 						sourceOfNewNumbers=((Vertex)t).getNeighbourHexes();
 						for(Hex h:sourceOfNewNumbers)
 							if(!numbers.contains(h.getProsperity()))
 								numbers.add(h.getProsperity());
-					} catch (GameEndsException e1) {
-					}
 					break;
 				case City:
-					toBuild = new City(me);
 					t = buildCity.getNode();
-					try {
-						me.build(toBuild, t);
+						me.build(Buildable.City, t);
 						sourceOfNewNumbers=((Vertex)t).getNeighbourHexes();
 						for(Hex h:sourceOfNewNumbers)
 							if(!numbers.contains(h.getProsperity()))
 								numbers.add(h.getProsperity());
-					} catch (GameEndsException e1) {
-					}
 					break;
 				case Development:
 					try {
 						me.buyDevCard();
-					} catch (NotEnoughResourcesException e) {
+					} catch (NotEnoughResourcesException e1) {
 					}
 					break;
 				case Road:
-					toBuild = new Road(me);
 					tf = buildRoad.getNodeFrom();
 					tt = buildRoad.getNodeTo();
 					t=roadWhere.get(0);
@@ -501,10 +492,7 @@ public class AiController extends PlayerController {
 						if(roadWhereSeged.contains(tt)&&roadWhereSeged.contains(tf))
 							t=e;
 					}
-					try {
-						me.build(toBuild, t);
-					} catch (GameEndsException e1) {
-					}
+						me.build(Buildable.Road, t);
 					break;
 				case None:
 					outOfBuildable = false;
@@ -515,7 +503,7 @@ public class AiController extends PlayerController {
 		
 		/**
 		 * trade. Calculates,does: What should we trade to get another hand to build again?
-		 * @author Holló-Szabó Ákos
+		 * @author Hollo-Szabo Akos
 		 */
 		public boolean trade() {
 
@@ -599,9 +587,9 @@ public class AiController extends PlayerController {
 	
 	/**
 	 * turn. The main calculator of future planes, and the center of control.
-	 * @author Holló-Szabó Ákos
+	 * @author Hollo-Szabo Akos
 	 */
-	public void turn() {
+	public void turn() throws GameEndsException{
 		me.rollTheDice();
 		AllNeededDataForTurn datas = new AllNeededDataForTurn();
 		boolean canBuild = true;
@@ -618,6 +606,67 @@ public class AiController extends PlayerController {
 			if (canBuild == false)
 				canTryAgain = datas.trade();
 		}
+	}
+	
+	/**
+	 * firstturn. The main calculator of the first moves.
+	 * @author Hollo-Szabo Akos
+	 */
+	@Override
+	public void firstturn(){
+		try {
+		List<Double> Values=new ArrayList<Double>();
+		List<Vertex> SettlementPlace=map.getNodes();
+		Vertex placeofSettlement=new Vertex(null);
+		List<Hex> sourceOfNewNumbers=new ArrayList<Hex>();
+		List<Edge> roadPlaces=new ArrayList<Edge>();
+		List<Vertex> settlementPlaceNN=new ArrayList<Vertex>();
+		List<Edge> edgesinNeighbour=new ArrayList<Edge>();
+		
+		for(Vertex v:SettlementPlace)
+			Values.add(nodePersonalValue(v));
+		double max=-1;
+		int index=-1;
+		for(double d:Values)
+		if(d>max){
+			max=d;
+			index=Values.indexOf(d);
+			placeofSettlement=SettlementPlace.get(index);
+		}
+		
+			me.build(Buildable.Settlement, placeofSettlement);
+			sourceOfNewNumbers=placeofSettlement.getNeighbourHexes();
+			for(Hex h:sourceOfNewNumbers)
+				if(!numbers.contains(h.getProsperity()))
+					numbers.add(h.getProsperity());
+			
+			SettlementPlace=placeofSettlement.getNeighbours();
+			for(Vertex v:SettlementPlace)
+				settlementPlaceNN.addAll(v.getNeighbours());
+			for(int i=0;i<6;i++)
+				settlementPlaceNN.remove(placeofSettlement);
+			Values=new ArrayList<Double>();
+			
+			for(Vertex v:settlementPlaceNN)
+				Values.add(nodePersonalValue(v));
+			max=-1;
+			index=-1;
+			for(double d:Values)
+			if(d>max){
+				max=d;
+				index=Values.indexOf(d);
+			}
+			
+			roadPlaces=placeofSettlement.getNeighbourEdges();
+			edgesinNeighbour=settlementPlaceNN.get(index).getNeighbourEdges();
+			for(Edge e1:roadPlaces)
+				for(Edge e2:edgesinNeighbour)
+					if(e1.getEnds().contains(placeofSettlement)&&(e1.getEnds().contains(e2.getEnds().get(0))||e1.getEnds().contains(e2.getEnds().get(1))))
+						me.build(Buildable.Road, e1);
+			} catch (GameEndsException e) {
+		}
+		
+		
 	}
 	
 	public double nodePersonalValue(Vertex v){
