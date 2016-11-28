@@ -3,12 +3,15 @@ package controller.player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import controller.map.Buildable;
+import controller.map.Edge;
 import controller.map.Hex;
 import controller.map.Table;
 import controller.map.TableElement;
+import controller.map.Vertex;
 import controller.player.devcards.DevCard;
 import controller.player.devcards.DevCardShop;
 import controller.player.devcards.KnightCard;
@@ -239,6 +242,82 @@ public class Player {
 	
 	public boolean equals(Player p){
 		return this.getId() == p.getId();
+	}
+	
+	
+	
+	/**
+	 * Calculates the players maximum length road.
+	 * @return - length of the maximum road
+	 * @author Gergely Olah
+	 */
+	public int calculateMaxRoad(){
+		int max = 0;
+		HashSet<Vertex> visitedNodes = new HashSet<Vertex>();
+		for(Vertex n : table.getNodes()){
+			visitedNodes.clear();
+			int currentMax = calculateMaxRoadFromNode(n, visitedNodes);
+			if(currentMax > max){
+				max = currentMax;
+			}
+		}
+		return max;
+	}
+	
+	/**
+	 * Recursive function, calculates longest road of the player from
+	 * given node.
+	 * @param fromNode - start of the road
+	 * @param visitedNodes - the Nodes we visited
+	 * @return - the length of the longest road
+	 * @author Gergely Olah
+	 */
+	public int calculateMaxRoadFromNode(Vertex fromNode, HashSet<Vertex> visitedNodes){
+		
+		int dist, max = 0;
+	    visitedNodes.add(fromNode);
+	    for(Edge road : getRoadsFromNode(fromNode)){
+	    	Vertex n1, n2;
+	        ArrayList<Vertex> roadNodes = road.getEnds();
+	        n1 = roadNodes.get(0);
+	        n2 = roadNodes.get(1);
+	        // if we havent visited the node yet
+	        if(fromNode.equals(n1)){
+	        	if(!visitedNodes.contains(n2)){
+	        		dist = 1 + calculateMaxRoadFromNode(n2, visitedNodes);
+		            if(dist>max)
+		                max=dist;
+	        	}
+	        } else if(fromNode.equals(n2)){
+	        	if(!visitedNodes.contains(n1)){
+	        		dist = 1 + calculateMaxRoadFromNode(n1, visitedNodes);
+		            if(dist>max)
+		                max=dist;
+	        	}
+	        }
+	    }
+
+	    visitedNodes.remove(fromNode);
+	    return max;
+	}
+	
+	/**
+	 * Lists roads starting from the given vertex
+	 * owned by the player as list of Edge-s
+	 * @return - the edges from the node the player has roads on,
+	 * empty if no roads
+	 */
+	public ArrayList<Edge> getRoadsFromNode(Vertex v){
+		ArrayList<Edge> result = new ArrayList<Edge>();
+		Road tmpRoad = null;
+		for(Edge e : table.getEdges()){
+			tmpRoad = (Road)e.getBuilding();
+			if(tmpRoad != null && tmpRoad.getOwner().equals(this)){
+				if(e.getEnds().contains(e))
+					result.add(e);
+			}
+		}
+		return result;
 	}
 	
 	

@@ -129,7 +129,7 @@ public class BuildRoad {
 		}
 		for(Vertex nodeFrom : nodeTo.getNeighbours()){
 			// if there is at least one road to this node
-			if(getPlayerRoadsFromNode(aiPlayer, nodeFrom).size() > 0){
+			if(aiPlayer.getRoadsFromNode(nodeFrom).size() > 0){
 				// we have to check whether there is someone else's road there
 				boolean isRoadBuilt = false;
 				
@@ -156,70 +156,17 @@ public class BuildRoad {
 	public int calculateMaxRoadDifference(){
 		int maxRoadVal = 0;
 		for(Player player : otherPlayers){
-			int playersMax = calculatePlayerMaxRoad(player);
+			int playersMax = player.calculateMaxRoad();
 			if(playersMax > maxRoadVal)
 				maxRoadVal = playersMax;
 		}
-		int AIMaxVal = calculatePlayerMaxRoad(aiPlayer);
+		int AIMaxVal = aiPlayer.calculateMaxRoad();
 		return maxRoadVal - AIMaxVal;
 	}
 	
-	/**
-	 * Calculates the given players maximum length road.
-	 * @param player - the player
-	 * @return - length of the maximum road
-	 * @author Gergely Olah
-	 */
-	private int calculatePlayerMaxRoad(Player player){
-		int max = 0;
-		HashSet<Vertex> visitedNodes = new HashSet<Vertex>();
-		for(Vertex n : map.getNodes()){
-			visitedNodes.clear();
-			int currentMax = calculatePlayerMaxRoadFromNode(n, player, visitedNodes);
-			if(currentMax > max){
-				max = currentMax;
-			}
-		}
-		return max;
-	}
-	
-	/**
-	 * Recursive function, calculates longest road of given player from
-	 * given node.
-	 * @param fromNode - start of the road
-	 * @param player - who's longest road we are lookin for
-	 * @param visitedNodes - the Nodes we visited
-	 * @return - the length of the longest road
-	 * @author Gergely Olah
-	 */
-	private int calculatePlayerMaxRoadFromNode(Vertex fromNode, Player player, HashSet<Vertex> visitedNodes){
-		
-		int dist, max = 0;
-	    visitedNodes.add(fromNode);
-	    for(Edge road : getPlayerRoadsFromNode(player, fromNode)){
-	    	Vertex n1, n2;
-	        ArrayList<Vertex> roadNodes = road.getEnds();
-	        n1 = roadNodes.get(0);
-	        n2 = roadNodes.get(1);
-	        // if we havent visited the node yet
-	        if(fromNode.equals(n1)){
-	        	if(!visitedNodes.contains(n2)){
-	        		dist = 1 + calculatePlayerMaxRoadFromNode(n2, player, visitedNodes);
-		            if(dist>max)
-		                max=dist;
-	        	}
-	        } else if(fromNode.equals(n2)){
-	        	if(!visitedNodes.contains(n1)){
-	        		dist = 1 + calculatePlayerMaxRoadFromNode(n1, player, visitedNodes);
-		            if(dist>max)
-		                max=dist;
-	        	}
-	        }
-	    }
 
-	    visitedNodes.remove(fromNode);
-	    return max;
-	}
+	
+
 	
 	/**
 	 * Decides whether there is a longest road starting from
@@ -230,8 +177,8 @@ public class BuildRoad {
 	 */
 	private boolean isMaxRoadStart(Vertex fromNode){
 		HashSet<Vertex> visitedNodes = new HashSet<Vertex>();
-		int nodesMaxRoad = calculatePlayerMaxRoadFromNode(fromNode,aiPlayer, visitedNodes);
-		int maxRoad = calculatePlayerMaxRoad(aiPlayer);
+		int nodesMaxRoad = aiPlayer.calculateMaxRoadFromNode(fromNode, visitedNodes);
+		int maxRoad = aiPlayer.calculateMaxRoad();
 		return nodesMaxRoad == maxRoad;
 	}
 	/**
@@ -293,25 +240,6 @@ public class BuildRoad {
 		return result;
 	}
 	
-	/**
-	 * Lists roads starting from the given vertex
-	 * owned by given player as list of Edge-s
-	 * @param p - the player
-	 * @return - the edges from the node the player has roads on,
-	 * empty if no roads
-	 */
-	private ArrayList<Edge> getPlayerRoadsFromNode(Player p, Vertex v){
-		ArrayList<Edge> result = new ArrayList<Edge>();
-		Road tmpRoad = null;
-		for(Edge e : map.getEdges()){
-			tmpRoad = (Road)e.getBuilding();
-			if(tmpRoad != null && tmpRoad.getOwner().equals(p)){
-				if(e.getEnds().contains(e))
-					result.add(e);
-			}
-		}
-		return result;
-	}
 	
 	/**
 	 * Counts ai's roads on the map, and returns true if
