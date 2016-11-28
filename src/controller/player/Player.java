@@ -332,24 +332,60 @@ public class Player {
 	 * PLAYER ACTION
 	 * Rolls the dice(e. g. generates two random integers (1-6), and adds them), and allocates new resources to each Player.
 	 * If 7 is rolled calls the handleThief method and calls
+	 * @throws OutOfRangeException 
 	 */
-	public void rollTheDice() {
+	public void rollTheDice() throws OutOfRangeException {
+		Resource w = Resource.Wool;
+		Resource o = Resource.Ore;
+		Resource g = Resource.Grain;
+		Resource l = Resource.Lumber;
+		Resource b = Resource.Brick;
 		int result = (int)(Math.random()*6+1) + (int)(Math.random()*6+1);
 		if(result == 7){
-		//HERE												TODO If Players have more than 7 Resources card, they lose half of them
+			for(int i = 0; i < Game.players.size(); i++){
+				Player a = Game.players.get(i);
+				int sumAmountResources = (a.getResourceAmount(w) + a.getResourceAmount(o) + a.getResourceAmount(g) + a.getResourceAmount(l) + a.getResourceAmount(b));
+				if(sumAmountResources>7){
+					int cnt = (int)Math.floor(sumAmountResources/2);	
+					while(cnt!=0){
+						Resource randRes = Resource.values()[(int) Math.random()*5];
+						if(a.getResourceAmount(randRes)>0){
+						a.decResourceAmount(randRes, 1);
+						cnt--;
+					}
+				}		
+			}
+		}
+			
 			handleThief();
 		}
+		else{
 		table.allocateResources(result);
+		}
 	}
 	
 	/**
 	 * PLAYER ACTION
-	 * The player can choose to change the position of the Thief. Executes all the changes accordingly.
+	 * The Thief goes to a random Hex, then the player get one Resource of the Hex
 	 * 
 	 */
 	public void handleThief(){
+		for(int i = 0; i < table.getFields().size(); i++){
+			table.getFields().get(i).setHasThief(false);
+		}
 		
+		Hex hex = table.getFields().get((int)Math.random()*table.getFields().size());
+		hex.setHasThief(true);
+		
+		Resource Res = hex.getResource();
+		
+		try {
+			this.incResourceAmount(Res, 1);
+		} catch (OutOfRangeException e) {
+			e.printStackTrace();
+		}
 	}
+	
 	
 	public boolean firstBuild(Buildable what, TableElement where) throws GameEndsException{
 		boolean succesful = false;	
