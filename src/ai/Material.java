@@ -73,6 +73,9 @@ public class Material {
 		case Wool:
 			baseValue = 4;
 			break;
+		case Desert:
+			baseValue = 0;
+			break;
 
 		default:
 			baseValue = 0;
@@ -165,6 +168,8 @@ public class Material {
 			return 5.0/36.0;
 		case 7:
 			return 6.0/36.0;
+		case 0:
+			return 0;
 		default:
 			System.out.println("Material.frequencyLUT: argument is not a valid dice roll.");
 			return 1;
