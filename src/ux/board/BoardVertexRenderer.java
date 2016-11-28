@@ -15,6 +15,7 @@ import controller.map.Table;
 import controller.map.Vertex;
 import controller.player.Building;
 import controller.player.City;
+import controller.player.Player;
 import controller.player.Settlement;
 import ux.ImageRenderer;
 import ux.ui.InterfaceColorProfile;
@@ -62,7 +63,7 @@ public class BoardVertexRenderer extends ImageRenderer {
 				}
 					
 			}
-			if (/*board.isBuildPossibleAt(new Settlement(), v.getValue())*/false) {
+			if (board.isBuildPossibleAt(new Settlement(new Player(null, eps, board)), v.getKey())) {
 				if (selectedVertex!=null && v.getKey().equals(selectedVertex))
 					vertexCanvas.setColor(InterfaceColorProfile.vertexColor);
 				else vertexCanvas.setColor(InterfaceColorProfile.selectedColor);

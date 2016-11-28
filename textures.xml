@@ -4,5 +4,7 @@
 <Texture r="Lumber" c="0x215411"/>
 <Texture r="Ore" c="0x7a7a7a"/>
 <Texture r="Grain" c="0xefc53b"/>
-<Texture r="Wool" c="0xcecece"/>
+<Texture r="Wool" c="0x87ce40"/>
+<Texture r="Desert" c="0xf4ad42"/>
+
 </TextureMap>

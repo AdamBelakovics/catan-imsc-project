@@ -14,7 +14,7 @@ public class UIController extends PlayerController {
 	public volatile boolean active;
 	public volatile boolean firstturnactive;
 	
-	public void setControlledPlayer(Player _controlledPlayer) {
+	public UIController(Player _controlledPlayer) {
 		controlledPlayer=_controlledPlayer;
 	}
 

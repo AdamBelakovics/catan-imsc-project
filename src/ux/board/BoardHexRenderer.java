@@ -72,10 +72,9 @@ public class BoardHexRenderer extends ImageRenderer {
 
 	public void paint(Graphics g) {
 		hexCanvas=(Graphics2D)g;
-		hexCanvas.setColor(Color.white);
+		hexCanvas.setColor(InterfaceColorProfile.bgWaterColor);
 		hexCanvas.fillRect(0, 0, width, height);
 		translateBoardCanvas();
-
 		paintHexes();
 	}
 
@@ -147,7 +146,8 @@ public class BoardHexRenderer extends ImageRenderer {
 	 */
 	private void paintHexes() {
 		for (Map.Entry<Hex, HexPoly> entry : hexMap.entrySet()){
-			hexCanvas.setPaint(colorMap.get(entry.getKey().getResource()));
+			if (entry.getKey().getResource()==null)	hexCanvas.setPaint(InterfaceColorProfile.waterColor);
+			else hexCanvas.setPaint(colorMap.get(entry.getKey().getResource()));
 			hexCanvas.draw(entry.getValue());
 			hexCanvas.fillPolygon(entry.getValue());
 			if (entry.getValue().selected) selectedTile=entry.getKey();

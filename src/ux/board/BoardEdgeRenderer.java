@@ -62,7 +62,4 @@ public class BoardEdgeRenderer extends ImageRenderer {
 			edgeMap.put(e, e.getEnds());
 		}
 	}
-	
-	
-
 }

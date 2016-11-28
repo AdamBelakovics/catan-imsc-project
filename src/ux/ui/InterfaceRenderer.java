@@ -81,7 +81,7 @@ public class InterfaceRenderer extends ImageRenderer {
 	}
 	
 	private void paintHexInfo() {
-		if (activeHex!=null) {
+		if (activeHex!=null && activeHex.getResource()!=null) {
 			intCanvas.drawString("Selected "+activeHex.getID()+", resource: "+ activeHex.getResource().toString(), (width*3/10)+20, (height*9/10)+30);
 		} else {
 			intCanvas.drawString("No field selected", (width*3/10)+20, (height*9/10)+30);
