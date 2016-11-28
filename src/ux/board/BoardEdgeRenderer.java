@@ -10,6 +10,7 @@ import java.util.Map;
 import controller.map.Edge;
 import controller.map.Table;
 import controller.map.Vertex;
+import controller.player.Road;
 import ux.ImageRenderer;
 import ux.ui.InterfaceColorProfile;
 
@@ -43,13 +44,15 @@ public class BoardEdgeRenderer extends ImageRenderer {
 
 	private void paintEdges() {
 		for (HashMap.Entry<Edge, ArrayList<Vertex> > e : edgeMap.entrySet() ) {
-			edgeCanvas.setPaint(InterfaceColorProfile.selectedColor);
-			edgeCanvas.drawLine(
-					vertexRenderer.vertexMap.get(e.getValue().get(0)).x,
-					vertexRenderer.vertexMap.get(e.getValue().get(0)).y,
-					vertexRenderer.vertexMap.get(e.getValue().get(1)).x,
-					vertexRenderer.vertexMap.get(e.getValue().get(1)).y
-					);
+			if (e.getKey().getBuilding() instanceof Road) {
+				edgeCanvas.setPaint(InterfaceColorProfile.selectedColor);
+				edgeCanvas.drawLine(
+						vertexRenderer.vertexMap.get(e.getValue().get(0)).x,
+						vertexRenderer.vertexMap.get(e.getValue().get(0)).y,
+						vertexRenderer.vertexMap.get(e.getValue().get(1)).x,
+						vertexRenderer.vertexMap.get(e.getValue().get(1)).y
+						);
+			}
 		}
 		
 	}
