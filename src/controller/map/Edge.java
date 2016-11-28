@@ -42,18 +42,22 @@ public class Edge implements TableElement {
 	
 	@Override
 	public boolean isBuildPossible(Building what) {
-		for(Vertex v : this.getEnds())
-			for(Edge e : v.getNeighbourEdges())
-				if(e.getBuilding() != null) //just to avoid nullpointers
-					if(e.getBuilding().getOwner().equals(what.getOwner()))
+		for(Vertex v : this.getEnds()){
+			for(Edge e : v.getNeighbourEdges()){
+				System.out.println(e + ": " + (e.getBuilding() != null));
+				if(e.getBuilding() != null){ //just to avoid nullpointers
+					if(e.getBuilding().getOwner().equals(what.getOwner())){
 						return true;
+					}
+				}
+			}
+		}
 		return false;
 	}
 
 	@Override
 	public void setBuilding(Building b) {
-		// TODO Auto-generated method stub
-		
+		road = (Road) b;
 	}
 
 	@Override

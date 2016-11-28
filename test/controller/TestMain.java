@@ -22,11 +22,11 @@ public class TestMain {
 		p.incResourceAmount(Resource.Wool, 100);
 		p.incResourceAmount(Resource.Grain, 100);
 		try {
-			p.build(Buildable.Settlement, t.getNodes().get(0));
-			p.build(Buildable.Settlement, t.getNodes().get(4));
-			p.build(Buildable.Settlement, t.getNodes().get(5));
-			p.build(Buildable.Settlement, t.getNodes().get(6));
-			p.build(Buildable.Settlement, t.getNodes().get(7));
+			p.firstBuild(Buildable.Settlement, t.getNodes().get(0));
+			p.firstBuild(Buildable.Settlement, t.getNodes().get(4));
+			p.firstBuild(Buildable.Road, t.getNodes().get(3).getNeighbourEdges().get(0));
+			System.out.println(p.build(Buildable.Road, t.getNodes().get(3).getNeighbourEdges().get(1)));
+
 		} catch (GameEndsException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -35,6 +35,7 @@ public class TestMain {
 		System.out.println(p.getResourceAmount(Resource.Brick));
 		System.out.println(p.getResourceAmount(Resource.Wool));
 		System.out.println(p.getResourceAmount(Resource.Grain));
+		System.out.println(p.getAllBuildings());
 	}
 
 }
