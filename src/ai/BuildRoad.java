@@ -8,6 +8,7 @@ import java.util.Set;
 import controller.map.Vertex;
 import controller.map.Table;
 import controller.map.Edge;
+import controller.player.Building;
 import controller.player.Player;
 import controller.player.Road;
 
@@ -88,30 +89,33 @@ public class BuildRoad {
 	private void refresh(){
 		this.nodeFrom = null;
 		this.nodeTo = null;
-		double maxVal = 0;
-		double val;
-		int dif = calculateMaxRoadDifference();
-		double difVal = 1;
-		for(Vertex nodeTo : map.getNodes()){
-			Vertex nodeFrom = fromWhereCanBuildRoad(nodeTo);
-			if(nodeFrom != null){
-				val = nodePersonalValueForRoad(nodeTo);
-				if(dif < 2){
-					if(dif >= -1)
-						difVal = 1.5;
-					else
-						difVal = 1.2;
-					if(isMaxRoadStart(nodeFrom))
-						val = difVal * val;
-				}
-				if(val > maxVal){
-					maxVal = val;
-					this.nodeTo = nodeTo;
-					this.nodeFrom = nodeFrom;
+		buildValue = 0;
+		if(isRoadAvailable()){
+			double maxVal = 0;
+			double val;
+			int dif = calculateMaxRoadDifference();
+			double difVal = 1;
+			for(Vertex nodeTo : map.getNodes()){
+				Vertex nodeFrom = fromWhereCanBuildRoad(nodeTo);
+				if(nodeFrom != null){
+					val = nodePersonalValueForRoad(nodeTo);
+					if(dif < 2){
+						if(dif >= -1)
+							difVal = 1.5;
+						else
+							difVal = 1.2;
+						if(isMaxRoadStart(nodeFrom))
+							val = difVal * val;
+					}
+					if(val > maxVal){
+						maxVal = val;
+						this.nodeTo = nodeTo;
+						this.nodeFrom = nodeFrom;
+					}
 				}
 			}
+			buildValue = maxVal;
 		}
-		buildValue = maxVal;
 	}
 	
 	/**
@@ -315,5 +319,23 @@ public class BuildRoad {
 			}
 		}
 		return result;
+	}
+	
+	/**
+	 * Counts ai's roads on the map, and returns true if
+	 * less than 15, returns false otherwise
+	 * @return - whether we have road available to build
+	 * @author Gergely Olah
+	 */
+	private boolean isRoadAvailable(){
+		int cnt = 0;
+		Building tmpRoad;
+		for(Edge e : map.getEdges()){
+			tmpRoad = e.getRoad();
+			if(tmpRoad != null && tmpRoad.getOwner().equals(aiPlayer)){
+				cnt++;
+			}
+		}
+		return cnt < 15;
 	}
 }

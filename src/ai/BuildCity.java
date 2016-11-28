@@ -3,6 +3,7 @@ package ai;
 import controller.map.Table;
 import controller.map.Vertex;
 import controller.player.Building;
+import controller.player.City;
 import controller.player.Player;
 import controller.player.Settlement;
 
@@ -69,15 +70,17 @@ public class BuildCity {
 	 * up to date values. 
 	 * @author Gergely Olah
 	 */
-	private void refresh(){		
+	private void refresh(){
 		buildValue = 0;
 		node = null;
-		ArrayList<Vertex> nodes = getVillages();
-		for(Vertex n: nodes){
-			double currentVal = owner.nodePersonalValue(n);
-			if(currentVal > buildValue){
-				buildValue = currentVal;
-				node = n;
+		if(isCityAvailable()){
+			ArrayList<Vertex> nodes = getVillages();
+			for(Vertex n: nodes){
+				double currentVal = owner.nodePersonalValue(n);
+				if(currentVal > buildValue){
+					buildValue = currentVal;
+					node = n;
+				}
 			}
 		}
 	}
@@ -101,5 +104,21 @@ public class BuildCity {
 		return result;
 	}
 	
-	
+	/**
+	 * Counts ai's cities on the map, and returns true if
+	 * less than 4, returns false otherwise
+	 * @return - whether we have city available to build
+	 * @author Gergely Olah
+	 */
+	private boolean isCityAvailable(){
+		int cnt = 0;
+		Building tmpBuild;
+		for(Vertex v : map.getNodes()){
+			tmpBuild = v.getBuilding();
+			if(tmpBuild != null && tmpBuild.getClass().equals(City.class) && tmpBuild.getOwner().equals(aiPlayer)){
+				cnt++;
+			}
+		}
+		return cnt < 4;
+	}
 }
