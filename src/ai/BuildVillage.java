@@ -174,10 +174,12 @@ public class BuildVillage {
 		buildValue = 0;
 		node = null;		
 		for(Vertex n : map.getNodes()){
-			double currentValue = owner.nodePersonalValue(n);
-			if(currentValue > buildValue){
-				buildValue = currentValue;
-				node = n;
+			if(n.isBuildPossible(new Settlement(aiPlayer))){
+				double currentValue = owner.nodePersonalValue(n);
+				if(currentValue > buildValue){
+					buildValue = currentValue;
+					node = n;
+				}
 			}
 		}
 	}
