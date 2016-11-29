@@ -11,8 +11,9 @@ public class Settlement extends Building{
 
 	@Override
 	public boolean build(TableElement t) {
-		if(t.getBuilding() == null && t.isBuildPossible(this) && t.getClass().equals(Vertex.class)){
+		if(t != null && t.getBuilding() == null && t.isBuildPossible(this) && t.getClass().equals(Vertex.class)){
 			t.setBuilding(this);
+			return true;
 		}
 		return false;
 	}

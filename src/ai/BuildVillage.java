@@ -1,5 +1,6 @@
 package ai;
 
+import controller.map.Buildable;
 import controller.map.Edge;
 import controller.map.Table;
 import controller.map.Vertex;
@@ -48,6 +49,8 @@ public class BuildVillage {
 	 */
 	public double getBuildValue(){
 		refresh();
+		if(node==null)
+			buildValue=0;
 		return buildValue;
 	}
 	
@@ -70,7 +73,7 @@ public class BuildVillage {
 		ArrayList<Vertex> result = new ArrayList<Vertex>();
 		
 		for(Vertex n : map.getNodes()){
-			if(getPlayerRoadsFromNode(aiPlayer, n).size() > 0 && n.isBuildPossible(new Settlement(aiPlayer))){
+			if(getPlayerRoadsFromNode(aiPlayer, n).size() > 0 && aiPlayer.isBuildPossible(Buildable.Settlement, n)){
 				result.add(n);
 			}
 		}
@@ -171,7 +174,7 @@ public class BuildVillage {
 		buildValue = 0;
 		node = null;		
 		for(Vertex n : map.getNodes()){
-			if(n.isBuildPossible(new Settlement(aiPlayer))){
+			if(aiPlayer.isBuildPossible(Buildable.Settlement, n)){
 				double currentValue = owner.nodePersonalValue(n);
 				if(currentValue > buildValue){
 					buildValue = currentValue;

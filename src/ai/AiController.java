@@ -488,19 +488,23 @@ public class AiController extends PlayerController {
 				switch (buildPlan.get(0)) {
 				case Settlement:
 					t = buildVillage.getNode();
+					if(t != null){
 						me.build(Buildable.Settlement, t);
 						sourceOfNewNumbers=((Vertex)t).getNeighbourHexes();
 						for(Hex h:sourceOfNewNumbers)
 							if(!numbers.contains(h.getProsperity()))
 								numbers.add(h.getProsperity());
+					}
 					break;
 				case City:
 					t = buildCity.getNode();
+					if(t != null){
 						me.build(Buildable.City, t);
 						sourceOfNewNumbers=((Vertex)t).getNeighbourHexes();
 						for(Hex h:sourceOfNewNumbers)
 							if(!numbers.contains(h.getProsperity()))
 								numbers.add(h.getProsperity());
+					}
 					break;
 				case Development:
 					try {
@@ -611,7 +615,8 @@ public class AiController extends PlayerController {
 						rAmount.replace(r1, rAmount.get(r1)-1);
 						seged.replace(r2, seged.get(r2)+1);
 						doneBusiness=true;
-					}}}}}}}
+					}}}}}	
+				}}
 			return doneBusiness;
 		}}
 	
@@ -627,15 +632,22 @@ public class AiController extends PlayerController {
 		boolean canTryAgain = true;
 
 		while (canTryAgain == true) {
+			System.out.println(me.getId()+"turn:"+Game.turn_number+"reFresh");
 			datas.Refresh();
+			System.out.println(me.getId()+"turn:"+Game.turn_number+"setPoss");
 			datas.setPossibilities();
+			System.out.println(me.getId()+"turn:"+Game.turn_number+"setBL");
 			datas.setBList();
+			System.out.println(me.getId()+"turn:"+Game.turn_number+"ToDoL");
 			datas.setToDoList();
+			System.out.println(me.getId()+"turn:"+Game.turn_number+"fMaxTo");
 			canBuild = datas.findMaxToDoList();
+			System.out.println(me.getId()+"turn:"+Game.turn_number+"inCh");
 			datas.inChange();
+			System.out.println(me.getId()+"turn:"+Game.turn_number+"letsBuild");
 			canBuild = datas.letsBuild();
-			if (canBuild == false)
-				canTryAgain = datas.trade();
+			System.out.println(me.getId()+"turn:"+Game.turn_number+"trade");
+			canTryAgain = datas.trade();
 		}
 	}
 	

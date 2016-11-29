@@ -349,14 +349,15 @@ public class Player {
 		Resource g = Resource.Grain;
 		Resource l = Resource.Lumber;
 		Resource b = Resource.Brick;
-		int result = (int)(Math.random()*6+1) + (int)(Math.random()*6+1);
+		int result = 7;//(int)(Math.random()*6+1) + (int)(Math.random()*6+1);
+		System.out.println("Hello from rollthedice"+result);
 		if(result == 7){
 			for(int i = 0; i < Game.players.size(); i++){
 				Player a = Game.players.get(i);
 				int sumAmountResources = (a.getResourceAmount(w) + a.getResourceAmount(o) + a.getResourceAmount(g) + a.getResourceAmount(l) + a.getResourceAmount(b));
 				if(sumAmountResources>7){
 					int cnt = (int)Math.floor(sumAmountResources/2);	
-					while(cnt!=0){
+					while(cnt>0){
 						Resource randRes = Resource.values()[(int) Math.random()*5];
 						if(a.getResourceAmount(randRes)>0){
 						try {
@@ -384,13 +385,14 @@ public class Player {
 	 * 
 	 */
 	public void handleThief(){
+		System.out.println("Hello from handlethief");
 		for(int i = 0; i < table.getFields().size(); i++){
 			if(table.getFields().get(i).hasThief() == true){
 				table.getFields().get(i).setHasThief(false);
 			}
 		}
 		
-		Hex hex = table.getValidFields().get((int)Math.random()*table.getFields().size());
+		Hex hex = table.getValidFields().get((int)Math.random()*table.getFields().size()-1);
 		hex.setHasThief(true);
 		
 		Resource Res = hex.getResource();
@@ -403,6 +405,7 @@ public class Player {
 	}
 	
 	public boolean isFirstBuildPossible(Buildable what, TableElement where){
+		System.out.println("Hello from is1bud");
 		if(what == Buildable.Road){
 			Road r = availableRoads.get(0);
 			if(where.getBuilding() == null  && where.getClass().equals(Edge.class) && where.isFirstBuildPossible(r)){
@@ -424,6 +427,7 @@ public class Player {
 	}
 	
 	public boolean firstBuild(Buildable what, TableElement where) throws GameEndsException{
+		System.out.println("Hello from 1buid");
 		boolean succesful = false;	
 		if(what == Buildable.Road){
 			Road u = availableRoads.remove(0);
@@ -454,6 +458,7 @@ public class Player {
 	}
 	
 	public boolean isBuildPossible(Buildable what, TableElement where){
+		System.out.println("Hello from isbuild");
 		if(what == Buildable.Road){
 			Road r = availableRoads.get(0);
 			if(where.getBuilding() == null && where.isBuildPossible(r) && where.getClass().equals(Edge.class)){
@@ -488,6 +493,7 @@ public class Player {
 	 * @throws GameEndsException Building Settlement or City increases Player's points.
 	 */
 	public boolean build(Buildable what, TableElement where) throws GameEndsException{
+		System.out.println("Hello from build " + what + " " + where);
 		Resource w = Resource.Wool;
 		Resource o = Resource.Ore;
 		Resource g = Resource.Grain;
@@ -496,76 +502,81 @@ public class Player {
 		boolean succesful = false;
 		
 		if(what == Buildable.Road){
-			try {
-				decResourceAmount(b, 1);
-				decResourceAmount(l, 1);
-			} catch (OutOfRangeException e1) {
-				e1.printStackTrace();
-			}
-			Road u = availableRoads.remove(0);
-			succesful = u.build(where);
-			if(succesful)
-				erectedBuildings.add(u);
-			else{
-				availableRoads.add(u);
+			if(getResourceAmount(w) >= 1 && getResourceAmount(l) >= 1){
 				try {
-					incResourceAmount(b, 1);
-					incResourceAmount(l, 1);
-				} catch (OutOfRangeException e) {
-					e.printStackTrace();
+					decResourceAmount(b, 1);
+					decResourceAmount(l, 1);
+				} catch (OutOfRangeException e1) {
+					e1.printStackTrace();
+				}
+				Road u = availableRoads.remove(0);
+				succesful = u.build(where);
+				if(succesful)
+					erectedBuildings.add(u);
+				else{
+					availableRoads.add(u);
+					try {
+						incResourceAmount(b, 1);
+						incResourceAmount(l, 1);
+					} catch (OutOfRangeException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		}
 		else if(what == Buildable.Settlement){
-			
-			try {										
-				decResourceAmount(b, 1);
-				decResourceAmount(l, 1);
-				decResourceAmount(g, 1);
-				decResourceAmount(w, 1);
-			} catch (OutOfRangeException e1) {
-				e1.printStackTrace();
-			}
-			Settlement s = availableSettlements.remove(0);
-			succesful = s.build(where);
-			if(succesful){
-				erectedBuildings.add(s);
-				this.incPoints(1);
-			}
-			else{
-				availableSettlements.add(s);
+			if(getResourceAmount(b) >= 1 && getResourceAmount(l) >= 1 && getResourceAmount(g) >= 1 && getResourceAmount(w) >= 1){
 				try {										
-					incResourceAmount(b, 1);
-					incResourceAmount(l, 1);
-					incResourceAmount(g, 1);
-					incResourceAmount(w, 1);
+					decResourceAmount(b, 1);
+					decResourceAmount(l, 1);
+					decResourceAmount(g, 1);
+					decResourceAmount(w, 1);
 				} catch (OutOfRangeException e1) {
 					e1.printStackTrace();
+				}
+				Settlement s = availableSettlements.remove(0);
+				succesful = s.build(where);
+				if(succesful){
+					erectedBuildings.add(s);
+					this.incPoints(1);
+				}
+				else{
+					availableSettlements.add(s);
+					try {										
+						incResourceAmount(b, 1);
+						incResourceAmount(l, 1);
+						incResourceAmount(g, 1);
+						incResourceAmount(w, 1);
+					} catch (OutOfRangeException e1) {
+						e1.printStackTrace();
+					}
 				}
 			}
 		}
 		else if(what == Buildable.City){
-			try {
-				decResourceAmount(g, 2);
-				decResourceAmount(o, 3);
-			} catch (OutOfRangeException e1) {
-				e1.printStackTrace();
-			}
-			City c = availableCities.remove(0);
-			succesful = c.build(where);
-			if(succesful){
-				availableSettlements.add((Settlement) where.getBuilding());
-				erectedBuildings.remove(where.getBuilding());
-				erectedBuildings.add(c);
-				this.incPoints(1);
-			}
-			else{
-				availableCities.add(c);
-				try {										
-					incResourceAmount(g, 2);
-					incResourceAmount(o, 3);
+			if(getResourceAmount(g) >= 2 && getResourceAmount(o) >= 3){
+				try {
+					decResourceAmount(g, 2);
+					decResourceAmount(o, 3);
 				} catch (OutOfRangeException e1) {
 					e1.printStackTrace();
+				}
+				City c = availableCities.remove(0);
+				succesful = c.build(where);
+				if(succesful){
+					availableSettlements.add((Settlement) where.getBuilding());
+					erectedBuildings.remove(where.getBuilding());
+					erectedBuildings.add(c);
+					this.incPoints(1);
+				}
+				else{
+					availableCities.add(c);
+					try {										
+						incResourceAmount(g, 2);
+						incResourceAmount(o, 3);
+					} catch (OutOfRangeException e1) {
+						e1.printStackTrace();
+					}
 				}
 			}
 		}
@@ -579,11 +590,26 @@ public class Player {
 	 * Modifies resources accordingly.
 	 */
 	public boolean trade(int amountW, Resource What, int amountFW, Resource ForWhat,Player with){
+		System.out.println("Hello from trade");
 		boolean succesfull=false;
 		return succesfull;
 	}
 	
-	public void change(Resource give , Resource get){}
+	public void change(Resource give , Resource get) {
+		System.out.println("Hello from change");
+		try {
+			if(this.getResourceAmount(give) >= 4)
+				this.decResourceAmount(give, 4);
+		} catch (OutOfRangeException e) {
+			e.printStackTrace();
+		}
+		try {
+			this.incResourceAmount(get, 1);
+		} catch (OutOfRangeException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	/**
 	 * PLAYER ACTION
 	 * Player can buy a random Development Card from the DevCardShop.
@@ -591,6 +617,7 @@ public class Player {
 	 * @throws NotEnoughResourcesException if Player don't have enough resources to buy DevCard
 	 */
 	public void buyDevCard() throws NotEnoughResourcesException {
+		System.out.println("Hello from buyDev");
 		Resource w = Resource.Wool;
 		Resource o = Resource.Ore;
 		Resource g = Resource.Grain;
@@ -618,6 +645,7 @@ public class Player {
 	 * @throws Throwable VictoryPointCard increase player's score, so it can throw GameEndsException
 	 */
 	public void playDev(DevCard dc, Resource r) throws GameEndsException{
+		System.out.println("Hello from playDev");
 		if(dc.getClass().equals(MonopolyCard.class) | dc.getClass().equals(YearOfPlentyCard.class))
 			dc.doCard(this, r);
 		if(dc.getClass().equals(KnightCard.class) | dc.getClass().equals(RoadBuildingCard.class) | dc.getClass().equals(VictoryPointCard.class))
