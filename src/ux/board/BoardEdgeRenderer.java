@@ -11,10 +11,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import controller.Game;
 import controller.map.Edge;
 import controller.map.Hex;
 import controller.map.Table;
 import controller.map.Vertex;
+import controller.player.Building;
+import controller.player.Player;
 import controller.player.Road;
 import ux.ImageRenderer;
 import ux.ui.InterfaceColorProfile;
@@ -27,6 +30,7 @@ public class BoardEdgeRenderer extends ImageRenderer {
 	private Table board;
 	private HashMap<Edge, ArrayList<Vertex> > edgeMap=new HashMap();
 	private HashMap<Edge, Polygon> edgeClickMap=new HashMap();
+
 	
 	private final int eps=10;
 	
@@ -35,6 +39,7 @@ public class BoardEdgeRenderer extends ImageRenderer {
 		vertexRenderer=_vertexRenderer;
 		hexRenderer=_hexRenderer;
 		board=_board;
+
 		generateEdges();
 	}
 
@@ -52,8 +57,8 @@ public class BoardEdgeRenderer extends ImageRenderer {
 		Stroke prevStroke = edgeCanvas.getStroke();
 		edgeCanvas.setStroke(new BasicStroke(5));
 		for (HashMap.Entry<Edge, ArrayList<Vertex> > e : edgeMap.entrySet() ) {
-			if (e.getKey().getBuilding() instanceof Road) {
-				edgeCanvas.setPaint(InterfaceColorProfile.selectedColor);
+			if (e.getKey().getBuilding()!=null) {
+				InterfaceColorProfile.setPlayerColor(edgeCanvas, e.getKey().getBuilding());
 				edgeCanvas.drawLine(
 						vertexRenderer.vertexMap.get(e.getValue().get(0)).x,
 						vertexRenderer.vertexMap.get(e.getValue().get(0)).y,

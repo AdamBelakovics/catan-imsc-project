@@ -20,6 +20,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
+import controller.Game;
 import controller.map.*;
 import controller.player.*;
 import controller.player.devcards.*;
@@ -116,8 +117,8 @@ public class Renderer {
 								currUIC.controlledPlayer.build(Buildable.Settlement, selectedVertex);
 							break;
 						case City:
-							if (currUIC.controlledPlayer.isBuildPossible(Buildable.Settlement, selectedVertex))
-								currUIC.controlledPlayer.build(Buildable.Settlement, selectedVertex);
+							if (currUIC.controlledPlayer.isBuildPossible(Buildable.City, selectedVertex))
+								currUIC.controlledPlayer.build(Buildable.City, selectedVertex);
 							break;		
 						default:
 							break;

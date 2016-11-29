@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import controller.Game;
 import controller.map.Buildable;
 import controller.map.Hex;
 import controller.map.Table;
@@ -31,6 +32,7 @@ public class BoardVertexRenderer extends ImageRenderer {
 	private Vertex selectedVertex=null;
 	private Graphics2D vertexCanvas;
 	private Table board;
+	private ArrayList<Player> playersList;
 	
 
 	public Buildable currentlyBuilding=null;
@@ -60,8 +62,8 @@ public class BoardVertexRenderer extends ImageRenderer {
 			hexRenderer.boardTransformation.transform(v.getValue(), transformedPoint);
 			
 			Building detectedBuilding=v.getKey().getBuilding();
-			if (detectedBuilding!=null) {
-				vertexCanvas.setColor(InterfaceColorProfile.vertexColor);
+			if (detectedBuilding!=null) {			
+				InterfaceColorProfile.setPlayerColor(vertexCanvas,detectedBuilding);
 				if (detectedBuilding instanceof Settlement) {
 					vertexCanvas.fillOval((int)transformedPoint.getX()-7, (int)transformedPoint.getY()-7, 10, 10);
 				}
