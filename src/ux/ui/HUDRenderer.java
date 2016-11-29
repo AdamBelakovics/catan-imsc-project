@@ -28,7 +28,7 @@ public class HUDRenderer extends ImageRenderer {
 	public void paint(Graphics g) {
 		hudCanvas=(Graphics2D)g;
 		interfaceRenderer.paint(interfaceImage.getGraphics());
-		getCardRenderer().paint(interfaceImage.getGraphics());
+		cardRenderer.paint(interfaceImage.getGraphics());
 		resRenderer.paint(interfaceImage.getGraphics());
 		if (interfaceImage!=null) hudCanvas.drawImage(interfaceImage, 0, 0, null);
 	}

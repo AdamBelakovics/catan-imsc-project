@@ -30,6 +30,11 @@ import ux.ui.Button;
 import ux.ui.HUDRenderer;
 import ux.ui.UIController;
 
+/**
+ * Main class of rendering. Creates the JFrame and image renderers
+ * @author Kiss Lorinc
+ *
+ */
 public class Renderer {
 	public UIController currUIC;
 	Table board;
@@ -73,6 +78,10 @@ public class Renderer {
 		mainFrame.setVisible(true);
 	}
 	
+	/**
+	 * Calls the paint() method of all subrenderers
+	 * @author Kiss Lorinc
+	 */
 	public void draw(){
 		bufferImg=mainFrame.createImage(mainFrame.getWidth(), mainFrame.getHeight());
 		if (bufferImg!=null) {
@@ -88,8 +97,18 @@ public class Renderer {
 	public void updateThief(Hex to) {};
 
 	
+	/**
+	 * Handles mouse clicks on elements
+	 * @author Kiss Lorinc
+	 *
+	 */
 	class BoardMouseListener implements MouseListener {
 		
+		/**
+		 * Checks clicked elements in the following order:
+		 * hex fields, vertices, edges, buttons, cards
+		 * @author Kiss Lorinc
+		 */
 		@Override
 		public void mouseClicked(MouseEvent ev) {
 			try {
@@ -181,6 +200,11 @@ public class Renderer {
 
 	}
 	
+	/**
+	 * Handles the rotation of the board with the E and Q keys
+	 * @author Kiss Lorinc
+	 *
+	 */
 	class BoardKeyListener implements KeyListener {
 
 		@Override
@@ -206,6 +230,11 @@ public class Renderer {
 		public void keyReleased(KeyEvent e) {}
 	}
 
+	/**
+	 * Handles board zoom with the use of the mouse wheel
+	 * @author Kiss Lorinc
+	 *
+	 */
 	class BoardWheelListener implements MouseWheelListener {
 
 		@Override
