@@ -24,6 +24,7 @@ import ux.Renderer;
 import ux.ui.UIController;
 
 /**
+ * Parent renderer of the Hex, Edge and Vertex renderers
  * @author Kiss Lorinc
  *
  */
@@ -37,6 +38,11 @@ public class BoardRenderer extends ImageRenderer {
 	public BoardVertexRenderer vertexRenderer;
 	public BoardEdgeRenderer edgeRenderer;
 
+	/**
+	 * Enumerator representing the direction of the board currently facing
+	 * @author Kiss Lorinc
+	 *
+	 */
 	public enum BoardOrientation {
 		NORTH,
 		NORTHEAST,
@@ -48,6 +54,13 @@ public class BoardRenderer extends ImageRenderer {
 
 	public BoardOrientation boardOrientation;
 
+	/**
+	 * Initializes the renderer
+	 * @param _currUIC the current UIController in use
+	 * @param _board the game board
+	 * @param _width width of the window
+	 * @param _height height of the window
+	 */
 	public BoardRenderer(UIController _currUIC,Table _board,int _width, int _height) {
 		super(_width,_height);
 		board=_board;
@@ -59,6 +72,7 @@ public class BoardRenderer extends ImageRenderer {
 		edgeRenderer=new BoardEdgeRenderer(vertexRenderer,hexRenderer, board, width, height);
 	}
 
+	@Override
 	public void paint(Graphics g) {
 		boardCanvas=(Graphics2D)g;
 		hexRenderer.paint(hexImage.getGraphics());
@@ -70,6 +84,10 @@ public class BoardRenderer extends ImageRenderer {
 		boardCanvas.translate(getWidth()/2, getHeight()/2);
 	}
 	
+	/**
+	 * Resets the selected hexes and vertices
+	 * @author Kiss Lorinc
+	 */
 	public void resetBoardSelection() {
 		hexRenderer.deselectHexes();
 		vertexRenderer.deselectVertices();

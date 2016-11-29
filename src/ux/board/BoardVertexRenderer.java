@@ -24,6 +24,11 @@ import ux.Renderer;
 import ux.ui.InterfaceColorProfile;
 import ux.ui.UIController;
 
+/**
+ * Renderer responsible for rendering vertices
+ * @author Kiss Lorinc
+ *
+ */
 public class BoardVertexRenderer extends ImageRenderer {
 
 	private UIController uiController;
@@ -54,6 +59,10 @@ public class BoardVertexRenderer extends ImageRenderer {
 
 	}
 
+	/**
+	 * Paints vertices on the canvas
+	 * @author Kiss Lorinc
+	 */
 	private void paintVertices() {
 
 		for (Entry<Vertex,Point> v : vertexMap.entrySet()) {
@@ -81,6 +90,7 @@ public class BoardVertexRenderer extends ImageRenderer {
 	
 	/**
 	 * Generates vertex center point from neighbour hexes center points to vertexMap
+	 * @author Kiss Lorinc
 	 */
 	private void generateVertices() {
 		for (Vertex v : board.getNodes()) {
@@ -93,6 +103,13 @@ public class BoardVertexRenderer extends ImageRenderer {
 		}
 	}
 	
+	/**
+	 * Returns with the vertex of the given point
+	 * @author Kiss Lorinc
+	 * @param x x coordinate of the point
+	 * @param y y coordinate of the point
+	 * @return Vertex under the given point
+	 */
 	public Vertex getVertexUnderCursor(int x, int y) {
 		Point transformedPoint=new Point();
 		try {
@@ -108,10 +125,19 @@ public class BoardVertexRenderer extends ImageRenderer {
 		return null;
 	}
 	
+	/**
+	 * Selects the given vertex
+	 * @param v the vertex to select
+	 * @author Kiss Lorinc
+	 */
 	public void selectVertex(Vertex v) {	
 		selectedVertex=v;
 	}
 	
+	/**
+	 * Deselects the vertex
+	 * @author Kiss Lorinc
+	 */
 	public void deselectVertices() {
 		selectedVertex=null;
 	}

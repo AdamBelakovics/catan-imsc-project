@@ -22,6 +22,11 @@ import controller.player.Road;
 import ux.ImageRenderer;
 import ux.ui.InterfaceColorProfile;
 
+/**
+ * Renderer responsible for painting edges
+ * @author Kiss Lorinc
+ *
+ */
 public class BoardEdgeRenderer extends ImageRenderer {
 
 	private BoardVertexRenderer vertexRenderer;
@@ -34,6 +39,14 @@ public class BoardEdgeRenderer extends ImageRenderer {
 	
 	private final int eps=10;
 	
+	/**
+	 * Initializes the Edge Renderer
+	 * @param _vertexRenderer renderer responsible for vertices
+	 * @param _hexRenderer renderer responsible for hex fields
+	 * @param _board playing board
+	 * @param _width width of the window
+	 * @param _height height of the window
+	 */
 	protected BoardEdgeRenderer(BoardVertexRenderer _vertexRenderer, BoardHexRenderer _hexRenderer, Table _board, int _width, int _height) {
 		super(_width, _height);
 		vertexRenderer=_vertexRenderer;
@@ -53,6 +66,10 @@ public class BoardEdgeRenderer extends ImageRenderer {
 	
 	
 
+	/**
+	 * Paints the edges, then restores the previous drawing color
+	 * @author Kiss Lorinc
+	 */
 	private void paintEdges() {
 		Stroke prevStroke = edgeCanvas.getStroke();
 		edgeCanvas.setStroke(new BasicStroke(5));
@@ -71,6 +88,9 @@ public class BoardEdgeRenderer extends ImageRenderer {
 		
 	}
 
+	/**
+	 * Generates all edges and calculates the clicking map polygons
+	 */
 	private void generateEdges() {
 		for (Edge e : board.getEdges()) {
 			edgeMap.put(e, e.getEnds());
@@ -96,6 +116,12 @@ public class BoardEdgeRenderer extends ImageRenderer {
 		}
 	}
 	
+	/**
+	 * Gets the edge (defined by the click map) under the given coordinates
+	 * @param x x coordinate of the click
+	 * @param y y coordinate of the click
+	 * @return the Edge under the point specified
+	 */
 	public Edge getEdgeUnderCursor(int x, int y) {
 		for (Map.Entry<Edge, Polygon> entry : edgeClickMap.entrySet()){
 			try {

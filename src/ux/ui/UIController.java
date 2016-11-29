@@ -54,6 +54,7 @@ public class UIController extends PlayerController {
 		
 	@Override
 	public void turn() {
+		controlledPlayer.rollTheDice();
 		active=true;
 		while (active);
 	}

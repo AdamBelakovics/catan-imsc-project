@@ -8,6 +8,11 @@ import controller.player.Resource;
 import ux.ui.StringPainter;
 import ux.ui.UIController;
 
+/**
+ * Responsible for rendering the player's resources
+ * @author Kiss Lorinc
+ *
+ */
 public class ResourceRenderer extends ImageRenderer {
 	UIController uiController;
 	

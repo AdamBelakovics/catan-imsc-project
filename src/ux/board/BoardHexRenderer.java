@@ -27,6 +27,11 @@ import ux.ResourceXMLReader;
 import ux.board.BoardRenderer.BoardOrientation;
 import ux.ui.InterfaceColorProfile;
 
+/**
+ * Renderer responsible for rendering the hex fields
+ * @author Kiss Lorinc
+ *
+ */
 public class BoardHexRenderer extends ImageRenderer {
 	private Table board;
 	private double rotationLeft;
@@ -42,6 +47,13 @@ public class BoardHexRenderer extends ImageRenderer {
 	final double eps=0.01;
 	final double rotationStep=0.01;
 
+	/**
+	 * Initializes the renderer
+	 * @param _parentRenderer the Board renderer parent of this renderer
+	 * @param _board the game board
+	 * @param _width width of the window
+	 * @param _height height of the window
+	 */
 	public BoardHexRenderer(ImageRenderer _parentRenderer,Table _board,int _width,int _height) {
 		
 		super(_width,_height);
