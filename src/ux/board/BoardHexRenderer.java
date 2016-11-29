@@ -61,6 +61,7 @@ public class BoardHexRenderer extends ImageRenderer {
 	 * Returns with the HexPoly of the given hex from the hex map
 	 * @param hex required hex
 	 * @return HexPoly of the given hex
+	 * @author Kiss Lorinc
 	 */
 	public HexPoly getHexPolyFromHex(Hex hex) {
 		return hexMap.get(hex);
