@@ -21,6 +21,14 @@ import controller.player.devcards.RoadBuildingCard;
 import controller.player.devcards.VictoryPointCard;
 import controller.player.devcards.YearOfPlentyCard;
 
+/**
+ * @author szoke
+ *
+ */
+/**
+ * @author szoke
+ *
+ */
 public class Player {
 	String name;
 	public PlayerController controller; 
@@ -181,7 +189,15 @@ public class Player {
 	}
 	
 	/**
-	 * getChangeLUT
+	 * Getter for table where the Player in
+	 * @return table
+	 */
+	public Table getTable(){
+		return table;
+	}
+	
+	/**
+	 * Getter for ChangeLUT the Player currently has
 	 * @param Resource
 	 * @return value of change lut
 	 */
