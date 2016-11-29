@@ -58,7 +58,7 @@ public class Controller {
 			pclist.get(i).firstturn();
 		}
 		
-		for(int i = pclist.size()-1; i > 0; i--){
+		for(int i = pclist.size()-1; i >= 0; i--){
 			pclist.get(i).firstturn();
 		}
 		
