@@ -66,6 +66,7 @@ public class Controller {
 		while(true){
 			for(PlayerController pc : pclist){
 				try {
+					Thread.sleep(100);
 					pc.turn();
 				} catch (GameEndsException e) {
 					e.printStackTrace();
