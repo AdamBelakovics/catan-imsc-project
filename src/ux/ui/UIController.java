@@ -74,5 +74,6 @@ public class UIController extends PlayerController {
 		firstturnactive = true;
 		state=FirstTurnState.STARTED;
 		while (firstturnactive);
+		state=FirstTurnState.NULL;
 	}
 }

@@ -311,7 +311,6 @@ public class AiController extends PlayerController {
 				if(!r.equals(Resource.Desert)){
 				i = i * 100 + rAmount.get(r);}
 			possibilities.put(i, data);
-
 			for (Resource forChange : Resource.values()) {
 				if(!forChange.equals(Resource.Desert)){
 				for (Resource getAble : Resource.values()) {
@@ -345,7 +344,7 @@ public class AiController extends PlayerController {
 				i = i * 100 + newData.hand.get(r);}
 
 			possibilities.put(i, newData);
-
+/*
 			for (Resource forChange2 : Resource.values()) {
 				if(!forChange2.equals(Resource.Desert)){
 				for (Resource getAble2 : Resource.values()) {
@@ -353,7 +352,7 @@ public class AiController extends PlayerController {
 					if (forChange2 != getAble2)
 						setPossibilitiesRec(newData, forChange2, getAble2);
 				}}
-			}}
+			}}*/
 		}
 		
 		/**
@@ -518,8 +517,10 @@ public class AiController extends PlayerController {
 					t=roadWhere.get(0);
 					for(Edge e:roadWhere){
 						roadWhereSeged=e.getEnds();
-						if(roadWhereSeged.contains(tt)&&roadWhereSeged.contains(tf))
+						if(roadWhereSeged.contains(tt)&&roadWhereSeged.contains(tf)) {
 							t=e;
+							break;
+						}
 					}
 						me.build(Buildable.Road, t);
 					break;
@@ -629,6 +630,16 @@ public class AiController extends PlayerController {
 		AllNeededDataForTurn datas = new AllNeededDataForTurn();
 		boolean canBuild = true;
 		boolean canTryAgain = true;
+		for(Edge e : map.edgeList) {
+			if (me.isBuildPossible(Buildable.Road, e) && Math.random()>0.6)
+				me.build(Buildable.Road, e);
+		}
+		for (Vertex v : map.vertexList) {
+			if (me.isBuildPossible(Buildable.City, v) && Math.random()>0.3)
+				me.build(Buildable.City, v);
+			else if (me.isBuildPossible(Buildable.Settlement, v) && Math.random()>0.5)
+				me.build(Buildable.Settlement, v);
+		}
 
 		while (canTryAgain == true) {
 			datas.Refresh();
