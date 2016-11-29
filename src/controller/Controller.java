@@ -62,9 +62,11 @@ public class Controller {
 			pclist.get(i).firstturn();
 		}
 		
+		int i = 0;
 		while(true){
 			for(PlayerController pc : pclist){
 				try {
+					System.out.println("Hello from player " + (++i)%4);
 					pc.turn();
 				} catch (GameEndsException e) {
 					e.printStackTrace();

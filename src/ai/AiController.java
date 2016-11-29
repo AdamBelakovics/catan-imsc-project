@@ -625,28 +625,19 @@ public class AiController extends PlayerController {
 	 * @author Hollo-Szabo Akos
 	 */
 	public void turn() throws GameEndsException{
-		System.out.println(me.getId()+"turn:"+Game.turn_number);
 		me.rollTheDice();
 		AllNeededDataForTurn datas = new AllNeededDataForTurn();
 		boolean canBuild = true;
 		boolean canTryAgain = true;
 
 		while (canTryAgain == true) {
-			System.out.println(me.getId()+"turn:"+Game.turn_number+"reFresh");
 			datas.Refresh();
-			System.out.println(me.getId()+"turn:"+Game.turn_number+"setPoss");
 			datas.setPossibilities();
-			System.out.println(me.getId()+"turn:"+Game.turn_number+"setBL");
 			datas.setBList();
-			System.out.println(me.getId()+"turn:"+Game.turn_number+"ToDoL");
 			datas.setToDoList();
-			System.out.println(me.getId()+"turn:"+Game.turn_number+"fMaxTo");
 			canBuild = datas.findMaxToDoList();
-			System.out.println(me.getId()+"turn:"+Game.turn_number+"inCh");
 			datas.inChange();
-			System.out.println(me.getId()+"turn:"+Game.turn_number+"letsBuild");
 			canBuild = datas.letsBuild();
-			System.out.println(me.getId()+"turn:"+Game.turn_number+"trade");
 			canTryAgain = datas.trade();
 		}
 	}

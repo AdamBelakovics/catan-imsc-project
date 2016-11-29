@@ -349,7 +349,12 @@ public class Player {
 		Resource g = Resource.Grain;
 		Resource l = Resource.Lumber;
 		Resource b = Resource.Brick;
-		int result = 7;//(int)(Math.random()*6+1) + (int)(Math.random()*6+1);
+		System.out.println("W " + getResourceAmount(w));
+		System.out.println("O " + getResourceAmount(o));
+		System.out.println("G " + getResourceAmount(g));
+		System.out.println("L " + getResourceAmount(l));
+		System.out.println("B " + getResourceAmount(b));
+		int result = (int)(Math.random()*6+1) + (int)(Math.random()*6+1);
 		System.out.println("Hello from rollthedice"+result);
 		if(result == 7){
 			for(int i = 0; i < Game.players.size(); i++){
@@ -358,20 +363,24 @@ public class Player {
 				if(sumAmountResources>7){
 					int cnt = (int)Math.floor(sumAmountResources/2);	
 					while(cnt>0){
-						Resource randRes = Resource.values()[(int) Math.random()*5];
+						int rnd = (int)(Math.random()*5);
+						Resource randRes = Resource.values()[rnd];
 						if(a.getResourceAmount(randRes)>0){
-						try {
-							a.decResourceAmount(randRes, 1);
-						} catch (OutOfRangeException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+							try {
+								a.decResourceAmount(randRes, 1);
+								cnt--;
+							} catch (OutOfRangeException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 						}
-						cnt--;
-					}
-				}		
+						else{
+							
+						}
+					}		
+				}
 			}
-		}
-			
+
 			handleThief();
 		}
 		else{
@@ -392,7 +401,7 @@ public class Player {
 			}
 		}
 		
-		Hex hex = table.getValidFields().get((int)Math.random()*table.getFields().size()-1);
+		Hex hex = table.getValidFields().get((int)Math.random()*table.getFields().size());
 		hex.setHasThief(true);
 		
 		Resource Res = hex.getResource();
