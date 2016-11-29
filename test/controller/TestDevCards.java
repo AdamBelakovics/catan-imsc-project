@@ -54,7 +54,7 @@ public class TestDevCards {
 	
 	@Test
 	public void testDevCardAmount(){
-		assertEquals(5, player.getOwnDevCards().size());
+		assertEquals(5, player.getDevCards().size());
 	}
 	
 	
