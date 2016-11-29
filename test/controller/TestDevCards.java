@@ -29,7 +29,7 @@ public class TestDevCards {
 	public void setUp() throws OutOfRangeException, NotEnoughResourcesException{
 	
 
-	
+	DevCardShop.initializeShop();
 	player.incResourceAmount(w, 100);
 	player.incResourceAmount(g, 100);
 	player.incResourceAmount(o, 100);
@@ -43,7 +43,7 @@ public class TestDevCards {
 	}
 	
 	@Test
-	public void testWhoolAmount() {
+	public void testWoolAmount() {
 		assertEquals(95, player.getResourceAmount(w) );
 	}
 	
@@ -56,7 +56,4 @@ public class TestDevCards {
 	public void testDevCardAmount(){
 		assertEquals(5, player.getDevCards().size());
 	}
-	
-	
-
 }

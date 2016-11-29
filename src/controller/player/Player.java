@@ -86,8 +86,6 @@ public class Player {
 			availableCities.add(new City(this));
 		}
 		
-		devCards = null;
-		playedDevCards = null;
 		table = t;
 				
 	}
