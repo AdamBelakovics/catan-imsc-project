@@ -7,12 +7,15 @@ import controller.player.Player;
 import controller.player.PlayerController;
 import controller.player.Resource;
 import controller.player.devcards.*;
+import ux.FirstTurnState;
 
 public class UIController extends PlayerController {
 	
-	Player controlledPlayer;
+	public Player controlledPlayer;
 	public volatile boolean active;
 	public volatile boolean firstturnactive;
+
+	public FirstTurnState state=FirstTurnState.NULL;
 	
 	public UIController(Player _controlledPlayer) {
 		controlledPlayer=_controlledPlayer;
@@ -68,6 +71,7 @@ public class UIController extends PlayerController {
 	@Override
 	public void firstturn() {
 		firstturnactive = true;
+		state=FirstTurnState.STARTED;
 		while (firstturnactive);
 	}
 }

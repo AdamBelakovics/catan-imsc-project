@@ -1,5 +1,7 @@
 package ux.ui;
 
+import ux.FirstTurnState;
+
 public class EndTurnButton extends Button {
 	UIController uiController;
 
@@ -10,9 +12,10 @@ public class EndTurnButton extends Button {
 	
 	@Override
 	public void press() {
-		uiController.active=false;
-		this.setSelected(false);
-		uiController.firstturnactive=false;
+		if (uiController.state==FirstTurnState.ROADBUILT || uiController.active) {
+			uiController.active=false;
+			this.setSelected(false);
+			uiController.firstturnactive=false;
+		}
 	}
-
 }

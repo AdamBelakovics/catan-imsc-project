@@ -14,7 +14,9 @@ public class DevCardShop {
 	 *								- 2 YearOfPlentyCard
 	 *								- 2 RoadBuildingCard
 	 */
-	public DevCardShop(){
+	
+	
+	static public void initializeShop(){
 		for(int i = 0; i < 14; i++){
 			devCardList.add(new KnightCard());
 		}

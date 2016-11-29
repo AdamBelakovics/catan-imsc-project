@@ -20,6 +20,8 @@ import controller.map.Hex;
 import controller.map.Orientation;
 import controller.map.Table;
 import ux.ImageRenderer;
+import ux.Renderer;
+import ux.ui.UIController;
 
 /**
  * @author Kiss Lorinc
@@ -29,6 +31,7 @@ public class BoardRenderer extends ImageRenderer {
 	Table board;
 	Graphics2D boardCanvas;
 	BufferedImage hexImage;
+	UIController currUIC;
 	
 	public BoardHexRenderer hexRenderer;
 	public BoardVertexRenderer vertexRenderer;
@@ -45,21 +48,23 @@ public class BoardRenderer extends ImageRenderer {
 
 	public BoardOrientation boardOrientation;
 
-	public BoardRenderer(Table _board,int _width, int _height) {
+	public BoardRenderer(UIController _currUIC,Table _board,int _width, int _height) {
 		super(_width,_height);
 		board=_board;
 		boardOrientation=BoardOrientation.NORTH;
+		currUIC=_currUIC;
 		hexImage=new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		hexRenderer=new BoardHexRenderer(this, board ,width,height);
-		vertexRenderer=new BoardVertexRenderer(_board, hexRenderer, width, height);
+		vertexRenderer=new BoardVertexRenderer(_board, hexRenderer, _currUIC, width, height);
 		edgeRenderer=new BoardEdgeRenderer(vertexRenderer,hexRenderer, board, width, height);
 	}
 
 	public void paint(Graphics g) {
 		boardCanvas=(Graphics2D)g;
 		hexRenderer.paint(hexImage.getGraphics());
-		vertexRenderer.paint(hexImage.getGraphics());
 		edgeRenderer.paint(hexImage.getGraphics());
+		vertexRenderer.paint(hexImage.getGraphics());
+		
 		if (hexImage!=null && boardCanvas!=null) boardCanvas.drawImage(hexImage, 0, 0, null);
 	
 		boardCanvas.translate(getWidth()/2, getHeight()/2);

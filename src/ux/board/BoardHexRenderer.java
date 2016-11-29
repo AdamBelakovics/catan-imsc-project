@@ -16,12 +16,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import controller.map.Buildable;
 import controller.map.Hex;
 import controller.map.Table;
 import controller.map.Vertex;
 import controller.player.Building;
 import controller.player.Resource;
-import ux.BuildingEnum;
 import ux.ImageRenderer;
 import ux.ResourceXMLReader;
 import ux.board.BoardRenderer.BoardOrientation;
@@ -37,8 +37,6 @@ public class BoardHexRenderer extends ImageRenderer {
 	private Hex selectedTile=null;
 	
 	AffineTransform boardTransformation;
-	
-	public BuildingEnum currentlyBuilding;
 
 	//Constants
 	final double eps=0.01;
@@ -55,8 +53,6 @@ public class BoardHexRenderer extends ImageRenderer {
 		hexMap=new HashMap<Hex,HexPoly>();
 		colorMap=ResourceXMLReader.readTextureXML("textures.xml");
 		generateHexes();
-		
-		currentlyBuilding=null;
 		rotationLeft=0;
 		zoomLevel=1;
 	}
