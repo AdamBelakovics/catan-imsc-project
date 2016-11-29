@@ -349,6 +349,7 @@ public class Player {
 		Resource g = Resource.Grain;
 		Resource l = Resource.Lumber;
 		Resource b = Resource.Brick;
+		System.out.println(this.getName());
 		System.out.println("W " + getResourceAmount(w));
 		System.out.println("O " + getResourceAmount(o));
 		System.out.println("G " + getResourceAmount(g));
@@ -511,7 +512,7 @@ public class Player {
 		boolean succesful = false;
 		
 		if(what == Buildable.Road){
-			if(getResourceAmount(w) >= 1 && getResourceAmount(l) >= 1){
+			if(getResourceAmount(b) >= 1 && getResourceAmount(l) >= 1){
 				try {
 					decResourceAmount(b, 1);
 					decResourceAmount(l, 1);

@@ -38,6 +38,7 @@ public class Controller {
 		AiController AICONT01 = new AiController(board, AI01, playerList);
 		AiController AICONT02 = new AiController(board, AI02, playerList);
 		AiController AICONT03 = new AiController(board, AI03, playerList);
+		
 		UIController HUMCONT = new UIController(HUMAN);
 		
 		ArrayList<PlayerController> pclist = new ArrayList<PlayerController>();
@@ -54,7 +55,6 @@ public class Controller {
 		Renderer rend = new Renderer(HUMCONT, board, 1024, 768);
 		
 		for(int i = 0; i < pclist.size(); i++){
-			System.out.println("Hello from player " + i);
 			pclist.get(i).firstturn();
 		}
 		
@@ -66,7 +66,6 @@ public class Controller {
 		while(true){
 			for(PlayerController pc : pclist){
 				try {
-					System.out.println("Hello from player " + (++i)%4);
 					pc.turn();
 				} catch (GameEndsException e) {
 					e.printStackTrace();
