@@ -69,7 +69,7 @@ public class Edge implements TableElement {
 	public boolean isFirstBuildPossible(Building r) {
 		for(Vertex v : getEnds())
 			if(v.getBuilding() != null)
-				if(getBuilding().getClass().equals(Settlement.class) && getBuilding().getOwner().equals(r.getOwner()))
+				if(v.getBuilding().getClass().equals(Settlement.class) && v.getBuilding().getOwner().equals(r.getOwner()))
 					return true;
 		return false;
 	}

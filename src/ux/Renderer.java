@@ -149,7 +149,8 @@ public class Renderer {
 			Edge selectedEdge=boardPanel.edgeRenderer.getEdgeUnderCursor(ev.getX(), ev.getY());
 			System.out.println(selectedEdge);
 			if (selectedEdge!=null && boardPanel.vertexRenderer.currentlyBuilding==Buildable.Road) {
-					if (currUIC.firstturnactive && currUIC.state==FirstTurnState.CITYBUILT) {
+					if (currUIC.firstturnactive && currUIC.state==FirstTurnState.CITYBUILT &&
+							currUIC.controlledPlayer.isFirstBuildPossible(Buildable.Road, selectedEdge)) {
 						
 							currUIC.state=FirstTurnState.ROADBUILT;
 							currUIC.controlledPlayer.firstBuild(Buildable.Road, selectedEdge);
