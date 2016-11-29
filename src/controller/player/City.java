@@ -11,7 +11,8 @@ public class City extends Building{
 
 	@Override
 	public boolean build(TableElement t) {
-			if(t.getBuilding().getClass().equals(Settlement.class) && t.isBuildPossible(this) && t.getClass().equals(Vertex.class)){
+		if(t != null && t.getBuilding() != null)
+			if( t.getBuilding().getClass().equals(Settlement.class) && t.isBuildPossible(this) && t.getClass().equals(Vertex.class)){
 				t.setBuilding(this);
 			}
 		return false;

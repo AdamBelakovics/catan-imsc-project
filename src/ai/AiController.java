@@ -1,6 +1,8 @@
 package ai;
 
 import java.util.*;
+
+import controller.Game;
 import controller.map.*;
 import controller.player.*;
 
@@ -235,11 +237,11 @@ public class AiController extends PlayerController {
 		 */
 		public AllNeededDataForTurn() {
 			for (Resource r : Resource.values()) {
+				if(!r.equals(Resource.Desert)){
 				rAmount.put(r, me.getResourceAmount(r));
-				System.out.println(me.getChangeLUT(r));
 				rLut.put(r, me.getChangeLUT(r));
 				seged.put(r, rAmount.get(r));
-			}
+			}}
 
 			seged = new HashMap<Resource, Integer>();
 			seged.put(Resource.Brick, 1);
@@ -269,6 +271,13 @@ public class AiController extends PlayerController {
 			seged.put(Resource.Grain, 0);
 			seged.put(Resource.Wool, 0);
 			resourceNeed.put(Buildable.Road, seged);
+			seged = new HashMap<Resource, Integer>();
+			seged.put(Resource.Brick, 0);
+			seged.put(Resource.Lumber, 0);
+			seged.put(Resource.Ore, 0);
+			seged.put(Resource.Grain, 0);
+			seged.put(Resource.Wool, 0);
+			resourceNeed.put(Buildable.None, seged);
 		}
 		
 		/**
@@ -277,10 +286,11 @@ public class AiController extends PlayerController {
 		 */
 		public void Refresh() {
 			for (Resource r : Resource.values()) {
+				if(!r.equals(Resource.Desert)){
 				rAmount.put(r, me.getResourceAmount(r));
 				rLut.put(r, me.getChangeLUT(r));
 				seged.put(r, rAmount.get(r));
-			}
+			}}
 			possibilities = new HashMap<Integer, Value1>();
 			options = new HashMap<Buildable, Double>();
 			bList = new ArrayList<Buildable>();
@@ -298,15 +308,18 @@ public class AiController extends PlayerController {
 			Value1 data = new Value1(rAmount, new ArrayList<List<Resource>>());
 			int i = 0;
 			for (Resource r : Resource.values())
-				i = i * 100 + rAmount.get(r);
+				if(!r.equals(Resource.Desert)){
+				i = i * 100 + rAmount.get(r);}
 			possibilities.put(i, data);
 
 			for (Resource forChange : Resource.values()) {
+				if(!forChange.equals(Resource.Desert)){
 				for (Resource getAble : Resource.values()) {
+					if(!getAble.equals(Resource.Desert)){
 					if (forChange != getAble)
 						setPossibilitiesRec(data, forChange, getAble);
-				}
-			}
+				}}
+			}}
 		}
 		
 		/**
@@ -328,16 +341,19 @@ public class AiController extends PlayerController {
 
 			int i = 0;
 			for (Resource r : Resource.values())
-				i = i * 100 + newData.hand.get(r);
+				if(!r.equals(Resource.Desert)){
+				i = i * 100 + newData.hand.get(r);}
 
 			possibilities.put(i, newData);
 
 			for (Resource forChange2 : Resource.values()) {
+				if(!forChange2.equals(Resource.Desert)){
 				for (Resource getAble2 : Resource.values()) {
+					if(!getAble2.equals(Resource.Desert)){
 					if (forChange2 != getAble2)
 						setPossibilitiesRec(newData, forChange2, getAble2);
-				}
-			}
+				}}
+			}}
 		}
 		
 		/**
@@ -375,27 +391,34 @@ public class AiController extends PlayerController {
 			int i = 2;
 			int j = 0;
 			boolean enough = true;
+			boolean jPlus = false;
 			for (Integer key : possibilities.keySet()) {
 				seged = new HashMap<Resource, Integer>();
 				seged.putAll(possibilities.get(key).hand);
+				
 				while (j < 4 && i > 0) {
 					for (Buildable b : Buildable.values()) {
 						if (bList.get(j).equals(b)) {
 							for (Resource r : Resource.values()) {
+								if(!r.equals(Resource.Desert)){
 								if (seged.get(r) < resourceNeed.get(b).get(r))
 									enough = false;
-							}
+							}}
 							if (enough == true) {
 								for (Resource r : Resource.values()) {
+									if(!r.equals(Resource.Desert)){
 									seged.replace(r, seged.get(r) - resourceNeed.get(b).get(r));
 									buildPlan.add(b);
-								}
+								}}
 								i--;
 							} else
-								j++;
+								jPlus=true;
 						}
 						enough = true;
 					}
+					if(jPlus==true){
+						j++;
+						jPlus=false;}
 				}
 				while (i > 0) {
 					buildPlan.add(Buildable.None);
@@ -509,18 +532,19 @@ public class AiController extends PlayerController {
 		 */
 		public boolean trade() {
 
-			for (Resource r : Resource.values()) {
+			for (Resource r : Resource.values()) {if(!r.equals(Resource.Desert)){
 				rAmount.put(r, me.getResourceAmount(r));
-			}
+			}}
 			for (Buildable b : Buildable.values()) {
 				seged.putAll(resourceNeed.get(b));
 				needToBuild.put(b, seged);
 				for (Resource r : Resource.values()) {
+					if(!r.equals(Resource.Desert)){
 					if (needToBuild.get(b).get(r) >= rAmount.get(r))
 						needToBuild.get(b).replace(r, 0);
 					else
 						needToBuild.get(b).replace(r, rAmount.get(r) - needToBuild.get(b).get(r));
-				}
+				}}
 			}
 
 			for (int i = 0; i < bList.size(); i++)
@@ -532,15 +556,17 @@ public class AiController extends PlayerController {
 				}
 			int hSum = 0;
 			for (Resource r : Resource.values()) {
+				if(!r.equals(Resource.Desert)){
 				hSum += rAmount.get(r);
-			}
+			}}
 
 			int ntbSum;
 			for (int i = 0; i < bList.size(); i++) {
 				ntbSum = 0;
 				for (Resource r : Resource.values()) {
+					if(!r.equals(Resource.Desert)){
 					ntbSum += needToBuild.get(bList.get(i)).get(r);
-				}
+				}}
 				if (ntbSum >= hSum / 3) {
 					needToBuild.remove(bList.get(i));
 					bList.remove(i);
@@ -565,10 +591,13 @@ public class AiController extends PlayerController {
 			boolean doneBusiness = false;
 			boolean success = false;
 			for(Resource r:Resource.values()){
+				if(!r.equals(Resource.Desert)){
 				rAmount.replace(r, rAmount.get(r)-needToBuild.get(bList.get(0)).get(r));
-				seged.putAll(needToBuild.get(bList.get(0)));}
+				seged.putAll(needToBuild.get(bList.get(0)));}}
 			for(Resource r1:Resource.values()){
+				if(!r1.equals(Resource.Desert)){
 				for(Resource r2:Resource.values()){
+					if(!r2.equals(Resource.Desert)){
 					if(rAmount.get(r1)!=0&&seged.get(r2)!=0){
 						success=true;
 						while(rAmount.get(r1)!=0&&seged.get(r2)!=0&&success){
@@ -582,16 +611,16 @@ public class AiController extends PlayerController {
 						rAmount.replace(r1, rAmount.get(r1)-1);
 						seged.replace(r2, seged.get(r2)+1);
 						doneBusiness=true;
-					}}}}}
+					}}}}}}}
 			return doneBusiness;
-		}	
-		}
+		}}
 	
 	/**
 	 * turn. The main calculator of future planes, and the center of control.
 	 * @author Hollo-Szabo Akos
 	 */
 	public void turn() throws GameEndsException{
+		System.out.println(me.getId()+"turn:"+Game.turn_number);
 		me.rollTheDice();
 		AllNeededDataForTurn datas = new AllNeededDataForTurn();
 		boolean canBuild = true;
@@ -627,7 +656,6 @@ public class AiController extends PlayerController {
 		
 		for(int i=0;i<settlementPlace.size();i++){
 			if(me.isFirstBuildPossible(Buildable.Settlement, settlementPlace.get(i))){
-				System.out.println("value:"+nodeFirstPersonalValue(settlementPlace.get(i)));
 				Values.add(nodeFirstPersonalValue(settlementPlace.get(i)));}
 			else{settlementPlace.remove(i);
 				i--;}}
@@ -655,7 +683,6 @@ public class AiController extends PlayerController {
 			
 			for(int i=0;i<settlementPlaceNN.size();i++){
 				if(me.isFirstBuildPossible(Buildable.Settlement, settlementPlaceNN.get(i))){
-					System.out.println("value:"+nodeFirstPersonalValue(settlementPlaceNN.get(i)));
 					Values.add(nodeFirstPersonalValue(settlementPlaceNN.get(i)));}
 				else{settlementPlaceNN.remove(i);
 					i--;}}
@@ -668,7 +695,6 @@ public class AiController extends PlayerController {
 			}
 			
 			roadPlaces=placeofSettlement.getNeighbourEdges();
-			System.out.println(index);
 			edgesinNeighbour=settlementPlaceNN.get(index).getNeighbourEdges();
 			for(Edge e1:roadPlaces)
 				for(Edge e2:edgesinNeighbour)

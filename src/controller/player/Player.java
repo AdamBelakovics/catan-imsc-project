@@ -327,7 +327,7 @@ public class Player {
 		for(Edge e : table.getEdges()){
 			tmpRoad = (Road)e.getBuilding();
 			if(tmpRoad != null && tmpRoad.getOwner().equals(this)){
-				if(e.getEnds().contains(e))
+				if(e.getEnds().contains(v))
 					result.add(e);
 			}
 
