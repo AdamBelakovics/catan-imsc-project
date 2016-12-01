@@ -20,6 +20,7 @@ import controller.player.Building;
 import controller.player.Player;
 import controller.player.Road;
 import ux.ImageRenderer;
+import ux.RendererDataStore;
 import ux.ui.InterfaceColorProfile;
 
 /**
@@ -29,10 +30,8 @@ import ux.ui.InterfaceColorProfile;
  */
 public class BoardEdgeRenderer extends ImageRenderer {
 
-	private BoardVertexRenderer vertexRenderer;
-	private BoardHexRenderer hexRenderer;
 	private Graphics2D edgeCanvas;
-	private Table board;
+	private RendererDataStore ds;
 	private HashMap<Edge, ArrayList<Vertex> > edgeMap=new HashMap();
 	private HashMap<Edge, Polygon> edgeClickMap=new HashMap();
 
@@ -47,11 +46,8 @@ public class BoardEdgeRenderer extends ImageRenderer {
 	 * @param _width width of the window
 	 * @param _height height of the window
 	 */
-	protected BoardEdgeRenderer(BoardVertexRenderer _vertexRenderer, BoardHexRenderer _hexRenderer, Table _board, int _width, int _height) {
-		super(_width, _height);
-		vertexRenderer=_vertexRenderer;
-		hexRenderer=_hexRenderer;
-		board=_board;
+	protected BoardEdgeRenderer(RendererDataStore _dataStore) {
+		ds=_dataStore;
 
 		generateEdges();
 	}
@@ -60,7 +56,7 @@ public class BoardEdgeRenderer extends ImageRenderer {
 	public void paint(Graphics g) {
 		edgeCanvas=(Graphics2D)g;
 
-		edgeCanvas.setTransform(hexRenderer.boardTransformation);
+		edgeCanvas.setTransform(ds.boardTransformation);
 		paintEdges();
 	}
 	
@@ -77,10 +73,10 @@ public class BoardEdgeRenderer extends ImageRenderer {
 			if (e.getKey().getBuilding()!=null) {
 				InterfaceColorProfile.setPlayerColor(edgeCanvas, e.getKey().getBuilding());
 				edgeCanvas.drawLine(
-						vertexRenderer.vertexMap.get(e.getValue().get(0)).x,
-						vertexRenderer.vertexMap.get(e.getValue().get(0)).y,
-						vertexRenderer.vertexMap.get(e.getValue().get(1)).x,
-						vertexRenderer.vertexMap.get(e.getValue().get(1)).y
+						ds.vertexMap.get(e.getValue().get(0)).x,
+						ds.vertexMap.get(e.getValue().get(0)).y,
+						ds.vertexMap.get(e.getValue().get(1)).x,
+						ds.vertexMap.get(e.getValue().get(1)).y
 						);
 			}
 		}		
@@ -92,14 +88,14 @@ public class BoardEdgeRenderer extends ImageRenderer {
 	 * Generates all edges and calculates the clicking map polygons
 	 */
 	private void generateEdges() {
-		for (Edge e : board.getEdges()) {
+		for (Edge e : ds.board.getEdges()) {
 			edgeMap.put(e, e.getEnds());
 			
 			double eps=0.3;
 			
 			Polygon clickPoly=new Polygon();
-			Point v1=vertexRenderer.vertexMap.get(e.getEnds().get(0));
-			Point v2=vertexRenderer.vertexMap.get(e.getEnds().get(1));
+			Point v1=ds.vertexMap.get(e.getEnds().get(0));
+			Point v2=ds.vertexMap.get(e.getEnds().get(1));
 
 			clickPoly.addPoint(v1.x,v1.y);
 			int p1=(v1.x+v2.x)/2;
@@ -126,7 +122,7 @@ public class BoardEdgeRenderer extends ImageRenderer {
 		for (Map.Entry<Edge, Polygon> entry : edgeClickMap.entrySet()){
 			try {
 				if (
-						entry.getValue().contains(hexRenderer.boardTransformation.inverseTransform(new Point(x,y), null))) return entry.getKey();
+						entry.getValue().contains(ds.boardTransformation.inverseTransform(new Point(x,y), null))) return entry.getKey();
 			} catch (NoninvertibleTransformException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -36,11 +36,10 @@ import ux.ui.UIController;
  *
  */
 public class Renderer {
-	public UIController currUIC;
-	Table board;
 	JFrame mainFrame;
 	public BoardRenderer boardPanel;
 	public HUDRenderer hudPanel;
+	RendererDataStore dataStore=new RendererDataStore();
 	Timer updateTimer;
 	Image bufferImg;
 
@@ -52,12 +51,15 @@ public class Renderer {
 	 * @param _height height of the window
 	 */
 	public Renderer(UIController uiController, Table _board, int _width, int _height) {
-		board=_board;
-		currUIC=uiController;
+		dataStore.board=_board;
+		dataStore.currUIC=uiController;
 		mainFrame=new JFrame("JCatan");
 		
-		boardPanel=new BoardRenderer(uiController, board,_width,_height);
-		hudPanel=new HUDRenderer(currUIC, _width,_height);
+		dataStore.width=_width;
+		dataStore.height=_height;
+		
+		boardPanel=new BoardRenderer(dataStore);
+		hudPanel=new HUDRenderer(dataStore);
 
 		mainFrame.setSize(_width, _height);
 		mainFrame.setResizable(false);
@@ -111,6 +113,8 @@ public class Renderer {
 		 */
 		@Override
 		public void mouseClicked(MouseEvent ev) {
+			// for quick access
+			RendererDataStore ds=dataStore;
 			try {
 			// Selecting board elements
 			Hex selectedHex=boardPanel.hexRenderer.getHexUnderCursor(ev.getX(), ev.getY());
@@ -123,21 +127,21 @@ public class Renderer {
 			
 			Vertex selectedVertex=boardPanel.vertexRenderer.getVertexUnderCursor(ev.getX(), ev.getY());
 			if (selectedVertex!=null) {
-				if (boardPanel.vertexRenderer.currentlyBuilding!=null) {
-					if (currUIC.firstturnactive && currUIC.state==FirstTurnState.STARTED) {
+				if (ds.currentlyBuilding!=null) {
+					if (ds.currUIC.firstturnactive && ds.currUIC.state==FirstTurnState.STARTED) {
 						
-							currUIC.state=FirstTurnState.CITYBUILT;
-							currUIC.controlledPlayer.firstBuild(Buildable.Settlement, selectedVertex);
+							ds.currUIC.state=FirstTurnState.CITYBUILT;
+							ds.currUIC.controlledPlayer.firstBuild(Buildable.Settlement, selectedVertex);
 							
-					} else if (currUIC.active) {
-						switch (boardPanel.vertexRenderer.currentlyBuilding) {
+					} else if (ds.currUIC.active) {
+						switch (ds.currentlyBuilding) {
 						case Settlement:
-							if (currUIC.controlledPlayer.isBuildPossible(Buildable.Settlement, selectedVertex))
-								currUIC.controlledPlayer.build(Buildable.Settlement, selectedVertex);
+							if (ds.currUIC.controlledPlayer.isBuildPossible(Buildable.Settlement, selectedVertex))
+								ds.currUIC.controlledPlayer.build(Buildable.Settlement, selectedVertex);
 							break;
 						case City:
-							if (currUIC.controlledPlayer.isBuildPossible(Buildable.City, selectedVertex))
-								currUIC.controlledPlayer.build(Buildable.City, selectedVertex);
+							if (ds.currUIC.controlledPlayer.isBuildPossible(Buildable.City, selectedVertex))
+								ds.currUIC.controlledPlayer.build(Buildable.City, selectedVertex);
 							break;		
 						default:
 							break;
@@ -148,21 +152,21 @@ public class Renderer {
 			}
 			Edge selectedEdge=boardPanel.edgeRenderer.getEdgeUnderCursor(ev.getX(), ev.getY());
 			System.out.println(selectedEdge);
-			if (selectedEdge!=null && boardPanel.vertexRenderer.currentlyBuilding==Buildable.Road) {
-					if (currUIC.firstturnactive && currUIC.state==FirstTurnState.CITYBUILT &&
-							currUIC.controlledPlayer.isFirstBuildPossible(Buildable.Road, selectedEdge)) {
+			if (selectedEdge!=null && ds.currentlyBuilding==Buildable.Road) {
+					if (ds.currUIC.firstturnactive && ds.currUIC.state==FirstTurnState.CITYBUILT &&
+							ds.currUIC.controlledPlayer.isFirstBuildPossible(Buildable.Road, selectedEdge)) {
 						
-							currUIC.state=FirstTurnState.ROADBUILT;
-							currUIC.controlledPlayer.firstBuild(Buildable.Road, selectedEdge);
+							ds.currUIC.state=FirstTurnState.ROADBUILT;
+							ds.currUIC.controlledPlayer.firstBuild(Buildable.Road, selectedEdge);
 						
 					}
-					else if (currUIC.active && currUIC.controlledPlayer.isBuildPossible(Buildable.Road, selectedEdge))
-						currUIC.controlledPlayer.build(Buildable.Road, selectedEdge);
+					else if (ds.currUIC.active && ds.currUIC.controlledPlayer.isBuildPossible(Buildable.Road, selectedEdge))
+						ds.currUIC.controlledPlayer.build(Buildable.Road, selectedEdge);
 			}
 			 
 			
 			// Player activity check
-			if (!currUIC.active && !currUIC.firstturnactive) return;
+			if (!ds.currUIC.active && !ds.currUIC.firstturnactive) return;
 			
 			
 			// Selecting interface elements
@@ -172,15 +176,15 @@ public class Renderer {
 				hudPanel.resetInterfaceSelection();
 				hudPanel.pressButton(selectedButton);
 				if (selectedButton instanceof BuildButton && selectedButton.isSelected())
-					boardPanel.vertexRenderer.currentlyBuilding=((BuildButton)selectedButton).building;
+					ds.currentlyBuilding=((BuildButton)selectedButton).building;
 			}
 			
-			DevCard selectedCard=hudPanel.getCardRenderer().getDevCardUnderCursor(ev.getX(), ev.getY());
+			DevCard selectedCard=hudPanel.cardRenderer.getDevCardUnderCursor(ev.getX(), ev.getY());
 			if (selectedCard!=null) {
 				boardPanel.resetBoardSelection();
 				hudPanel.resetInterfaceSelection();
 				
-				hudPanel.getCardRenderer().selectDevCard(selectedCard);
+				hudPanel.cardRenderer.selectDevCard(selectedCard);
 			}		
 			} catch (GameEndsException e) {
 				// TODO Auto-generated catch block

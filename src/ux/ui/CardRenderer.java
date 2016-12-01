@@ -11,19 +11,19 @@ import java.util.HashMap;
 
 import controller.player.devcards.DevCard;
 import ux.ImageRenderer;
+import ux.RendererDataStore;
 
 public class CardRenderer extends ImageRenderer {
 	Graphics2D cardCanvas;
-	UIController uiPlayer;
 	HashMap<DevCard,Rectangle> devCards;
 	HashMap<DevCard,Rectangle> usedDevCards;
+	RendererDataStore ds;
 
 	DevCard selectedDevCard;
 	
 
-	public CardRenderer(UIController _uiPlayer, int _width, int _height) {
-		super(_width,_height);
-		uiPlayer=_uiPlayer;
+	public CardRenderer(RendererDataStore _ds) {
+		ds=_ds;
 		calculateCardMetrics();
 		selectedDevCard=null;
 		}
@@ -33,19 +33,19 @@ public class CardRenderer extends ImageRenderer {
 		int i=1;
 		
 		devCards=new HashMap();
-		ArrayList<DevCard> devCardsArray=uiPlayer.getDevCards();
+		ArrayList<DevCard> devCardsArray=ds.currUIC.getDevCards();
 		for (DevCard dc : devCardsArray) {
 			devCards.put(dc, 
-					new Rectangle(width*13/40+i*width*14/40/(devCardsArray.size()+1)-cardMetrics.width/2, height*17/20-cardMetrics.height/2, cardMetrics.width, cardMetrics.height));
+					new Rectangle(ds.width*13/40+i*ds.width*14/40/(devCardsArray.size()+1)-cardMetrics.width/2, ds.height*17/20-cardMetrics.height/2, cardMetrics.width, cardMetrics.height));
 			i++;
 		}
 		
 		usedDevCards=new HashMap();
 		i=1;
-		ArrayList<DevCard> usedDevCardsArray=uiPlayer.getPlayedDevCards();
-		for (DevCard udc : uiPlayer.getPlayedDevCards()) {
+		ArrayList<DevCard> usedDevCardsArray=ds.currUIC.getPlayedDevCards();
+		for (DevCard udc : ds.currUIC.getPlayedDevCards()) {
 			usedDevCards.put(udc, 
-					new Rectangle(width*13/40+i*width*14/40/(usedDevCardsArray.size()+1)-cardMetrics.width/2, height*15/20-cardMetrics.height/2, cardMetrics.width, cardMetrics.height));		
+					new Rectangle(ds.width*13/40+i*ds.width*14/40/(usedDevCardsArray.size()+1)-cardMetrics.width/2, ds.height*15/20-cardMetrics.height/2, cardMetrics.width, cardMetrics.height));		
 			i++;
 		}
 }
@@ -63,7 +63,7 @@ public class CardRenderer extends ImageRenderer {
 			cardCanvas.setColor(
 					dc.getKey().equals(selectedDevCard)?
 							InterfaceColorProfile.selectedColor:
-							uiPlayer.active?
+							ds.currUIC.active?
 								InterfaceColorProfile.bgColor:
 								InterfaceColorProfile.inactiveColor);
 			cardCanvas.fill(dc.getValue());
@@ -106,7 +106,7 @@ public class CardRenderer extends ImageRenderer {
 	}
 	
 	private class CardMetrics {
-		public final int height=CardRenderer.this.height*1/10-20;
+		public final int height=ds.height*1/10-20;
 		public final int width=height*11/16;
 	}
 }

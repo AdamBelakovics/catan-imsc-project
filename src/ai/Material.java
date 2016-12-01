@@ -11,23 +11,22 @@ import controller.player.Settlement;
 /**
  * @author Mate Sebestyen
  *
- * Class for representing materials in the game Catan, used by the 
- * AI player for making decisions
+ * Class for calculating values of materials in Catan, used by the AI player
  */
 public class Material {
 	
 	/**
-	 * variable for storing the resource type this material represents
+	 * the resource type this material represents
 	 */
 	private Resource myresource;
 	
 	/**
-	 * variable to store base value of specific material
+	 * base value of specific material
 	 */
 	private double baseValue;
 	
 	/**
-	 * the chance of getting the material in a turn on all the territories combined
+	 * the chance of gaining the material in a turn on all the territories combined
 	 */
 	@SuppressWarnings("unused")
 	private double baseFrequency;
@@ -45,12 +44,12 @@ public class Material {
 	/**
 	 * constructor, initializes board me and myresource 
 	 * @param t - board
-	 * @param pc - me
+	 * @param p - me
 	 * @param r - myresource
 	 */
-	public Material(Table t, Player pc, Resource r){
+	public Material(Table t, Player p, Resource r){
 		
-		me = pc;
+		me = p;
 		board = t;
 		myresource = r;
 		
@@ -76,7 +75,6 @@ public class Material {
 		case Desert:
 			baseValue = 0;
 			break;
-
 		default:
 			baseValue = 0;
 			System.out.println("Failed to initialize baseValue to proper ammount set to 0");
@@ -121,7 +119,7 @@ public class Material {
 	 * @return the value
 	 */
 	public double personalValue(){
-		return baseValue * factorByNumberInHandLUY(me.getResourceAmount(myresource)) + 2 * globalFrequency();
+		return baseValue * factorByNumberInHandLUT(me.getResourceAmount(myresource)) + 2 * globalFrequency();
 	}
 	
 	/**
@@ -133,10 +131,12 @@ public class Material {
 		for(Hex field : board.getFields()){
 			if(field.getResource().equals(myresource)){
 				for(Vertex node : field.getNeighbouringVertices()){
-					if((node.getBuilding() != null) && (node.getBuilding().getClass().equals(Settlement.class))){
-						sum += frequencyLUT(field.getProsperity());
-					}else if((node.getBuilding() != null) && (node.getBuilding().getClass().equals(City.class))){
-						sum += 2.0 * frequencyLUT(field.getProsperity());
+					if(node.getBuilding() != null){
+						if(node.getBuilding().getClass().equals(Settlement.class)){
+							sum += frequencyLUT(field.getProsperity());
+						}else if(node.getBuilding().getClass().equals(City.class)){
+							sum += 2.0 * frequencyLUT(field.getProsperity());
+						}
 					}
 				}
 			}
@@ -145,7 +145,7 @@ public class Material {
 	}
 	
 	/**
-	 * method for getting the chance of rolling a given number if we roll two dice
+	 * LUT for the chance of rolling a given number if we roll two dice
 	 * @param a the rolled number
 	 * @return the chance of rolling it
 	 */
@@ -177,11 +177,11 @@ public class Material {
 	}
 	
 	/**
-	 * look up table for factors in calculating personal vale
+	 * look up table for factors in calculating personal vale magic constants
 	 * @param number of given material in hand
 	 * @return a factor for the calculation of the value of the material
 	 */
-	private double factorByNumberInHandLUY(int inhand){
+	private double factorByNumberInHandLUT(int inhand){
 		switch(inhand){
 		case 0:
 			return 1;

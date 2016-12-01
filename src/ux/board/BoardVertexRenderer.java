@@ -21,6 +21,7 @@ import controller.player.Player;
 import controller.player.Settlement;
 import ux.ImageRenderer;
 import ux.Renderer;
+import ux.RendererDataStore;
 import ux.ui.InterfaceColorProfile;
 import ux.ui.UIController;
 
@@ -31,24 +32,13 @@ import ux.ui.UIController;
  */
 public class BoardVertexRenderer extends ImageRenderer {
 
-	private UIController uiController;
-	private BoardHexRenderer hexRenderer; 
-	HashMap<Vertex,Point> vertexMap=new HashMap();
-	private Vertex selectedVertex=null;
-	private Graphics2D vertexCanvas;
-	private Table board;
-	private ArrayList<Player> playersList;
-	
 
-	public Buildable currentlyBuilding=null;
-	
+	private Graphics2D vertexCanvas;
+	private RendererDataStore ds;	
 	private final int eps=10;
 
-	BoardVertexRenderer(Table _board, BoardHexRenderer _hexRenderer, UIController _currUIC, int _width, int _height) {
-		super(_width, _height);
-		board=_board;
-		uiController=_currUIC;
-		hexRenderer=_hexRenderer;
+	BoardVertexRenderer(RendererDataStore _ds) {
+		ds=_ds;
 		generateVertices();
 	}
 
@@ -65,10 +55,10 @@ public class BoardVertexRenderer extends ImageRenderer {
 	 */
 	private void paintVertices() {
 
-		for (Entry<Vertex,Point> v : vertexMap.entrySet()) {
+		for (Entry<Vertex,Point> v : ds.vertexMap.entrySet()) {
 			
 			Point2D transformedPoint=new Point();
-			hexRenderer.boardTransformation.transform(v.getValue(), transformedPoint);
+			ds.boardTransformation.transform(v.getValue(), transformedPoint);
 			
 			Building detectedBuilding=v.getKey().getBuilding();
 			if (detectedBuilding!=null) {			
@@ -79,8 +69,8 @@ public class BoardVertexRenderer extends ImageRenderer {
 				else if (detectedBuilding instanceof City) {
 					vertexCanvas.fillOval((int)transformedPoint.getX()-14, (int)transformedPoint.getY()-14, 20, 20);
 				}
-			} else if (selectedVertex!=null && uiController.controlledPlayer.isBuildPossible(currentlyBuilding, selectedVertex)) {
-				if (selectedVertex!=null && v.getKey().equals(selectedVertex))
+			} else if (ds.selectedVertex!=null && ds.currUIC.controlledPlayer.isBuildPossible(ds.currentlyBuilding, ds.selectedVertex)) {
+				if (ds.selectedVertex!=null && v.getKey().equals(ds.selectedVertex))
 					vertexCanvas.setColor(InterfaceColorProfile.vertexColor);
 				else vertexCanvas.setColor(InterfaceColorProfile.selectedColor);
 				vertexCanvas.fillOval((int)transformedPoint.getX()-4, (int)transformedPoint.getY()-4, 5, 5);
@@ -93,13 +83,13 @@ public class BoardVertexRenderer extends ImageRenderer {
 	 * @author Kiss Lorinc
 	 */
 	private void generateVertices() {
-		for (Vertex v : board.getNodes()) {
+		for (Vertex v : ds.board.getNodes()) {
 			ArrayList<Hex> neighbourHexes=v.getNeighbourHexes();
 			
-			HexPoly A=hexRenderer.getHexPolyFromHex(neighbourHexes.get(0));
-			HexPoly B=hexRenderer.getHexPolyFromHex(neighbourHexes.get(1));
-			HexPoly C=hexRenderer.getHexPolyFromHex(neighbourHexes.get(2));
-			vertexMap.put(v,new Point((A.x+B.x+C.x)/3,(A.y+B.y+C.y)/3));
+			HexPoly A=ds.hexMap.get(neighbourHexes.get(0));
+			HexPoly B=ds.hexMap.get(neighbourHexes.get(1));
+			HexPoly C=ds.hexMap.get(neighbourHexes.get(2));
+			ds.vertexMap.put(v,new Point((A.x+B.x+C.x)/3,(A.y+B.y+C.y)/3));
 		}
 	}
 	
@@ -113,13 +103,13 @@ public class BoardVertexRenderer extends ImageRenderer {
 	public Vertex getVertexUnderCursor(int x, int y) {
 		Point transformedPoint=new Point();
 		try {
-			hexRenderer.boardTransformation.inverseTransform(new Point(x,y), transformedPoint);
+			ds.boardTransformation.inverseTransform(new Point(x,y), transformedPoint);
 		} catch (NoninvertibleTransformException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		
-		for (HashMap.Entry<Vertex,Point> e : vertexMap.entrySet()) {
+		for (HashMap.Entry<Vertex,Point> e : ds.vertexMap.entrySet()) {
 			if (Math.abs(e.getValue().getX()-transformedPoint.x)<eps && Math.abs(e.getValue().getY()-transformedPoint.y)<eps) return e.getKey();
 		}
 		return null;
@@ -131,7 +121,7 @@ public class BoardVertexRenderer extends ImageRenderer {
 	 * @author Kiss Lorinc
 	 */
 	public void selectVertex(Vertex v) {	
-		selectedVertex=v;
+		ds.selectedVertex=v;
 	}
 	
 	/**
@@ -139,6 +129,6 @@ public class BoardVertexRenderer extends ImageRenderer {
 	 * @author Kiss Lorinc
 	 */
 	public void deselectVertices() {
-		selectedVertex=null;
+		ds.selectedVertex=null;
 	}
 }

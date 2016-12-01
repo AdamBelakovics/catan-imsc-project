@@ -5,24 +5,25 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 import ux.ImageRenderer;
-import ux.ResourceRenderer;
+import ux.RendererDataStore;
+import ux.board.BoardRenderer.BoardOrientation;
 
 public class HUDRenderer extends ImageRenderer {
 	Graphics2D hudCanvas;
 	BufferedImage interfaceImage;
 	public InterfaceRenderer interfaceRenderer;
-	private CardRenderer cardRenderer;
-	ResourceRenderer resRenderer;
-	UIController uiPlayer;
+	public CardRenderer cardRenderer;
+	private ResourceRenderer resRenderer;
+	private RendererDataStore ds;
 	
 
-	public HUDRenderer(UIController currUIC, int _width, int _height) {
-		super(_width,_height);
-		uiPlayer=currUIC;
-		interfaceRenderer=new InterfaceRenderer(uiPlayer,width,height);
-		setCardRenderer(new CardRenderer(uiPlayer,width,height));
-		resRenderer=new ResourceRenderer(uiPlayer,width,height);
-		interfaceImage=new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+	public HUDRenderer(RendererDataStore _ds) {
+		ds=_ds;
+
+		interfaceRenderer=new InterfaceRenderer(ds);
+		cardRenderer=new CardRenderer(ds);
+		resRenderer=new ResourceRenderer(ds);
+		interfaceImage=new BufferedImage(ds.width, ds.height, BufferedImage.TYPE_INT_ARGB);
 	}
 
 	public void paint(Graphics g) {
@@ -40,14 +41,6 @@ public class HUDRenderer extends ImageRenderer {
 	
 	public void resetInterfaceSelection() {
 		interfaceRenderer.deselectAllButtons();
-		getCardRenderer().deselectDevCards();
-	}
-
-	public CardRenderer getCardRenderer() {
-		return cardRenderer;
-	}
-
-	public void setCardRenderer(CardRenderer cardRenderer) {
-		this.cardRenderer = cardRenderer;
+		cardRenderer.deselectDevCards();
 	}
 }
