@@ -76,7 +76,7 @@ public class BuildCity {
 		if(isCityAvailable()){
 			ArrayList<Vertex> nodes = getVillages();
 			for(Vertex n: nodes){
-				double currentVal = 10 * owner.nodePersonalValue(n);
+				double currentVal = 5 * owner.nodePersonalValue(n);
 				if(currentVal > buildValue){
 					buildValue = currentVal;
 					node = n;

@@ -93,7 +93,7 @@ public class BuildVillage {
 		if(isVillageAvailable()){
 			ArrayList<Vertex> nodes = listValidNodes();		
 			for(Vertex n : nodes){
-				double currentValue = 10 * owner.nodePersonalValue(n);
+				double currentValue = 5 * owner.nodePersonalValue(n);
 				if(currentValue > buildValue){
 					buildValue = currentValue;
 					node = n;
