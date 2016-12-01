@@ -84,6 +84,7 @@ public class BuildRoad {
 				if(aiPlayer.getRoadsFromNode(node1).isEmpty()){
 					// if we haven't reached node1
 					val = nodePersonalValueForRoad(node1);
+					//System.out.println("SpecialRoadValue: " + val);
 					if(dif < 2){
 						if(dif >= -1)
 							difVal = 1.5;
@@ -99,6 +100,7 @@ public class BuildRoad {
 				} else if(aiPlayer.getRoadsFromNode(node2).isEmpty()){
 					// if we haven't reached node2
 					val = nodePersonalValueForRoad(node2);
+					//System.out.println("SpecialRoadValue: " + val);
 					if(dif < 2){
 						if(dif >= -1)
 							difVal = 1.5;
@@ -222,11 +224,12 @@ public class BuildRoad {
 		}
 		double ownPersVal = nodePersonalValueForRoadLocal(n);
 		// some magic formula, looks useable
-		result += Math.min(1, ownPersVal - 2) * (ownPersVal + 2) * (0.1) * (cnt + 1) * (cnt + 1) * (cnt + 1) * 0.0156215;
+		result +=  ownPersVal * ownPersVal * (10) * (cnt + 1) * (cnt + 1) * (cnt + 1) * 0.0156215;
+		//System.out.println("MagicRoadVal: " + result + " cnt: " + cnt);
 		for(Double val : persValues){
 			result += val;
 		}
-		return Math.max(10, result);
+		return result;
 	}
 	
 	/**
