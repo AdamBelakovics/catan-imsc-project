@@ -13,33 +13,33 @@ import controller.map.Hex;
 import controller.player.Building;
 import ux.FirstTurnState;
 import ux.ImageRenderer;
+import ux.RendererDataStore;
 
 public class InterfaceRenderer extends ImageRenderer {
 	
-	UIController currUIC;
 	Graphics2D intCanvas;
 	
-	private Hex activeHex=null;;
+	private Hex activeHex=null;
 	ArrayList<Button> buttonsList;
-	FrameMetrics frameMetrics=new FrameMetrics();
+	FrameMetrics frameMetrics;
+	RendererDataStore ds;
 
-	public InterfaceRenderer(UIController _currUIC, int _width, int _height) {
-		super(_width,_height);
-
-		currUIC=_currUIC;
+	public InterfaceRenderer(RendererDataStore _ds) {
+		ds=_ds;
+		frameMetrics=new FrameMetrics();
 		generateButtons();
 	}
 	
 	private void generateButtons() {
 		buttonsList=new ArrayList();
-		buttonsList.add(new BuildButton("Settlement",Buildable.Settlement, width*31/40, height*15/20, width*3/20-20, 30));
-		buttonsList.add(new BuildButton("City", Buildable.City, width*31/40, height*16/20, width*3/20-20, 30));
-		buttonsList.add(new BuildButton("Road",Buildable.Road, width*31/40, height*17/20, width*3/20-20, 30));
+		buttonsList.add(new BuildButton("Settlement",Buildable.Settlement, ds.width*31/40, ds.height*15/20, ds.width*3/20-20, 30));
+		buttonsList.add(new BuildButton("City", Buildable.City, ds.width*31/40, ds.height*16/20, ds.width*3/20-20, 30));
+		buttonsList.add(new BuildButton("Road",Buildable.Road, ds.width*31/40, ds.height*17/20, ds.width*3/20-20, 30));
 		
-		buttonsList.add(new TradeButton("Trade", width*37/40, height*61/80, width*3/20-20, 40));
-		buttonsList.add(new TradeButton("Dev Card", width*37/40, height*67/80, width*3/20-20, 40));
+		buttonsList.add(new TradeButton("Trade", ds.width*37/40, ds.height*61/80, ds.width*3/20-20, 40));
+		buttonsList.add(new TradeButton("Dev Card", ds.width*37/40, ds.height*67/80, ds.width*3/20-20, 40));
 
-		buttonsList.add(new EndTurnButton(currUIC,"End turn", width*17/20,height*26/40,width*3/10-10,50));
+		buttonsList.add(new EndTurnButton(ds.currUIC,"End turn", ds.width*17/20,ds.height*26/40,ds.width*3/10-10,50));
 		
 	}
 	@Override
@@ -55,13 +55,13 @@ public class InterfaceRenderer extends ImageRenderer {
 		
 		
 		for (Button b : buttonsList) {
-			if (!currUIC.active) intCanvas.setColor(InterfaceColorProfile.inactiveColor);
-			if (currUIC.firstturnactive && 
-					((b.text.equals("Settlement") && currUIC.state==FirstTurnState.STARTED) || 
-					((b.text.equals("Road") && currUIC.state==FirstTurnState.CITYBUILT))|| 
+			if (!ds.currUIC.active) intCanvas.setColor(InterfaceColorProfile.inactiveColor);
+			if (ds.currUIC.firstturnactive && 
+					((b.text.equals("Settlement") && ds.currUIC.state==FirstTurnState.STARTED) || 
+					((b.text.equals("Road") && ds.currUIC.state==FirstTurnState.CITYBUILT))|| 
 					b.text.equals("End turn")))
 				intCanvas.setColor(InterfaceColorProfile.bgColor);
-			if (currUIC.active) intCanvas.setColor(InterfaceColorProfile.bgColor);
+			if (ds.currUIC.active) intCanvas.setColor(InterfaceColorProfile.bgColor);
 			
 			
 			if (b.isSelected()) {
@@ -86,9 +86,9 @@ public class InterfaceRenderer extends ImageRenderer {
 	
 	private void paintHexInfo() {
 		if (activeHex!=null && activeHex.getResource()!=null) {
-			intCanvas.drawString("Selected "+activeHex.getID()+", resource: "+ activeHex.getResource().toString(), (width*3/10)+20, (height*9/10)+30);
+			intCanvas.drawString("Selected "+activeHex.getID()+", resource: "+ activeHex.getResource().toString(), (ds.width*3/10)+20, (ds.height*9/10)+30);
 		} else {
-			intCanvas.drawString("No field selected", (width*3/10)+20, (height*9/10)+30);
+			intCanvas.drawString("No field selected", (ds.width*3/10)+20, (ds.height*9/10)+30);
 		}
 		
 	}
@@ -107,7 +107,7 @@ public class InterfaceRenderer extends ImageRenderer {
 		intCanvas.draw(frameMetrics.rightRect);
 		
 		paintHexInfo();
-		StringPainter.printString(intCanvas, "Build",width*31/40, height*57/80);
+		StringPainter.printString(intCanvas, "Build",ds.width*31/40, ds.height*57/80);
 		
 		paintButtons();
 	}
@@ -136,9 +136,9 @@ public class InterfaceRenderer extends ImageRenderer {
 	}
 	
 	private class FrameMetrics {
-		Rectangle leftRect=new Rectangle(0, height*7/10, width*3/10, height*3/10);
-		Rectangle centerRect=new Rectangle(width*3/10, height*9/10, width*4/10, height*1/10);
-		Rectangle rightRect=new Rectangle(width*7/10, height*7/10, width*3/10, height*3/10);
+		Rectangle leftRect=new Rectangle(0, ds.height*7/10, ds.width*3/10, ds.height*3/10);
+		Rectangle centerRect=new Rectangle(ds.width*3/10, ds.height*9/10,ds.width*4/10, ds.height*1/10);
+		Rectangle rightRect=new Rectangle(ds.width*7/10, ds.height*7/10, ds.width*3/10, ds.height*3/10);
 	}
 
 }

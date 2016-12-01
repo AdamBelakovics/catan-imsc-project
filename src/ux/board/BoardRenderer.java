@@ -21,6 +21,7 @@ import controller.map.Orientation;
 import controller.map.Table;
 import ux.ImageRenderer;
 import ux.Renderer;
+import ux.RendererDataStore;
 import ux.ui.UIController;
 
 /**
@@ -29,10 +30,9 @@ import ux.ui.UIController;
  *
  */
 public class BoardRenderer extends ImageRenderer {
-	Table board;
 	Graphics2D boardCanvas;
 	BufferedImage hexImage;
-	UIController currUIC;
+	RendererDataStore ds;
 	
 	public BoardHexRenderer hexRenderer;
 	public BoardVertexRenderer vertexRenderer;
@@ -52,7 +52,6 @@ public class BoardRenderer extends ImageRenderer {
 		NORTHWEST
 	}
 
-	public BoardOrientation boardOrientation;
 
 	/**
 	 * Initializes the renderer
@@ -61,15 +60,13 @@ public class BoardRenderer extends ImageRenderer {
 	 * @param _width width of the window
 	 * @param _height height of the window
 	 */
-	public BoardRenderer(UIController _currUIC,Table _board,int _width, int _height) {
-		super(_width,_height);
-		board=_board;
-		boardOrientation=BoardOrientation.NORTH;
-		currUIC=_currUIC;
-		hexImage=new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-		hexRenderer=new BoardHexRenderer(this, board ,width,height);
-		vertexRenderer=new BoardVertexRenderer(_board, hexRenderer, _currUIC, width, height);
-		edgeRenderer=new BoardEdgeRenderer(vertexRenderer,hexRenderer, board, width, height);
+	public BoardRenderer(RendererDataStore _ds) {
+		
+		ds=_ds;
+		hexImage=new BufferedImage(ds.width, ds.height, BufferedImage.TYPE_INT_ARGB);
+		hexRenderer=new BoardHexRenderer(ds);
+		vertexRenderer=new BoardVertexRenderer(ds);
+		edgeRenderer=new BoardEdgeRenderer(ds);
 	}
 
 	@Override
@@ -81,7 +78,7 @@ public class BoardRenderer extends ImageRenderer {
 		
 		if (hexImage!=null && boardCanvas!=null) boardCanvas.drawImage(hexImage, 0, 0, null);
 	
-		boardCanvas.translate(getWidth()/2, getHeight()/2);
+		boardCanvas.translate(ds.width/2, ds.height/2);
 	}
 	
 	/**

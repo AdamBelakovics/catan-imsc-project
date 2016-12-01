@@ -23,6 +23,7 @@ import controller.map.Vertex;
 import controller.player.Building;
 import controller.player.Resource;
 import ux.ImageRenderer;
+import ux.RendererDataStore;
 import ux.ResourceXMLReader;
 import ux.board.BoardRenderer.BoardOrientation;
 import ux.ui.InterfaceColorProfile;
@@ -33,15 +34,11 @@ import ux.ui.InterfaceColorProfile;
  *
  */
 public class BoardHexRenderer extends ImageRenderer {
-	private Table board;
 	private double rotationLeft;
 	private Graphics2D hexCanvas;
 	private double zoomLevel;
-	private HashMap<Hex,HexPoly> hexMap;
-	private HashMap<Resource,Color> colorMap;
-	private Hex selectedTile=null;
 	
-	AffineTransform boardTransformation;
+	private RendererDataStore ds;
 
 	//Constants
 	final double eps=0.01;
@@ -49,40 +46,20 @@ public class BoardHexRenderer extends ImageRenderer {
 
 	/**
 	 * Initializes the renderer
-	 * @param _parentRenderer the Board renderer parent of this renderer
-	 * @param _board the game board
-	 * @param _width width of the window
-	 * @param _height height of the window
+	 * @param _dataStore the RendererDataStore object belonging to the parent Renderer
 	 */
-	public BoardHexRenderer(ImageRenderer _parentRenderer,Table _board,int _width,int _height) {
+	public BoardHexRenderer(RendererDataStore _dataStore) {
 		
-		super(_width,_height);
-
-		parentRenderer=_parentRenderer;
-		width=parentRenderer.getWidth();
-		height=parentRenderer.getHeight();
-		board=_board;
-		hexMap=new HashMap<Hex,HexPoly>();
-		colorMap=ResourceXMLReader.readTextureXML("textures.xml");
+		ds=_dataStore;
 		generateHexes();
 		rotationLeft=0;
 		zoomLevel=1;
 	}
 	
-	/**
-	 * Returns with the HexPoly of the given hex from the hex map
-	 * @param hex required hex
-	 * @return HexPoly of the given hex
-	 * @author Kiss Lorinc
-	 */
-	public HexPoly getHexPolyFromHex(Hex hex) {
-		return hexMap.get(hex);
-	}
-
 	public void paint(Graphics g) {
 		hexCanvas=(Graphics2D)g;
 		hexCanvas.setColor(InterfaceColorProfile.bgWaterColor);
-		hexCanvas.fillRect(0, 0, width, height);
+		hexCanvas.fillRect(0, 0, ds.width, ds.height);
 		translateBoardCanvas();
 		paintHexes();
 	}
@@ -95,20 +72,20 @@ public class BoardHexRenderer extends ImageRenderer {
 	 * @author      Kiss Lorinc
 	 */
 	private void translateBoardCanvas() {
-		boardTransformation=new AffineTransform();
+		ds.boardTransformation=new AffineTransform();
 		//Setting origin to center
-		boardTransformation.translate(width/2, height/2);
+		ds.boardTransformation.translate(ds.width/2, ds.height/2);
 
 		//Isometric tilt
-		boardTransformation.scale(1*zoomLevel, 0.5*zoomLevel);
+		ds.boardTransformation.scale(1*zoomLevel, 0.5*zoomLevel);
 
 		//Applying rotation, if needed
 		if (Math.abs(rotationLeft)>eps) {
-			boardTransformation.rotate((((BoardRenderer)parentRenderer).boardOrientation.ordinal())*Math.PI/3-rotationLeft);
+			ds.boardTransformation.rotate(ds.boardOrientation.ordinal()*Math.PI/3-rotationLeft);
 			rotationLeft-=Math.signum(rotationLeft)*rotationStep;
 		} 
-		else boardTransformation.rotate(((BoardRenderer)parentRenderer).boardOrientation.ordinal()*Math.PI/3);
-		hexCanvas.setTransform(boardTransformation);
+		else ds.boardTransformation.rotate(ds.boardOrientation.ordinal()*Math.PI/3);
+		hexCanvas.setTransform(ds.boardTransformation);
 	}
 
 	/**
@@ -119,7 +96,7 @@ public class BoardHexRenderer extends ImageRenderer {
 	 */
 	public void cycleOrientation(int i) {
 		if (Math.abs(rotationLeft)<eps) {
-			((BoardRenderer)parentRenderer).boardOrientation=BoardOrientation.values()[((((BoardRenderer)parentRenderer).boardOrientation.ordinal()+i+6)%6)];
+			ds.boardOrientation=BoardOrientation.values()[((ds.boardOrientation.ordinal()+i+6)%6)];
 			rotationLeft+=i*Math.PI/3;
 		}
 	}
@@ -138,9 +115,9 @@ public class BoardHexRenderer extends ImageRenderer {
 
 	public Hex getHexUnderCursor(int x, int y) {
 
-		for (Map.Entry<Hex, HexPoly> entry : hexMap.entrySet()){
+		for (Map.Entry<Hex, HexPoly> entry : ds.hexMap.entrySet()){
 			try {
-				if (entry.getValue().contains(boardTransformation.inverseTransform(new Point(x,y), null))) return entry.getKey();
+				if (entry.getValue().contains(ds.boardTransformation.inverseTransform(new Point(x,y), null))) return entry.getKey();
 			} catch (NoninvertibleTransformException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -154,17 +131,17 @@ public class BoardHexRenderer extends ImageRenderer {
 	 * @author Kiss Lorinc
 	 */
 	private void paintHexes() {
-		for (Map.Entry<Hex, HexPoly> entry : hexMap.entrySet()){
+		for (Map.Entry<Hex, HexPoly> entry : ds.hexMap.entrySet()){
 			if (entry.getKey().getResource()==null)	hexCanvas.setPaint(InterfaceColorProfile.waterColor);
-			else hexCanvas.setPaint(colorMap.get(entry.getKey().getResource()));
+			else hexCanvas.setPaint(ds.colorMap.get(entry.getKey().getResource()));
 			hexCanvas.draw(entry.getValue());
 			hexCanvas.fillPolygon(entry.getValue());
-			if (entry.getValue().selected) selectedTile=entry.getKey();
+			if (entry.getValue().selected) ds.selectedTile=entry.getKey();
 		}
 		
-		if (selectedTile!=null) {
+		if (ds.selectedTile!=null) {
 			hexCanvas.setPaint(InterfaceColorProfile.fgColor);
-			hexCanvas.draw(hexMap.get(selectedTile));
+			hexCanvas.draw(ds.hexMap.get(ds.selectedTile));
 		}
 	}
 	
@@ -176,14 +153,14 @@ public class BoardHexRenderer extends ImageRenderer {
 	 * @author Kiss Lorinc
 	 */
 	public void selectHex(Hex h) {
-		System.out.println("[Renderer]Selected "+hexMap.get(h).toString());
+		System.out.println("[Renderer]Selected "+ds.hexMap.get(h).toString());
 		deselectHexes();
-		hexMap.get(h).selected=!(hexMap.get(h).selected);
+		ds.hexMap.get(h).selected=!(ds.hexMap.get(h).selected);
 	}
 	
 	public void deselectHexes() {
-		for (Map.Entry<Hex, HexPoly> entry : hexMap.entrySet()) entry.getValue().selected=false;
-		selectedTile=null;
+		for (Map.Entry<Hex, HexPoly> entry : ds.hexMap.entrySet()) entry.getValue().selected=false;
+		ds.selectedTile=null;
 	}
 	
 	
@@ -195,10 +172,10 @@ public class BoardHexRenderer extends ImageRenderer {
 	private void generateHexes() {
 		int x=0;
 		int y=0;
-		Table.IteratorHex iterator=board.hexIterator();
+		Table.IteratorHex iterator=ds.board.hexIterator();
 		do {
 			Hex currHex=iterator.next();
-			hexMap.put(currHex, HexPolyFactory.getHexPoly(currHex, x-3, y-3));
+			ds.hexMap.put(currHex, HexPolyFactory.getHexPoly(currHex, x-3, y-3));
 			do {
 				if (y < 6)
 					y++;
