@@ -512,7 +512,7 @@ public class AiController extends PlayerController {
 					}
 					break;
 				case Road:
-					tf = buildRoad.getNodeFrom();
+					/*tf = buildRoad.getNodeFrom();
 					tt = buildRoad.getNodeTo();
 					t=roadWhere.get(0);
 					for(Edge e:roadWhere){
@@ -522,7 +522,7 @@ public class AiController extends PlayerController {
 							break;
 						}
 					}
-						me.build(Buildable.Road, t);
+						me.build(Buildable.Road, t);*/
 					break;
 				case None:
 					outOfBuildable = false;
@@ -630,7 +630,21 @@ public class AiController extends PlayerController {
 		AllNeededDataForTurn datas = new AllNeededDataForTurn();
 		boolean canBuild = true;
 		boolean canTryAgain = true;
-		for(Edge e : map.edgeList) {
+		
+		Vertex vBuild = buildVillage.getNode();
+		if(vBuild != null)
+			me.build(Buildable.Settlement, vBuild);
+		vBuild = buildCity.getNode();
+		if(vBuild != null)
+			me.build(Buildable.City, vBuild);
+		
+		Edge edgeRoad = buildRoad.getEdge();
+		if(edgeRoad != null){
+			if(me.isBuildPossible(Buildable.Road, edgeRoad))
+				me.build(Buildable.Road, edgeRoad);
+		}
+		
+		/*for(Edge e : map.edgeList) {
 			if (me.isBuildPossible(Buildable.Road, e) && Math.random()>0.6)
 				me.build(Buildable.Road, e);
 		}
@@ -650,24 +664,31 @@ public class AiController extends PlayerController {
 			datas.inChange();
 			canBuild = datas.letsBuild();
 			canTryAgain = datas.trade();
-		}
+		}*/
 	}
 	
 	/**
 	 * firstturn. The main calculator of the first moves.
-	 * @author Hollo-Szabo Akos
+	 * @author Hollo-Szabo Akos 
 	 */
 	@Override
 	public void firstturn(){
 		try {
-		List<Double> Values=new ArrayList<Double>();
-		List<Vertex> settlementPlace=map.getNodes();
-		Vertex placeofSettlement=new Vertex(null);
-		List<Hex> sourceOfNewNumbers=new ArrayList<Hex>();
-		List<Edge> roadPlaces=new ArrayList<Edge>();
-		List<Vertex> settlementPlaceNN=new ArrayList<Vertex>();
-		List<Edge> edgesinNeighbour=new ArrayList<Edge>();
-		
+			List<Double> Values=new ArrayList<Double>();
+			List<Vertex> settlementPlace=map.getNodes();
+			Vertex placeofSettlement=new Vertex(null);
+			List<Hex> sourceOfNewNumbers=new ArrayList<Hex>();
+			List<Edge> roadPlaces=new ArrayList<Edge>();
+			List<Vertex> settlementPlaceNN=new ArrayList<Vertex>();
+			List<Edge> edgesinNeighbour=new ArrayList<Edge>();
+			Vertex villageNode = buildVillage.getNodeFirstTurn();
+			me.firstBuild(Buildable.Settlement, villageNode);
+			Edge edgeRoad = buildRoad.getEdgeFirstTurn(villageNode);
+			me.firstBuild(Buildable.Road, edgeRoad);
+		} catch(GameEndsException gee){
+			
+		}
+		/*
 		for(int i=0;i<settlementPlace.size();i++){
 			if(me.isFirstBuildPossible(Buildable.Settlement, settlementPlace.get(i))){
 				Values.add(nodeFirstPersonalValue(settlementPlace.get(i)));}
@@ -716,14 +737,19 @@ public class AiController extends PlayerController {
 						me.firstBuild(Buildable.Road, e1);
 			} catch (GameEndsException e) {
 		}
+		*/
 		
 		
 	}
-	
-	public double nodePersonalValue(Vertex v){
-		if(!(v.isBuildPossible(new Settlement(me)))){
-			return 0;
+	public boolean isNodeValid(Vertex v){
+		ArrayList<Vertex> neighbors = v.getNeighbours();
+		for(Vertex next : neighbors){
+			if(next.getBuilding() != null)
+				return false;
 		}
+		return v.getBuilding() == null;
+	}
+	public double nodePersonalValue(Vertex v){
 		double sum = 0;
 		ArrayList<Hex> terrytories = v.getNeighbourHexes();
 		for(Hex x : terrytories){

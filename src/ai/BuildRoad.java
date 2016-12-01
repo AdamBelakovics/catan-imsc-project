@@ -23,8 +23,9 @@ public class BuildRoad {
 	private Table map;
 	private AiController owner;
 	private double buildValue;
-	private Vertex nodeFrom;
-	private Vertex nodeTo;
+	//private Vertex nodeFrom;
+	//private Vertex nodeTo;
+	private Edge edge;
 	private Player aiPlayer;
 	private ArrayList<Player> otherPlayers;
 	
@@ -37,8 +38,7 @@ public class BuildRoad {
 	public BuildRoad(Table map, AiController owner, Player aiPlayer, ArrayList<Player> otherPlayers){
 		this.map = map;
 		this.owner = owner;
-		nodeFrom = null;
-		nodeTo = null;
+		edge = null;
 		buildValue = 0;
 		this.aiPlayer = aiPlayer;
 		this.otherPlayers = otherPlayers;
@@ -55,25 +55,15 @@ public class BuildRoad {
 	}
 	
 	/**
-	 * Determines a node to build the best road from.
-	 * @return - the node to build the road from, null if can't build any
+	 * Determines the edge to build the best road on.
+	 * @return - the edge to build the road on, null if can't build any
 	 * @author Gergely Olah
 	 */
-	public Vertex getNodeFrom(){
+	public Edge getEdge(){
 		refresh();
-		return nodeFrom;
+		return edge;
 	}
-	
-	/**
-	 * Returns the best node to build a road to.
-	 * @return - the node to build the road to, null if can't build any
-	 * @author Gergely Olah
-	 */
-	public Vertex getNodeTo(){
-		refresh();
-		return nodeTo;
-	}
-	
+		
 	/**
 	 * Refreshes the nodes and the buildValue. Must call this before
 	 * before calling the getter methods, as they may not return
@@ -81,72 +71,92 @@ public class BuildRoad {
 	 * @author Gergely Olah
 	 */
 	private void refresh(){
-		this.nodeFrom = null;
-		this.nodeTo = null;
+		edge = null;
 		buildValue = 0;
 		if(isRoadAvailable()){
-			double maxVal = 0;
+			double maxVal = -1;
 			double val;
 			int dif = calculateMaxRoadDifference();
 			double difVal = 1;
-			for(Vertex nodeTo : map.getNodes()){
-				Vertex nodeFrom = fromWhereCanBuildRoad(nodeTo);
-				if(nodeFrom != null){
-					val = nodePersonalValueForRoad(nodeTo);
+			for(Edge e : listValidEdges()){
+				Vertex node1 = e.getEnds().get(0);
+				Vertex node2 = e.getEnds().get(1);
+				if(aiPlayer.getRoadsFromNode(node1).isEmpty()){
+					// if we haven't reached node1
+					val = nodePersonalValueForRoad(node1);
 					if(dif < 2){
 						if(dif >= -1)
 							difVal = 1.5;
 						else
 							difVal = 1.2;
-						if(isMaxRoadStart(nodeFrom))
+						if(isMaxRoadStart(node1))
 							val = difVal * val;
 					}
 					if(val > maxVal){
 						maxVal = val;
-						this.nodeTo = nodeTo;
-						this.nodeFrom = nodeFrom;
+						edge = e;
 					}
+				} else if(aiPlayer.getRoadsFromNode(node2).isEmpty()){
+					// if we haven't reached node2
+					val = nodePersonalValueForRoad(node2);
+					if(dif < 2){
+						if(dif >= -1)
+							difVal = 1.5;
+						else
+							difVal = 1.2;
+						if(isMaxRoadStart(node2))
+							val = difVal * val;
+					}
+					if(val > maxVal){
+						maxVal = val;
+						edge = e;
+					}
+				} else {
+					// if we reached both ends, the only good possibility
+					// is when our max road will be bigger than before
+					// TODO to check if we will have a longer max road
 				}
 			}
 			buildValue = maxVal;
 		}
 	}
-	
 	/**
-	 * Finds a Node where you can build a road to the given Node.
-	 * It doesn't counts nodes that are already reached, as there
-	 * is no point in building a road to that node.
-	 * @param nodeTo - end of the road
-	 * @return - start of the road, null if can't build any.
-	 * @author Gergely Olah
+	 * Returns with the best edge to build in the first turn
+	 * next to the given Vertex.
+	 * @param where - the node, where the road should start
+	 * @return - the best of the roads
 	 */
-	private Vertex fromWhereCanBuildRoad(Vertex nodeTo){
-		
-		// there is no point in building multiple roads to same node
-		for(Edge r : getPlayerRoads(this.aiPlayer)){
-			if(r.getEnds().contains(nodeTo))
-				return null;
-		}
-		for(Vertex nodeFrom : nodeTo.getNeighbours()){
-			// if there is at least one road to this node
-			if(aiPlayer.getRoadsFromNode(nodeFrom).size() > 0){
-				// we have to check whether there is someone else's road there
-				boolean isRoadBuilt = false;
-				
-				// checks all players except ai, as we know we have no road here
-				for(Edge e : map.getEdges()){
-					if(e.getBuilding() != null)
-						isRoadBuilt = true;
-				}
-				// if no road is blocking, we can build
-				if(!isRoadBuilt){
-					return nodeFrom;
-				}
+	public Edge getEdgeFirstTurn(Vertex where){
+		Vertex bestNode = null;
+		double maxVal = 0;
+		for(Vertex v : where.getNeighbours()){
+			double val = nodePersonalValueForRoad(v);
+			if(val > maxVal){
+				bestNode = v;
+				maxVal = val;
 			}
 		}
+		for(Edge e : where.getNeighbourEdges())
+			if(e.getEnds().contains(bestNode))
+				return e;
 		return null;
 	}
+	/**
+	 * List of valid edges the ai can build
+	 * @return - the list of valid edges
+	 * @author Gergely Olah
+	 */
+	private ArrayList<Edge> listValidEdges(){
+		ArrayList<Edge> result = new ArrayList<Edge>();
+		for(Edge e: map.getEdges()){
+			if(e.isBuildPossible(new Road(aiPlayer)) && e.getBuilding() == null){
+				result.add(e);
+			}
+		}
+		return result;
+	}
 	
+		
 	/**
 	 * Calculates the difference between AI's max road and the maximum of
 	 * other player's max roads. Negative if AI's road is longer.
@@ -164,9 +174,6 @@ public class BuildRoad {
 		return maxRoadVal - AIMaxVal;
 	}
 	
-
-	
-
 	
 	/**
 	 * Decides whether there is a longest road starting from
@@ -213,9 +220,7 @@ public class BuildRoad {
 		for(Vertex next : n.getNeighbours()){
 			persValues.add(nodePersonalValueForRoadRecursive(next, visitedNodes, cnt - 1));
 		}
-		double ownPersVal = owner.nodePersonalValue(n);
-		if(ownPersVal == 0)
-			return 0;
+		double ownPersVal = nodePersonalValueForRoadLocal(n);
 		// some magic formula, looks useable
 		result += Math.min(1, ownPersVal - 2) * (ownPersVal + 2) * (0.1) * (cnt + 1) * (cnt + 1) * (cnt + 1) * 0.0156215;
 		for(Double val : persValues){
@@ -223,23 +228,20 @@ public class BuildRoad {
 		}
 		return Math.max(10, result);
 	}
-	/**
-	 * Lists roads owned by given player as list of Edge-s
-	 * @param p - the player
-	 * @return - the edges the player has roads on
-	 */
-	private ArrayList<Edge> getPlayerRoads(Player p){
-		ArrayList<Edge> result = new ArrayList<Edge>();
-		Road tmpRoad = null;
-		for(Edge e : map.getEdges()){
-			tmpRoad = (Road)e.getBuilding();
-			if(tmpRoad != null && tmpRoad.getOwner().equals(p)){
-				result.add(e);
-			}
-		}
-		return result;
-	}
 	
+	/**
+	 * Modified version of AiController's nodePersonal value
+	 * @param v - the vertex
+	 * @return - the personal value, 0 if builded or nexts are builded
+	 * @author Gergely Olah
+	 */
+	
+	private double nodePersonalValueForRoadLocal(Vertex v){
+		if(owner.isNodeValid(v))
+			return owner.nodePersonalValue(v);
+		return 0;
+	}
+
 	
 	/**
 	 * Counts ai's roads on the map, and returns true if

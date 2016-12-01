@@ -73,7 +73,7 @@ public class BuildVillage {
 		ArrayList<Vertex> result = new ArrayList<Vertex>();
 		
 		for(Vertex n : map.getNodes()){
-			if(getPlayerRoadsFromNode(aiPlayer, n).size() > 0 && aiPlayer.isBuildPossible(Buildable.Settlement, n)){
+			if(aiPlayer.getRoadsFromNode( n).size() > 0 && aiPlayer.isBuildPossible(Buildable.Settlement, n)){
 				result.add(n);
 			}
 		}
@@ -111,7 +111,7 @@ public class BuildVillage {
 	 */
 	// TODO this is pretty much the same function as in BuildRoad, 
 	// but it was the easiest to access it here too
-	private ArrayList<Edge> getPlayerRoadsFromNode(Player p, Vertex v){
+	/*private ArrayList<Edge> getPlayerRoadsFromNode(Player p, Vertex v){
 		ArrayList<Edge> edgeList = new ArrayList<Edge>(); 
 		for(Edge e : v.getNeighbourEdges()){
 			if((e.getBuilding() != null) && (e.getBuilding().getOwner() == p))
@@ -119,7 +119,7 @@ public class BuildVillage {
 		}
 			
 		return edgeList;
-	}
+	}*/
 	
 	/**
 	 * Counts ai's villages on the map, and returns true if
@@ -174,7 +174,7 @@ public class BuildVillage {
 		buildValue = 0;
 		node = null;		
 		for(Vertex n : map.getNodes()){
-			if(aiPlayer.isBuildPossible(Buildable.Settlement, n)){
+			if(owner.isNodeValid(n)){
 				double currentValue = owner.nodePersonalValue(n);
 				if(currentValue > buildValue){
 					buildValue = currentValue;
