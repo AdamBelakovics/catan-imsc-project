@@ -8,6 +8,7 @@ import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import controller.Game;
@@ -46,7 +47,16 @@ public class BoardVertexRenderer extends ImageRenderer {
 	public void paint(Graphics g) {
 		vertexCanvas=(Graphics2D)g;
 		paintVertices();
+		paintThief();
+	}
 
+	private void paintThief() {
+		for (Map.Entry<Hex,HexPoly> e : ds.hexMap.entrySet()) {
+			if (e.getKey().hasThief) {
+				vertexCanvas.setColor(Color.black);
+				vertexCanvas.fillOval(e.getValue().x-10, e.getValue().y-10, 14, 14);
+			}
+		}
 	}
 
 	/**

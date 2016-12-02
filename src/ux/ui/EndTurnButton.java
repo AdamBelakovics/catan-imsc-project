@@ -15,7 +15,8 @@ public class EndTurnButton extends Button {
 		if (uiController.state==FirstTurnState.ROADBUILT || uiController.active) {
 			uiController.active=false;
 			this.setSelected(false);
-			uiController.firstturnactive=false;
+			if (uiController.state==FirstTurnState.ROADBUILT)
+				uiController.firstturnactive=false;
 		}
 	}
 }
