@@ -1,8 +1,11 @@
 package ux;
 
+import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.Polygon;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -28,6 +31,7 @@ import ux.board.BoardRenderer;
 import ux.ui.BuildButton;
 import ux.ui.Button;
 import ux.ui.HUDRenderer;
+import ux.ui.StringPainter;
 import ux.ui.UIController;
 
 /**
@@ -64,6 +68,8 @@ public class Renderer {
 		mainFrame.setSize(_width, _height);
 		mainFrame.setResizable(false);
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		StringPainter.initializeStringPainter();
 		
 		updateTimer=new Timer(30, new ActionListener() {
 			@Override

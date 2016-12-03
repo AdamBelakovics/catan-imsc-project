@@ -55,12 +55,12 @@ public class Controller {
 		Renderer rend = new Renderer(HUMCONT, board, 1024, 768);
 		
 		for(int i = 0; i < pclist.size(); i++){
-			Thread.sleep(100);
+			Thread.sleep(1000);
 			pclist.get(i).firstturn();
 		}
 		
 		for(int i = pclist.size()-1; i >= 0; i--){
-			Thread.sleep(100);
+			Thread.sleep(1000);
 			pclist.get(i).firstturn();
 		}
 		
@@ -68,7 +68,7 @@ public class Controller {
 		while(true){
 			for(PlayerController pc : pclist){
 				try {
-					Thread.sleep(100);
+					Thread.sleep(1000);
 					pc.turn();
 				} catch (GameEndsException e) {
 					e.printStackTrace();

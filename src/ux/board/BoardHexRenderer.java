@@ -27,6 +27,7 @@ import ux.RendererDataStore;
 import ux.ResourceXMLReader;
 import ux.board.BoardRenderer.BoardOrientation;
 import ux.ui.InterfaceColorProfile;
+import ux.ui.StringPainter;
 
 /**
  * Renderer responsible for rendering the hex fields
@@ -54,10 +55,12 @@ public class BoardHexRenderer extends ImageRenderer {
 		generateHexes();
 		rotationLeft=0;
 		zoomLevel=1;
+		
 	}
 	
 	public void paint(Graphics g) {
 		hexCanvas=(Graphics2D)g;
+		hexCanvas.setFont(hexCanvas.getFont().deriveFont(18.0f));
 		hexCanvas.setColor(InterfaceColorProfile.bgWaterColor);
 		hexCanvas.fillRect(0, 0, ds.width, ds.height);
 		translateBoardCanvas();
@@ -131,12 +134,23 @@ public class BoardHexRenderer extends ImageRenderer {
 	 * @author Kiss Lorinc
 	 */
 	private void paintHexes() {
+		Hex currHex;
+		HexPoly currHexPoly;
 		for (Map.Entry<Hex, HexPoly> entry : ds.hexMap.entrySet()){
+			currHex=entry.getKey();
+			currHexPoly=entry.getValue();
 			if (entry.getKey().getResource()==null)	hexCanvas.setPaint(InterfaceColorProfile.waterColor);
-			else hexCanvas.setPaint(ds.colorMap.get(entry.getKey().getResource()));
-			hexCanvas.draw(entry.getValue());
-			hexCanvas.fillPolygon(entry.getValue());
-			if (entry.getValue().selected) ds.selectedTile=entry.getKey();
+			else hexCanvas.setPaint(ds.colorMap.get(currHex.getResource()));
+			hexCanvas.draw(currHexPoly);
+			hexCanvas.fillPolygon(currHexPoly);
+			
+			if (currHex.getProsperity()!=0) StringPainter.printString(hexCanvas, new Integer(currHex.getProsperity()).toString(), 14, currHexPoly.x, currHexPoly.y);
+			if (currHex.hasThief) {
+				hexCanvas.setColor(Color.black);
+				hexCanvas.fillOval(currHexPoly.x-10, currHexPoly.y-10, 14, 14);
+			}
+			
+			if (currHexPoly.selected) ds.selectedTile=currHex;
 		}
 		
 		if (ds.selectedTile!=null) {
