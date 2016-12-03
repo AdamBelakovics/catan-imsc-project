@@ -431,17 +431,34 @@ public class Player {
 	public boolean isFirstBuildPossible(Buildable what, TableElement where){
 		System.out.println("Hello from is1bud");
 		if(what == Buildable.Road){
-			Road r = availableRoads.get(0);
-			if(where.getBuilding() == null  && where.getClass().equals(Edge.class) && where.isFirstBuildPossible(r)){
-				return true;
+			boolean rightInput = where != null;;
+			if(rightInput){
+				boolean isEmpty = where.getBuilding() == null;
+				boolean isTheRightPlace = where.getClass().equals(Edge.class);
+				boolean hasNeighbouringSettlement = ((Edge)where).getEnds().get(0).getBuilding().getClass() == Settlement.class || ((Edge)where).getEnds().get(1).getBuilding().getClass() == Settlement.class; 
+				boolean hasPlayerOwnedSettlement = ((Edge)where).getEnds().get(0).getBuilding().getOwner() == this || ((Edge)where).getEnds().get(1).getBuilding().getOwner() == this;
+				if(isEmpty && isTheRightPlace && hasNeighbouringSettlement && hasPlayerOwnedSettlement){
+					return true;
+				}
 			}
+			else
+				throw new NullPointerException("From isFistBuildPossible(Road): the received TableElement is null.");
 			return false;
 		}
 		else if(what == Buildable.Settlement){
-			Settlement s = availableSettlements.get(0);
-			if(where.getBuilding() == null && where.getClass().equals(Vertex.class) && where.isFirstBuildPossible(s)){
-				return true;
+			boolean rightInput = where != null;
+			if (rightInput){
+				boolean isEmpty = where.getBuilding() == null;
+				boolean isTheRightPlace = where.getClass().equals(Vertex.class);
+				boolean hasNeighbouringSettlement = ((Vertex)where).getNeighbours().get(0).getBuilding() != null || 
+													((Vertex)where).getNeighbours().get(1).getBuilding() != null || 
+													((Vertex)where).getNeighbours().get(2).getBuilding() != null;
+				if(isEmpty && isTheRightPlace && !hasNeighbouringSettlement){
+					return true;
+				}
 			}
+			else
+				throw new NullPointerException("From isFirstBuildPossible(Settlement): the received TableElement is null.");
 			return false;
 		}
 		else if(what == Buildable.City){

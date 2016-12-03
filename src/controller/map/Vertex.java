@@ -104,14 +104,5 @@ public class Vertex implements TableElement{
 				return true;
 		return false;
 	}
-
-	@Override
-	public boolean isFirstBuildPossible(Building r) {
-		for(Vertex v : getNeighbours()){
-			if(v.getBuilding() != null)
-				return false;
-		}
-		return true;
-	}
 }
 

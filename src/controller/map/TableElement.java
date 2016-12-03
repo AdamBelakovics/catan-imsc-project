@@ -10,5 +10,4 @@ public interface TableElement {
 
 	public Building getBuilding();
 
-	public boolean isFirstBuildPossible(Building r);
 }
