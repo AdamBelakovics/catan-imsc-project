@@ -437,9 +437,9 @@ public class Player {
 			if(rightInput){
 				boolean isEmpty = where.getBuilding() == null;
 				boolean isTheRightPlace = where.getClass().equals(Edge.class);
-				boolean hasNeighbouringSettlement = ((Edge)where).getEnds().get(0).getBuilding().getClass() == Settlement.class || ((Edge)where).getEnds().get(1).getBuilding().getClass() == Settlement.class; 
-				boolean hasPlayerOwnedSettlement = ((Edge)where).getEnds().get(0).getBuilding().getOwner() == this || ((Edge)where).getEnds().get(1).getBuilding().getOwner() == this;
-				if(isEmpty && isTheRightPlace && hasNeighbouringSettlement && hasPlayerOwnedSettlement){
+				boolean hasNeighbouringSettlement = (((Edge)where).getEnds().get(0).getBuilding() == null ? false :  (((Edge)where).getEnds().get(0).getBuilding().getClass() == Settlement.class && ((Edge)where).getEnds().get(0).getBuilding().getOwner().equals(this)))
+													|| (((Edge)where).getEnds().get(1).getBuilding() == null ? false :  (((Edge)where).getEnds().get(1).getBuilding().getClass() == Settlement.class && ((Edge)where).getEnds().get(1).getBuilding().getOwner().equals(this)));
+				if(isEmpty && isTheRightPlace && hasNeighbouringSettlement){
 					return true;
 				}
 			}
