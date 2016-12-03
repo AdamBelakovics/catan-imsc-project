@@ -8,7 +8,7 @@ public class Dice {
 		currentValue = i;
 	}
 	
-	public int getCurrentValue(){
+	public static int getCurrentValue(){
 		return currentValue;
 	}
 }
