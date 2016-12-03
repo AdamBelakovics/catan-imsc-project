@@ -8,6 +8,7 @@ import java.util.Map;
 
 import controller.Game;
 import controller.map.Buildable;
+import controller.map.Dice;
 import controller.map.Edge;
 import controller.map.Hex;
 import controller.map.Table;
@@ -371,6 +372,7 @@ public class Player {
 		System.out.println("B " + getResourceAmount(b));
 		int result = (int)(Math.random()*6+1) + (int)(Math.random()*6+1);
 		System.out.println("Hello from rollthedice"+result);
+		Dice.setCurrentValue(result);
 		if(result == 7){
 			for(int i = 0; i < Game.players.size(); i++){
 				Player a = Game.players.get(i);
@@ -416,7 +418,7 @@ public class Player {
 			}
 		}
 		
-		Hex hex = table.getValidFields().get((int)Math.random()*table.getFields().size());
+		Hex hex = table.getValidFields().get((int)(Math.random()*table.getValidFields().size()));
 		hex.setHasThief(true);
 		
 		Resource Res = hex.getResource();

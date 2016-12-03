@@ -1,7 +1,14 @@
 package controller.map;
 
 public class Dice {
-	private int dice0;
-	private int dice1;
-	public int getDiceAt(int i) {return i==0?dice0:dice1;}
+
+	static int currentValue;
+	
+	public static void setCurrentValue(int i){
+		currentValue = i;
+	}
+	
+	public int getCurrentValue(){
+		return currentValue;
+	}
 }
