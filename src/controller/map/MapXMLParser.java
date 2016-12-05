@@ -22,8 +22,8 @@ import controller.player.Resource;
  */
 public class MapXMLParser {
 	
-	public static void readCatanMap(File innerFields, File outerFields, Table board){
-		
+	public static void readCatanMap(File f, Table board){
+
 		ArrayList<Hex> fields = board.getFields();
 		ArrayList<Hex> waters = new ArrayList<>();
 		for(int i = 0; i < fields.size(); i++){
@@ -32,28 +32,18 @@ public class MapXMLParser {
 			}
 		}
 		fields.removeAll(waters);
-		for(Hex h : waters){
-			h.setResource(null);
-			h.setProsperity(0);
-		}
-		
+
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		try {
 			DocumentBuilder builder = factory.newDocumentBuilder();
-			Document doc = builder.parse(innerFields);
+			Document doc = builder.parse(f);
 			NodeList docelements = doc.getElementsByTagName("hex");
 			for(int i = 0; i < docelements.getLength(); i++){
 				fields.get(i).setResource(Resource.valueOf(docelements.item(i).getAttributes().getNamedItem("res").getNodeValue()));
 				fields.get(i).setProsperity(Integer.parseInt(docelements.item(i).getAttributes().getNamedItem("prosp").getNodeValue()));
 			}
-		} catch (ParserConfigurationException | SAXException | IOException e) {
-			e.printStackTrace();
-		}
-		
-		try {
-			DocumentBuilder portBuilder = factory.newDocumentBuilder();
-			Document portDoc = portBuilder.parse(outerFields);
-			NodeList docelements = portDoc.getElementsByTagName("water");
+
+			docelements = doc.getElementsByTagName("water");
 			for(int i = 0; i < docelements.getLength(); i++){
 				if(docelements.item(i).getAttributes().getNamedItem("resourcetype").getNodeValue().equals("")){
 					waters.get(i).setPort(null);
@@ -67,10 +57,8 @@ public class MapXMLParser {
 					}
 				}
 			}
-			
 		} catch (ParserConfigurationException | SAXException | IOException e) {
 			e.printStackTrace();
 		}
-		
 	}
 }
