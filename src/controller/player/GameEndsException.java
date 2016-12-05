@@ -6,4 +6,8 @@ public class GameEndsException extends Exception {
 	public GameEndsException(int id){
 		playerId = id;
 	}
+	
+	public int getPlayerID(){
+		return playerId;
+	}
 }
