@@ -74,6 +74,10 @@ public class Hex implements Comparable {
 			neighbourVertices.add(v.getValue());
 	}
 	
+	public void setPort(Port p){
+		port = p;
+	}
+	
 	public void setResource(Resource r){
 		res = r;
 	}
