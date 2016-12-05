@@ -1,9 +1,11 @@
 package ai;
 
 import java.util.ArrayList;
-
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.Collections;
 
 import controller.map.Vertex;
 import controller.map.Table;
@@ -117,10 +119,68 @@ public class BuildRoad {
 					// if we reached both ends, the only good possibility
 					// is when our max road will be bigger than before
 					// TODO to check if we will have a longer max road
+					if(!isVertexReachable(node1, node2)){
+						int max1 = aiPlayer.calculateMaxRoadFromNode(node1, new HashSet<Vertex>());
+						int max2 = aiPlayer.calculateMaxRoadFromNode(node2, new HashSet<Vertex>());
+						int max = calculateMaxRoadLength();
+						int aiMax = aiPlayer.calculateMaxRoad();
+						if(aiMax < max && max1 + max2 + 1 > max){
+							val = 8;
+							if(val > maxVal){
+								maxVal = val;
+								edge = e;
+							}
+						}
+					}
 				}
 			}
 			buildValue = maxVal;
 		}
+	}
+	
+	private int calculateMaxRoadLength(){
+		int max = 0;
+		for(Player p : otherPlayers){
+			int tmp = p.calculateMaxRoad();
+			if(tmp > max)
+				max = tmp;
+		}
+		int tmp = aiPlayer.calculateMaxRoad();
+		if(tmp > max)
+			max = tmp;
+		return max;
+	}
+	
+	/**
+	 * Decides whether the destination vertex is reachable
+	 * on roads from the source
+	 * @param source
+	 * @param dest
+	 * @return
+	 */
+	private boolean isVertexReachable(Vertex source, Vertex dest){
+		HashSet<Vertex> reachables = reachableVertexes(source, null);
+		return reachables.contains(dest);
+	}
+	
+	/**
+	 * Set of reachable vertexes on roads from the source vertex
+	 * @param source - source vertex
+	 * @param visitedNodes - already reached vertexes
+	 * @return - set of reachable vertexes
+	 */
+	private HashSet<Vertex> reachableVertexes(Vertex source, HashSet<Vertex> visitedNodes){
+		if(visitedNodes == null)
+			visitedNodes = new HashSet<Vertex>();
+		if(visitedNodes.contains(source))
+			return visitedNodes;
+		visitedNodes.add(source);
+		for(Edge e  : aiPlayer.getRoadsFromNode(source)){
+			ArrayList<Vertex> ends = e.getEnds();
+			ends.remove(source);
+			reachableVertexes(ends.get(0), visitedNodes);
+		}
+		return visitedNodes;
 	}
 	/**
 	 * Returns with the best edge to build in the first turn
@@ -214,7 +274,7 @@ public class BuildRoad {
 	 */
 	private double nodePersonalValueForRoadRecursive(Vertex n, Set<Vertex> visitedNodes, int cnt){
 		// if we should not go further
-		if(cnt < 0 || visitedNodes.contains(n) || n.getBuilding() != null)
+		if(cnt < 0 || visitedNodes.contains(n) || n.getBuilding() != null || countOutgoingRoadsFromNode(n) > 1)
 			return 0;
 		double result = 0;
 		visitedNodes.add(n);
@@ -228,6 +288,19 @@ public class BuildRoad {
 		//System.out.println("MagicRoadVal: " + result + " cnt: " + cnt);
 		for(Double val : persValues){
 			result += val;
+		}
+		return result;
+	}
+	
+	/**
+	 * Counts other players road starting from a given vertex
+	 * @param v - the vertex
+	 * @return - the number of roads as integer
+	 */
+	private int countOutgoingRoadsFromNode(Vertex v){
+		int result = 0;
+		for(Player p : otherPlayers){
+			result += p.getRoadsFromNode(v).size();
 		}
 		return result;
 	}
