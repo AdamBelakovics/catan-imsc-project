@@ -452,9 +452,10 @@ public class Player {
 			if (rightInput){
 				boolean isEmpty = where.getBuilding() == null;
 				boolean isTheRightPlace = where.getClass().equals(Vertex.class);
-				boolean hasNeighbouringSettlement = ((Vertex)where).getNeighbours().get(0).getBuilding() != null || 
-													((Vertex)where).getNeighbours().get(1).getBuilding() != null || 
-													((Vertex)where).getNeighbours().get(2).getBuilding() != null;
+				boolean hasNeighbouringSettlement = false;
+				for(Vertex v : ((Vertex)where).getNeighbours())									
+					if(v.getBuilding() != null)
+						hasNeighbouringSettlement = true;
 				if(isEmpty && isTheRightPlace && !hasNeighbouringSettlement){
 					return true;
 				}
@@ -520,10 +521,11 @@ public class Player {
 		else if(what == Buildable.Settlement){
 			boolean hasEnoughAvailableSettlements = (availableSettlements.size() > 0);
 			boolean isEmpty = where.getBuilding() == null;
-			boolean isTheRightPlace = where.getClass().equals(Settlement.class);
-			boolean hasNeighbouringSettlement = ((Vertex)where).getNeighbours().get(0).getBuilding() != null || 
-												((Vertex)where).getNeighbours().get(1).getBuilding() != null || 
-												((Vertex)where).getNeighbours().get(2).getBuilding() != null;
+			boolean isTheRightPlace = where.getClass().equals(Vertex.class);
+			boolean hasNeighbouringSettlement = false;
+			for(Vertex v : ((Vertex)where).getNeighbours())									
+				if(v.getBuilding() != null)
+					hasNeighbouringSettlement = true;
 			boolean hasNeighbouringRoad = false;
 			for(Edge e : ((Vertex)where).getNeighbourEdges()){
 				if(e.getBuilding() == null ? false : (e.getBuilding().getClass().equals(Road.class) && e.getBuilding().getOwner().equals(this))){
@@ -710,7 +712,7 @@ public class Player {
 		if(dc.getClass().equals(MonopolyCard.class) | dc.getClass().equals(YearOfPlentyCard.class))
 			dc.doCard(this, r);
 		if(dc.getClass().equals(KnightCard.class) | dc.getClass().equals(RoadBuildingCard.class) | dc.getClass().equals(VictoryPointCard.class))
-			dc.doCard(this);
+			dc.doCard(this, r);
 		playedDevCards.add(dc);
 		devCards.remove(dc);
 	}
