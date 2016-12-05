@@ -37,7 +37,8 @@ public class Player {
 	int points;
 	int activeKnights;
 	Table table;
-	boolean BiggestArmy = false;
+	boolean biggestArmy = false;
+	boolean longestRoad = false;
 	
 	HashMap<Resource, Integer> changeLUT = new HashMap<Resource, Integer>();
 	HashMap<Resource, Integer> resourcePool = new HashMap<Resource, Integer>();
@@ -219,7 +220,7 @@ public class Player {
 	 * @return BiggestArmy
 	 */
 	public boolean isBiggestArmy(){
-		return BiggestArmy;
+		return biggestArmy;
 	}
 	
 	/**
@@ -227,7 +228,7 @@ public class Player {
 	 * @param b boolean for BiggestArmy
 	 */
 	public void setBiggestArmy(boolean b){
-		BiggestArmy = b;
+		biggestArmy = b;
 	}
 	
 	/**
@@ -381,6 +382,34 @@ public class Player {
 					}
 				}
 			}
+		}
+	}
+	
+	public void updateLongestRoad() throws GameEndsException{
+		Player longestRoadOwner = this;
+		for(Player p: Game.players){
+			if(p.longestRoad){
+				longestRoadOwner = p;
+				try {
+					p.decPoints(2);
+				} catch (OutOfRangeException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			p.longestRoad = false;
+		}
+		int max = longestRoadOwner.calculateMaxRoad();
+		for(Player p: Game.players){
+			int current = p.calculateMaxRoad();
+			if(current > max){
+				max = current;
+				longestRoadOwner = p;
+			}
+		}
+		if(max >= 5){
+			longestRoadOwner.longestRoad = true;
+			longestRoadOwner.incPoints(2);
 		}
 	}
 	
@@ -621,6 +650,7 @@ public class Player {
 					}
 				}
 			}
+			updateLongestRoad();
 		}
 		else if(what == Buildable.Settlement){
 			if(getResourceAmount(b) >= 1 && getResourceAmount(l) >= 1 && getResourceAmount(g) >= 1 && getResourceAmount(w) >= 1){

@@ -111,7 +111,7 @@ public class BuildDevelopment {
 		}
 		// the return value is between 0 and 10
 		if(minResourceFrequency > 0)
-			return Math.max(10 / minResourceFrequency, 10);
+			return Math.min(10 / minResourceFrequency, 10);
 		else
 			return 0;
 	}
@@ -136,7 +136,7 @@ public class BuildDevelopment {
 				maxMaterialValue = currentValue;
 			}
 		}
-		return Math.max(maxMaterialValue, 10);
+		return Math.min(maxMaterialValue, 10);
 	}
 	
 	/**
@@ -158,7 +158,7 @@ public class BuildDevelopment {
 			difVal = 2;
 		// TODO getRobbedSum() in AiController, not very important
 		//return Math.max(robbed * difVal + owner.getRobbedSum() + 2.5, 10);
-		return Math.max(robbed * difVal + 2.5, 10);
+		return Math.min(robbed * difVal + 2.5, 10);
 	}
 	
 	/**
@@ -216,14 +216,13 @@ public class BuildDevelopment {
 				allCnt++;
 			}
 		}
+		for(Player player : otherPlayers){
+			allCnt += player.getDevCards().size();
+		}
+		allCnt += aiPlayer.getDevCards().size();
+		
 		// to avoid divide by zero
-		if(allCnt == 0){
-			pKnight = 0;
-			pInvention = 0;
-			pMonopoly = 0;
-			pTwoRoad = 0;
-			pPlusPoint = 0;
-		} else {
+		if(allCnt > 0){
 			pKnight = (14 - knightCnt) / (25.0 - allCnt);
 			pInvention = (2 - inventionCnt) / (25.0 - allCnt);
 			pMonopoly = (2 - monopolyCnt) / (25.0 - allCnt);

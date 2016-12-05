@@ -36,13 +36,13 @@ public class Controller {
 		playerList.add(AI03);
 		playerList.add(HUMAN);
 		
-		for(Resource r : Resource.values())
+		/*for(Resource r : Resource.values())
 			try {
 				HUMAN.incResourceAmount(r, 100);
 			} catch (OutOfRangeException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
-			}
+			}*/
 		
 		Game.initializeGame(board, playerList);
 		DevCardShop.initializeShop();

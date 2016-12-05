@@ -13,9 +13,17 @@ import controller.map.Hex;
 import controller.map.Table;
 import controller.map.Vertex;
 import controller.player.GameEndsException;
+import controller.player.NotEnoughResourcesException;
+import controller.player.OutOfRangeException;
 import controller.player.Player;
 import controller.player.PlayerController;
 import controller.player.Resource;
+import controller.player.devcards.DevCard;
+import controller.player.devcards.KnightCard;
+import controller.player.devcards.MonopolyCard;
+import controller.player.devcards.RoadBuildingCard;
+import controller.player.devcards.VictoryPointCard;
+import controller.player.devcards.YearOfPlentyCard;
 
 public class AiController extends PlayerController {
 
@@ -84,7 +92,7 @@ public class AiController extends PlayerController {
 	 * @return true if robber is on a field the player has a village or city on
 	 */
 	public boolean isRobbed() {
-		for(Vertex v : board.getNodes()){
+		for(Vertex v : map.getNodes()){
 			if((v.getBuilding() != null) && (v.getBuilding().getOwner().equals(me))){
 				for(Hex h : v.getNeighbourHexes()){
 					if(h.hasThief){
@@ -109,10 +117,10 @@ public class AiController extends PlayerController {
 		
 		for (Resource res : Resource.values()){
 			if(offer.containsKey(res)){
-				offerValue += myHand.get(res).personalValue() * offer.get(res);
+				offerValue += resources.get(res).personalValue() * offer.get(res);
 			}
 			if(demand.containsKey(res)){
-				demandValue += myHand.get(res).personalValue() * demand.get(res);
+				demandValue += resources.get(res).personalValue() * demand.get(res);
 			}
 		}
 		
@@ -129,6 +137,67 @@ public class AiController extends PlayerController {
 	 */
 	public void turn() throws GameEndsException{
 		me.rollTheDice();
+		boolean playedCard = true;
+		int index = 0;
+		while(playedCard){
+			System.out.println("development card ciklus");
+			playedCard = false;
+			if(me.getDevCards().size() > index){
+				if(me.getDevCards().get(index).getClass().equals(KnightCard.class)){
+					if(isRobbed()){
+						me.playDev(me.getDevCards().get(index), null);
+						playedCard = true;
+					} else {
+						index++;
+					}
+				}
+				else if (me.getDevCards().get(index).getClass().equals(YearOfPlentyCard.class)){
+					me.playDev(me.getDevCards().get(index), null);
+					playedCard = true;
+				}
+				else if (me.getDevCards().get(index).getClass().equals(MonopolyCard.class)){
+					me.playDev(me.getDevCards().get(index), null);
+					playedCard = true;
+				}
+				else if (me.getDevCards().get(index).getClass().equals(RoadBuildingCard.class)){
+					me.playDev(me.getDevCards().get(index), null);
+					playedCard = true;
+				}
+				else if (me.getDevCards().get(index).getClass().equals(VictoryPointCard.class)){
+					int victoryPoints = 0;
+					for(DevCard card : me.getDevCards()){
+						if(card.getClass().equals(VictoryPointCard.class)){
+							victoryPoints++;
+						}
+					}
+					if(me.getPoints() + victoryPoints >= 10){
+						me.playDev(me.getDevCards().get(index), null);
+						playedCard = true;
+					}
+				}
+			}
+		}
+		for(DevCard card : me.getDevCards()){
+			if(card.getClass().equals(KnightCard.class)){
+				if(isRobbed()){
+					card.doCard(me);
+				}
+			}
+			else if (card.getClass().equals(YearOfPlentyCard.class)){
+				card.doCard(me);
+			}
+			else if (card.getClass().equals(MonopolyCard.class)){
+				card.doCard(me);			
+			}
+			else if (card.getClass().equals(RoadBuildingCard.class)){
+				card.doCard(me);
+			}
+			else if (card.getClass().equals(VictoryPointCard.class)){
+				
+			}
+		}
+		
+		
 		boolean buildSuccesful = true;
 		while(buildSuccesful){
 			buildSuccesful = false;
@@ -136,6 +205,7 @@ public class AiController extends PlayerController {
 			choices.add(Buildable.Settlement);
 			choices.add(Buildable.Road);
 			choices.add(Buildable.City);
+			choices.add(Buildable.Development);
 			choices.sort(new BuildableComparator(map, me, this, players));
 			for(Buildable b : choices){
 				if(b.equals(Buildable.City)){
@@ -166,6 +236,27 @@ public class AiController extends PlayerController {
 						} else {
 							buildSuccesful = false;
 						}
+					}
+				}
+				else if(b.equals(Buildable.Development)){
+					if(me.getResourceAmount(Resource.Grain) >= 1 &&
+							me.getResourceAmount(Resource.Wool) >= 1 &&
+							me.getResourceAmount(Resource.Ore) >= 1){
+						if(buildDevelopment.getBuildValue() > 0){
+							try {
+								me.buyDevCard();
+								buildSuccesful = true;
+								System.out.println("Successful development");
+							} catch (NotEnoughResourcesException e) {
+								buildSuccesful = false;
+							}
+						} else {
+							System.out.println("Nulla az erteke a fejlesztesnek");
+							buildSuccesful = false;
+						}
+					}
+					else {
+						buildSuccesful = false;
 					}
 				}
 			}
@@ -217,6 +308,25 @@ public class AiController extends PlayerController {
 						} else {
 							buildSuccesful = false;
 						}
+					}
+				}
+				else if(b.equals(Buildable.Development)){
+					if(me.getResourceAmount(Resource.Grain) >= 1 &&
+							me.getResourceAmount(Resource.Wool) >= 1 &&
+							me.getResourceAmount(Resource.Ore) >= 1){
+						if(buildDevelopment.getBuildValue() > 0){
+							try {
+								me.buyDevCard();
+								buildSuccesful = true;
+								System.out.println("Successful development");
+							} catch (NotEnoughResourcesException e) {
+								buildSuccesful = false;
+							}
+						} else {
+							buildSuccesful = false;
+						}
+					} else{
+						buildSuccesful = false;
 					}
 				}
 			}
