@@ -79,6 +79,22 @@ public class AiController extends PlayerController {
 	public Map<Resource, Material> getResources() {
 		return resources;
 	}
+	
+	/**
+	 * @return true if robber is on a field the player has a village or city on
+	 */
+	public boolean isRobbed() {
+		for(Vertex v : board.getNodes()){
+			if((v.getBuilding() != null) && (v.getBuilding().getOwner().equals(me))){
+				for(Hex h : v.getNeighbourHexes()){
+					if(h.hasThief){
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
 
 	/**
 	 * query. Calculates:Should we accept the offer?
@@ -88,18 +104,23 @@ public class AiController extends PlayerController {
 	 * @author Hollo-Szabo Akos
 	 */
 	public boolean query(Player donor, Map<Resource, Integer> offer, Map<Resource, Integer> demand) {
-		double demValue=0;
-		double ofValue=0;
-		double materia;
-		for(Resource r:Resource.values()){
-			materia=resources.get(r).personalValue();
-			demValue+=(materia*demand.get(r));
-			ofValue+=(materia*offer.get(r));
+		double offerValue = 0;
+		double demandValue = 0;
+		
+		for (Resource res : Resource.values()){
+			if(offer.containsKey(res)){
+				offerValue += myHand.get(res).personalValue() * offer.get(res);
+			}
+			if(demand.containsKey(res)){
+				demandValue += myHand.get(res).personalValue() * demand.get(res);
+			}
 		}
-		if(ofValue>demValue)
+		
+		if(demandValue > offerValue){
 			return true;
-		else
-			return false;
+		}
+		
+		return false;
 	}
 
 		/**
@@ -203,16 +224,16 @@ public class AiController extends PlayerController {
 		
 	}
 	
-	// az adott building építéséhez megadja, hogy melyik nyersanyagból
-	// mennyit kell beváltani az építéshez
+	// az adott building Ã©pÃ­tÃ©sÃ©hez megadja, hogy melyik nyersanyagbÃ³l
+	// mennyit kell bevÃ¡ltani az Ã©pÃ­tÃ©shez
 	private HashMap<Resource, Integer> whatCanChange(Buildable what){
 		// ezt adom vissza
 		HashMap<Resource, Integer> result = new HashMap<Resource, Integer>();
-		// ez az, ami az adott building építéséhez már megvan nyersanyag
+		// ez az, ami az adott building Ã©pÃ­tÃ©sÃ©hez mÃ¡r megvan nyersanyag
 		HashMap<Resource, Integer> ownedResources = new HashMap<Resource, Integer>();
-		// ez a maradék nyersanyag, ezeket lehet cserélni
+		// ez a maradÃ©k nyersanyag, ezeket lehet cserÃ©lni
 		HashMap<Resource, Integer> changableResources = new HashMap<Resource, Integer>();
-		// ezek a nyersanyagok hiányoznak még az építéshez
+		// ezek a nyersanyagok hiÃ¡nyoznak mÃ©g az Ã©pÃ­tÃ©shez
 		HashMap<Resource, Integer> neededResources = new HashMap<Resource, Integer>();
 		changableResources.put(Resource.Brick, me.getResourceAmount(Resource.Brick));
 		changableResources.put(Resource.Lumber, me.getResourceAmount(Resource.Lumber));
@@ -221,59 +242,59 @@ public class AiController extends PlayerController {
 		changableResources.put(Resource.Wool, me.getResourceAmount(Resource.Wool));
 		int neededResCnt = 0;
 		if(what.equals(Buildable.Road)){
-			// ebbe kerül az út
+			// ebbe kerÃ¼l az Ãºt
 			neededResources.put(Resource.Brick, 1);
 			neededResources.put(Resource.Lumber, 1);
 			neededResCnt = 2;
-			// ha van téglánk
+			// ha van tÃ©glÃ¡nk
 			if(me.getResourceAmount(Resource.Brick) > 0){
 				ownedResources.put(Resource.Brick, 1);
 				changableResources.put(Resource.Brick, changableResources.get(Resource.Brick) - 1);
 				neededResCnt--;
 			}
-			// ha van fánk :-)
+			// ha van fÃ¡nk :-)
 			if(me.getResourceAmount(Resource.Lumber) > 0){
 				ownedResources.put(Resource.Lumber, 1);
 				changableResources.put(Resource.Lumber, changableResources.get(Resource.Lumber) - 1);
 				neededResCnt--;
 			}
 		} else if(what.equals(Buildable.Settlement)){
-			// ebbe kerül a település
+			// ebbe kerÃ¼l a telepÃ¼lÃ©s
 			neededResources.put(Resource.Brick, 1);
 			neededResources.put(Resource.Grain, 1);
 			neededResources.put(Resource.Wool, 1);
 			neededResources.put(Resource.Lumber, 1);
 			neededResCnt = 4;
-			// ha van téglánk
+			// ha van tÃ©glÃ¡nk
 			if(me.getResourceAmount(Resource.Brick) > 0){
 				ownedResources.put(Resource.Brick, 1);
 				changableResources.put(Resource.Brick, changableResources.get(Resource.Brick) - 1);
 				neededResCnt--;
 			}
-			// ha van fánk :-)
+			// ha van fÃ¡nk :-)
 			if(me.getResourceAmount(Resource.Lumber) > 0){
 				ownedResources.put(Resource.Lumber, 1);
 				changableResources.put(Resource.Lumber, changableResources.get(Resource.Lumber) - 1);
 				neededResCnt--;
 			}
-			// ha van gyapjúnk
+			// ha van gyapjÃºnk
 			if(me.getResourceAmount(Resource.Wool) > 0){
 				ownedResources.put(Resource.Wool, 1);
 				changableResources.put(Resource.Wool, changableResources.get(Resource.Wool) - 1);
 				neededResCnt--;
 			}
-			// ha van búzánk
+			// ha van bÃºzÃ¡nk
 			if(me.getResourceAmount(Resource.Grain) > 0){
 				ownedResources.put(Resource.Grain, 1);
 				changableResources.put(Resource.Grain, changableResources.get(Resource.Grain) - 1);
 				neededResCnt--;
 			}
 		} else if(what.equals(Buildable.City)){
-			// ebbe kerül a city;
+			// ebbe kerÃ¼l a city;
 			neededResources.put(Resource.Grain, 2);
 			neededResources.put(Resource.Ore, 3);
 			neededResCnt = 5;
-			// ha van ércünk
+			// ha van Ã©rcÃ¼nk
 			if(me.getResourceAmount(Resource.Ore) > 0){
 				if(me.getResourceAmount(Resource.Ore) == 1){
 					ownedResources.put(Resource.Ore, 1);
@@ -289,7 +310,7 @@ public class AiController extends PlayerController {
 					neededResCnt = neededResCnt - 3;
 				}
 			}
-			// ha van búzánk
+			// ha van bÃºzÃ¡nk
 			if(me.getResourceAmount(Resource.Grain) > 0){
 				if(me.getResourceAmount(Resource.Grain) == 1){
 					ownedResources.put(Resource.Grain, 1);
@@ -302,24 +323,24 @@ public class AiController extends PlayerController {
 				}
 			}
 		} else if(what.equals(Buildable.Development)){
-			// ebbe kerül a fejlesztés
+			// ebbe kerÃ¼l a fejlesztÃ©s
 			neededResources.put(Resource.Grain, 1);
 			neededResources.put(Resource.Wool, 1);
 			neededResources.put(Resource.Ore, 1);
 			neededResCnt = 3;
-			// ha van ércünk
+			// ha van Ã©rcÃ¼nk
 			if(me.getResourceAmount(Resource.Ore) > 0){
 				ownedResources.put(Resource.Ore, 1);
 				changableResources.put(Resource.Ore, changableResources.get(Resource.Ore) - 1);
 				neededResCnt--;
 			}
-			// ha van gyapjúnk
+			// ha van gyapjÃºnk
 			if(me.getResourceAmount(Resource.Wool) > 0){
 				ownedResources.put(Resource.Wool, 1);
 				changableResources.put(Resource.Wool, changableResources.get(Resource.Wool) - 1);
 				neededResCnt--;
 			}
-			// ha van búzánk
+			// ha van bÃºzÃ¡nk
 			if(me.getResourceAmount(Resource.Grain) > 0){
 				ownedResources.put(Resource.Grain, 1);
 				changableResources.put(Resource.Grain, changableResources.get(Resource.Grain) - 1);
@@ -344,54 +365,54 @@ public class AiController extends PlayerController {
 		}
 		return result;
 	}
-	// ennyi nyersanyag hiányzik a building megépítéséhez
+	// ennyi nyersanyag hiÃ¡nyzik a building megÃ©pÃ­tÃ©sÃ©hez
 	private ArrayList<Resource> resourceMissing(Buildable what){
-		// ez az, ami az adott building építéséhez már megvan nyersanyag
+		// ez az, ami az adott building Ã©pÃ­tÃ©sÃ©hez mÃ¡r megvan nyersanyag
 		HashMap<Resource, Integer> ownedResources = new HashMap<Resource, Integer>();
-		// ezek a nyersanyagok hiányoznak még az építéshez
+		// ezek a nyersanyagok hiÃ¡nyoznak mÃ©g az Ã©pÃ­tÃ©shez
 		HashMap<Resource, Integer> neededResources = new HashMap<Resource, Integer>();
 		if(what.equals(Buildable.Road)){
-			// ennyibe kerül az út
+			// ennyibe kerÃ¼l az Ãºt
 			neededResources.put(Resource.Brick, 1);
 			neededResources.put(Resource.Lumber, 1);
 			int neededRes = 0;
-			// ha van téglánk
+			// ha van tÃ©glÃ¡nk
 			if(me.getResourceAmount(Resource.Brick) > 0){
 				neededResources.remove(Resource.Brick);
 			}
-			// ha van fánk :-)
+			// ha van fÃ¡nk :-)
 			if(me.getResourceAmount(Resource.Lumber) > 0){
 				neededResources.remove(Resource.Lumber);
 			}
 			
 		} else if(what.equals(Buildable.Settlement)){
-			// ennyibe kerül a település
+			// ennyibe kerÃ¼l a telepÃ¼lÃ©s
 			neededResources.put(Resource.Brick, 1);
 			neededResources.put(Resource.Grain, 1);
 			neededResources.put(Resource.Wool, 1);
 			neededResources.put(Resource.Lumber, 1);
 			int neededRes = 0;
-			// ha van téglánk
+			// ha van tÃ©glÃ¡nk
 			if(me.getResourceAmount(Resource.Brick) > 0){
 				neededResources.remove(Resource.Brick);
 			}
-			// ha van fánk :-)
+			// ha van fÃ¡nk :-)
 			if(me.getResourceAmount(Resource.Lumber) > 0){
 				neededResources.remove(Resource.Lumber);
 			}
-			// ha van búzánk
+			// ha van bÃºzÃ¡nk
 			if(me.getResourceAmount(Resource.Grain) > 0){
 				neededResources.remove(Resource.Grain);
 			}
-			// ha van bárányunk
+			// ha van bÃ¡rÃ¡nyunk
 			if(me.getResourceAmount(Resource.Wool) > 0){
 				neededResources.remove(Resource.Wool);
 			}
 		} else if(what.equals(Buildable.City)){
-			// ebbe kerül a city;
+			// ebbe kerÃ¼l a city;
 			neededResources.put(Resource.Grain, 2);
 			neededResources.put(Resource.Ore, 3);
-			// ha van ércünk
+			// ha van Ã©rcÃ¼nk
 			if(me.getResourceAmount(Resource.Ore) > 0){
 				if(me.getResourceAmount(Resource.Ore) == 1){
 					neededResources.put(Resource.Ore, 2);
@@ -401,7 +422,7 @@ public class AiController extends PlayerController {
 					neededResources.put(Resource.Ore, 0);
 				}
 			}
-			// ha van búzánk
+			// ha van bÃºzÃ¡nk
 			if(me.getResourceAmount(Resource.Grain) > 0){
 				if(me.getResourceAmount(Resource.Grain) == 1){
 					neededResources.put(Resource.Grain, 1);
@@ -410,20 +431,20 @@ public class AiController extends PlayerController {
 				}
 			}
 		} else if(what.equals(Buildable.Development)){
-			// ennyibe kerül a fejlesztés
+			// ennyibe kerÃ¼l a fejlesztÃ©s
 			neededResources.put(Resource.Grain, 1);
 			neededResources.put(Resource.Wool, 1);
 			neededResources.put(Resource.Ore, 1);
 			int neededRes = 0;
-			// ha van ércünk
+			// ha van Ã©rcÃ¼nk
 			if(me.getResourceAmount(Resource.Ore) > 0){
 				neededResources.remove(Resource.Ore);
 			}
-			// ha van búzánk
+			// ha van bÃºzÃ¡nk
 			if(me.getResourceAmount(Resource.Grain) > 0){
 				neededResources.remove(Resource.Grain);
 			}
-			// ha van bárányunk
+			// ha van bÃ¡rÃ¡nyunk
 			if(me.getResourceAmount(Resource.Wool) > 0){
 				neededResources.remove(Resource.Wool);
 			}
