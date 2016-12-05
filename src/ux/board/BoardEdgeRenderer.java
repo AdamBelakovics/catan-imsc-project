@@ -71,7 +71,7 @@ public class BoardEdgeRenderer extends ImageRenderer {
 		edgeCanvas.setStroke(new BasicStroke(5));
 		for (HashMap.Entry<Edge, ArrayList<Vertex> > e : edgeMap.entrySet() ) {
 			if (e.getKey().getBuilding()!=null) {
-				InterfaceColorProfile.setPlayerColor(edgeCanvas, e.getKey().getBuilding());
+				InterfaceColorProfile.setPlayerColor(edgeCanvas, e.getKey().getBuilding().getOwner());
 				edgeCanvas.drawLine(
 						ds.vertexMap.get(e.getValue().get(0)).x,
 						ds.vertexMap.get(e.getValue().get(0)).y,

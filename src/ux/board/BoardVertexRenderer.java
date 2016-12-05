@@ -52,9 +52,10 @@ public class BoardVertexRenderer extends ImageRenderer {
 
 	private void paintThief() {
 		for (Map.Entry<Hex,HexPoly> e : ds.hexMap.entrySet()) {
+			Point2D transformedPoint=ds.boardTransformation.transform(new Point(e.getValue().x, e.getValue().y),null);
 			if (e.getKey().hasThief) {
 				vertexCanvas.setColor(Color.black);
-				vertexCanvas.fillOval(e.getValue().x-10, e.getValue().y-10, 14, 14);
+				vertexCanvas.fillOval((int)Math.floor(transformedPoint.getX())-14, (int)Math.floor(transformedPoint.getY())-14, 20, 20);
 			}
 		}
 	}
@@ -72,7 +73,7 @@ public class BoardVertexRenderer extends ImageRenderer {
 			
 			Building detectedBuilding=v.getKey().getBuilding();
 			if (detectedBuilding!=null) {			
-				InterfaceColorProfile.setPlayerColor(vertexCanvas,detectedBuilding);
+				InterfaceColorProfile.setPlayerColor(vertexCanvas,detectedBuilding.getOwner());
 				if (detectedBuilding instanceof Settlement) {
 					vertexCanvas.fillOval((int)transformedPoint.getX()-7, (int)transformedPoint.getY()-7, 10, 10);
 				}

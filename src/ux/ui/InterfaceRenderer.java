@@ -14,9 +14,12 @@ import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 
+import controller.Game;
 import controller.map.Buildable;
+import controller.map.Dice;
 import controller.map.Hex;
 import controller.player.Building;
+import controller.player.Player;
 import ux.FirstTurnState;
 import ux.ImageRenderer;
 import ux.RendererDataStore;
@@ -56,6 +59,15 @@ public class InterfaceRenderer extends ImageRenderer {
 		paintHexInfo();
 		paintButtons();
 		paintDice();
+		paintPoints();
+	}
+	
+	private void paintPoints() {
+		int i=0;
+		for (Player p : Game.players) {
+			StringPainter.printString(intCanvas, p.getName()+": "+p.getPoints(),InterfaceColorProfile.getPlayerColor(p), (ds.width-60)/8+(ds.width-60)*i/4, 40);
+			i++;
+		}
 	}
 
 	private void paintButtons() {
@@ -102,7 +114,9 @@ public class InterfaceRenderer extends ImageRenderer {
 	
 	private void paintDice() {
 		intCanvas.setColor(InterfaceColorProfile.bgColor);
-		StringPainter.printString(intCanvas, "3 4", ds.width-30, 45);
+		StringPainter.printString(intCanvas, "Dice", ds.width-30, 35);
+		Integer currDice=new Integer(Dice.getCurrentValue());
+		if (currDice!=0) StringPainter.printString(intCanvas, currDice.toString(), ds.width-30, 50);
 	}
 	
 	private void paintHexInfo() {
@@ -195,6 +209,7 @@ public class InterfaceRenderer extends ImageRenderer {
 			drawFrame(rectImg.getGraphics(),ds.width*3/10-5, ds.height*9/10,ds.width*4/10+10, ds.height*1/10);
 			drawFrame(rectImg.getGraphics(),0,ds.height*7/10, ds.width*3/10, ds.height*3/10);
 			drawFrame(rectImg.getGraphics(),ds.width*7/10, ds.height*7/10, ds.width*3/10, ds.height*3/10);
+			drawFrame(rectImg.getGraphics(),0,0,ds.width,60);
 			drawFrame(rectImg.getGraphics(),ds.width-60, 0, 60, 70);
 			
 			try {
