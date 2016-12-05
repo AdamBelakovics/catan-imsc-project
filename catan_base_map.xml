@@ -1,22 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <catanmap>
 	<hex res="Grain" prosp="4"/>
-	<hex res="Lumber" prosp="6"/>
-	<hex res="Grain" prosp="9"/>
 	<hex res="Brick" prosp="2"/>
-	<hex res="Lumber" prosp="5"/>
-	<hex res="Wool" prosp="12"/>
-	<hex res="Wool" prosp="4"/>
 	<hex res="Wool" prosp="9"/>
+	<hex res="Lumber" prosp="6"/>
+	<hex res="Lumber" prosp="5"/>
 	<hex res="Brick" prosp="8"/>
-	<hex res="Desert" prosp="0"/>
-	<hex res="Ore" prosp="8"/>
-	<hex res="Wool" prosp="10"/>
 	<hex res="Lumber" prosp="3"/>
+	<hex res="Grain" prosp="9"/>
+	<hex res="Wool" prosp="12"/>
+	<hex res="Desert" prosp="0"/>
 	<hex res="Ore" prosp="5"/>
-	<hex res="Brick" prosp="10"/>
-	<hex res="Lumber" prosp="11"/>
 	<hex res="Grain" prosp="3"/>
+	<hex res="Wool" prosp="4"/>
+	<hex res="Ore" prosp="8"/>
+	<hex res="Brick" prosp="10"/>
 	<hex res="Grain" prosp="6"/>
+	<hex res="Wool" prosp="10"/>
+	<hex res="Lumber" prosp="11"/>
 	<hex res="Ore" prosp="11"/>
+	
+	<water resourcetype="Ore"/>
+	<water resourcetype=""/>
+	<water resourcetype="Lumber"/>
+	<water resourcetype=""/>
+	
+	<water resourcetype=""/>
+	<water resourcetype="Any"/>
+	
+	<water resourcetype="Wool"/>
+	<water resourcetype=""/>
+	
+	<water resourcetype=""/>
+	<water resourcetype="Brick"/>
+	
+	<water resourcetype="Any"/>
+	<water resourcetype=""/>
+	
+	<water resourcetype=""/>
+	<water resourcetype="Any"/>
+	
+	<water resourcetype="Any"/>
+	<water resourcetype=""/>
+	<water resourcetype="Grain"/>
+	<water resourcetype=""/>
 </catanmap>
