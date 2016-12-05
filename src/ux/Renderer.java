@@ -112,7 +112,7 @@ public class Renderer {
 		System.out.println(p.getName().toUpperCase());
 		updateTimer.stop();
 		Graphics gr = bufferImg.getGraphics();
-			Color c= Color.BLUE;
+			Color c= Color.BLACK;
 			gr.setColor(c);
 			gr.fillRect(0, 0, dataStore.width, dataStore.height);
 			StringPainter.printString(gr, "Congratulations " + p.getName() + " you won!!!", InterfaceColorProfile.getPlayerColor(p), dataStore.width/2, dataStore.height/2);
