@@ -30,4 +30,5 @@ public class RendererDataStore {
 	public HashMap<Resource,Color> colorMap=ResourceXMLReader.readTextureXML("textures.xml");
 	public Hex selectedTile=null;
 	public BoardOrientation boardOrientation=BoardOrientation.NORTH;
+	public boolean changeActive=false;
 }
