@@ -473,26 +473,21 @@ public class Player {
 		System.out.println("Hello from 1buid");
 		boolean succesful = false;	
 		if(what == Buildable.Road){
-			Road u = availableRoads.remove(0);
-			succesful = where.getClass().equals(Edge.class) && where.getBuilding() == null;
+			succesful = isFirstBuildPossible(Buildable.Road, where);
 			if(succesful){
+				Road u = availableRoads.remove(0);
 				where.setBuilding(u);
 				erectedBuildings.add(u);
 			}
-			else
-				availableRoads.add(u);
 		}
 		else if(what == Buildable.Settlement){
-			Settlement s = availableSettlements.remove(0);
-			succesful = where.getClass().equals(Vertex.class) && where.getBuilding() == null;
+			succesful = isFirstBuildPossible(Buildable.Settlement, where);;
 			if(succesful){
+				Settlement s = availableSettlements.remove(0);
 				where.setBuilding(s);
 				erectedBuildings.add(s);
 				this.incPoints(1);
-			}
-			else
-				availableSettlements.add(s);
-				
+			}	
 		}
 		else if(what == Buildable.City){
 			succesful = false;
@@ -503,25 +498,48 @@ public class Player {
 	public boolean isBuildPossible(Buildable what, TableElement where){
 		System.out.println("Hello from isbuild");
 		if(what == Buildable.Road){
-			Road r = availableRoads.get(0);
-			if(where.getBuilding() == null && where.isBuildPossible(r) && where.getClass().equals(Edge.class)){
+			boolean hasEnoughAvailableRoads = (availableRoads.size() > 0);
+			boolean isEmpty = where.getBuilding() == null;
+			boolean isTheRightPlace = where.getClass().equals(Edge.class);
+			boolean hasNeighbouringSettlement = (((Edge)where).getEnds().get(0).getBuilding() == null ? false :  (((Edge)where).getEnds().get(0).getBuilding().getClass() == Settlement.class && ((Edge)where).getEnds().get(0).getBuilding().getOwner().equals(this)))
+											|| (((Edge)where).getEnds().get(1).getBuilding() == null ? false :  (((Edge)where).getEnds().get(1).getBuilding().getClass() == Settlement.class && ((Edge)where).getEnds().get(1).getBuilding().getOwner().equals(this)));
+			boolean hasNeighbouringCity = (((Edge)where).getEnds().get(0).getBuilding() == null ? false :  (((Edge)where).getEnds().get(0).getBuilding().getClass() == City.class && ((Edge)where).getEnds().get(0).getBuilding().getOwner().equals(this)))
+											|| (((Edge)where).getEnds().get(1).getBuilding() == null ? false :  (((Edge)where).getEnds().get(1).getBuilding().getClass() == City.class && ((Edge)where).getEnds().get(1).getBuilding().getOwner().equals(this)));
+			boolean hasNeighbouringRoad = false;
+			for(Vertex v : ((Edge)where).getEnds())
+				if(v.getBuilding() == null ? true : v.getBuilding().getOwner().equals(this)){
+					for(Edge e : v.getNeighbourEdges())
+							if(e.getBuilding() == null ? false : e.getBuilding().getOwner().equals(this))
+									hasNeighbouringRoad = true;
+					}
+			if(hasEnoughAvailableRoads && isEmpty && isTheRightPlace && (hasNeighbouringSettlement || hasNeighbouringCity || hasNeighbouringRoad)){
 				return true;
 			}
 			return false;
 		}
 		else if(what == Buildable.Settlement){
-			Settlement s = availableSettlements.get(0);
-			if(where.getBuilding() == null && where.isBuildPossible(s) && where.getClass().equals(Vertex.class)){
+			boolean hasEnoughAvailableSettlements = (availableSettlements.size() > 0);
+			boolean isEmpty = where.getBuilding() == null;
+			boolean isTheRightPlace = where.getClass().equals(Settlement.class);
+			boolean hasNeighbouringSettlement = ((Vertex)where).getNeighbours().get(0).getBuilding() != null || 
+												((Vertex)where).getNeighbours().get(1).getBuilding() != null || 
+												((Vertex)where).getNeighbours().get(2).getBuilding() != null;
+			boolean hasNeighbouringRoad = false;
+			for(Edge e : ((Vertex)where).getNeighbourEdges()){
+				if(e.getBuilding() == null ? false : (e.getBuilding().getClass().equals(Road.class) && e.getBuilding().getOwner().equals(this))){
+					hasNeighbouringRoad = true;
+				}
+			}
+			if(hasEnoughAvailableSettlements && isEmpty && isTheRightPlace && !hasNeighbouringSettlement && hasNeighbouringRoad){
 				return true;
 			}
 			return false;
 		}
 		else if(what == Buildable.City){
-			City c = availableCities.get(0);
-			if(where.getBuilding() != null){ //to avoid null pointers
-				if(where.getBuilding().getClass().equals(Settlement.class) && where.getBuilding().getOwner().equals(this) && where.isBuildPossible(c) && where.getClass().equals(Vertex.class)){
-					return true;
-				}
+			boolean hasEnoughAvailableCities = (availableCities.size() > 0);
+			boolean hasSettlement = ((Vertex)where).getBuilding() == null ? false : ((Vertex)where).getBuilding().getClass().equals(Settlement.class) && ((Vertex)where).getBuilding().getOwner().equals(this); 
+			if(hasEnoughAvailableCities && hasSettlement){
+				return true;
 			}
 			return false;
 		}	
