@@ -709,10 +709,7 @@ public class Player {
 	 */
 	public void playDev(DevCard dc, Resource r) throws GameEndsException{
 		System.out.println("Hello from playDev");
-		if(dc.getClass().equals(MonopolyCard.class) | dc.getClass().equals(YearOfPlentyCard.class))
-			dc.doCard(this, r);
-		if(dc.getClass().equals(KnightCard.class) | dc.getClass().equals(RoadBuildingCard.class) | dc.getClass().equals(VictoryPointCard.class))
-			dc.doCard(this, r);
+		dc.doCard(this, r);
 		playedDevCards.add(dc);
 		devCards.remove(dc);
 	}

@@ -15,6 +15,7 @@ import controller.player.OutOfRangeException;
 import controller.player.Player;
 import controller.player.PlayerController;
 import controller.player.Resource;
+import controller.player.devcards.DevCardShop;
 import ux.Renderer;
 import ux.ui.UIController;
 
@@ -36,13 +37,14 @@ public class Controller {
 		
 		for(Resource r : Resource.values())
 			try {
-				HUMAN.incResourceAmount(r, 100);
+				HUMAN.incResourceAmount(r, 0);
 			} catch (OutOfRangeException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		
-		Game game = new Game(board, playerList);
+		Game.initializeGame(board, playerList);
+		DevCardShop.initializeShop();
 		
 		AiController AICONT01 = new AiController(board, AI01, playerList);
 		AiController AICONT02 = new AiController(board, AI02, playerList);

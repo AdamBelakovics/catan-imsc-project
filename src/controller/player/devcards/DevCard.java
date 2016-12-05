@@ -12,15 +12,6 @@ abstract public class DevCard {
 	 */
 	public void doCard(Player p, Resource r) {
 		
-	}
-
-	
-	public void doCard(Player p) throws GameEndsException {
-	
-	}
-
-
-		
-		
+	}		
 }
 
