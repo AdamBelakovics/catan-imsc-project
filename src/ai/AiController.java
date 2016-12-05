@@ -856,7 +856,7 @@ public class AiController extends PlayerController {
 	}
 	/*
 	public double nodeFirstPersonalValue(Vertex v){
-		if(!(v.isFirstBuildPossible(new Settlement(me)))){
+		if(!(me.isFirstBuildPossible(Buildable.Settlement, v))){
 			return 0;
 		}
 		double sum = 0;
