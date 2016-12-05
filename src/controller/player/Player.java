@@ -721,20 +721,21 @@ public class Player {
 		Resource w = Resource.Wool;
 		Resource o = Resource.Ore;
 		Resource g = Resource.Grain;
-		
-		if((resourcePool.get(w)<0) | (resourcePool.get(o)<0) |  (resourcePool.get(g)<0)) throw new NotEnoughResourcesException("You dont't have enough resoureces to buy developement card.");
-		try {
-			decResourceAmount(w, 1);
-			decResourceAmount(o, 1);
-			decResourceAmount(g, 1);
-		} catch (OutOfRangeException e1) {
-			e1.printStackTrace();
-		}
-		
-		try {
-			devCards.add(DevCardShop.buyDevCard());
-		} catch (OutOfRangeException e) {
-			e.printStackTrace();
+		if(!DevCardShop.isShopEmpty()){
+			if((resourcePool.get(w)<0) | (resourcePool.get(o)<0) |  (resourcePool.get(g)<0)) throw new NotEnoughResourcesException("You dont't have enough resoureces to buy developement card.");
+			try {
+				decResourceAmount(w, 1);
+				decResourceAmount(o, 1);
+				decResourceAmount(g, 1);
+			} catch (OutOfRangeException e1) {
+				e1.printStackTrace();
+			}
+			
+			try {
+				devCards.add(DevCardShop.buyDevCard());
+			} catch (OutOfRangeException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	

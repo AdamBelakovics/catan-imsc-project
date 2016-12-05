@@ -42,5 +42,13 @@ public class DevCardShop {
 		return d;
 	}
 	
+	/**
+	 * Getter for devCardList is Empty
+	 * @return devCardList is Empty
+	 */
+	static public boolean isShopEmpty(){
+		return devCardList.isEmpty();
+	}
+	
 	
 }
