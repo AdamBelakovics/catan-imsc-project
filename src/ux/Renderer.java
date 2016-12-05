@@ -103,6 +103,10 @@ public class Renderer {
 	public void updateDevCards(Player actualPlayer){};
 	public void updateResources(Player actualPlayer){};
 	public void updateThief(Hex to) {};
+	
+	public void displayGameEndScreen(Player p) {
+		
+	}
 
 	
 	/**

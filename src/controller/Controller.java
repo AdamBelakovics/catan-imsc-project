@@ -37,7 +37,7 @@ public class Controller {
 		
 		for(Resource r : Resource.values())
 			try {
-				HUMAN.incResourceAmount(r, 0);
+				HUMAN.incResourceAmount(r, 100);
 			} catch (OutOfRangeException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();

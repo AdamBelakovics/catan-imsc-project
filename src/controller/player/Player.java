@@ -37,6 +37,7 @@ public class Player {
 	int points;
 	int activeKnights;
 	Table table;
+	boolean BiggestArmy = false;
 	
 	HashMap<Resource, Integer> changeLUT = new HashMap<Resource, Integer>();
 	HashMap<Resource, Integer> resourcePool = new HashMap<Resource, Integer>();
@@ -122,7 +123,7 @@ public class Player {
 	 * @param value
 	 * @throws OutOfRangeException if (points - value) goes negative
 	 */
-	protected final void decPoints(int value) throws OutOfRangeException{
+	public final void decPoints(int value) throws OutOfRangeException{
 		if((points - value) < 0) throw new OutOfRangeException("Points goes negative");
 		points -= value;
 	}
@@ -211,6 +212,22 @@ public class Player {
 	 */
 	public int getResourceAmount(Resource r){
 		return resourcePool.get(r);
+	}
+	
+	/**
+	 * Getter for BiggestArmy
+	 * @return BiggestArmy
+	 */
+	public boolean isBiggestArmy(){
+		return BiggestArmy;
+	}
+	
+	/**
+	 * Setter for BiggestArmy
+	 * @param b boolean for BiggestArmy
+	 */
+	public void setBiggestArmy(boolean b){
+		BiggestArmy = b;
 	}
 	
 	/**
@@ -729,7 +746,7 @@ public class Player {
 	 */
 	public void playDev(DevCard dc, Resource r) throws GameEndsException{
 		System.out.println("Hello from playDev");
-		dc.doCard(this, r);
+		dc.doCard(this);
 		playedDevCards.add(dc);
 		devCards.remove(dc);
 	}
