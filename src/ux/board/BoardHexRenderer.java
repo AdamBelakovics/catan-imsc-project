@@ -144,11 +144,7 @@ public class BoardHexRenderer extends ImageRenderer {
 			hexCanvas.draw(currHexPoly);
 			hexCanvas.fillPolygon(currHexPoly);
 			
-			if (currHex.getProsperity()!=0) StringPainter.printString(hexCanvas, new Integer(currHex.getProsperity()).toString(), 14, currHexPoly.x, currHexPoly.y);
-			if (currHex.hasThief) {
-				hexCanvas.setColor(Color.black);
-				hexCanvas.fillOval(currHexPoly.x-10, currHexPoly.y-10, 14, 14);
-			}
+			if (currHex.getProsperity()!=0) StringPainter.printString(hexCanvas, new Integer(currHex.getProsperity()).toString(), 18, currHexPoly.x, currHexPoly.y);
 			
 			if (currHexPoly.selected) ds.selectedTile=currHex;
 		}

@@ -43,7 +43,7 @@ public class TestGraphics {
 	@Test
 	public void colorChangeTest() {
 		Building testBuilding=new City(p);
-		InterfaceColorProfile.setPlayerColor(testCanvas, testBuilding);
+		InterfaceColorProfile.setPlayerColor(testCanvas, testBuilding.getOwner());
 		assertEquals(InterfaceColorProfile.player1Color,testCanvas.getColor());
 	}
 	

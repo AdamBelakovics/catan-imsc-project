@@ -134,7 +134,7 @@ public class Renderer {
 			Vertex selectedVertex=boardPanel.vertexRenderer.getVertexUnderCursor(ev.getX(), ev.getY());
 			if (selectedVertex!=null) {
 				if (ds.currentlyBuilding!=null) {
-					if (ds.currUIC.firstturnactive && ds.currUIC.state==FirstTurnState.STARTED) {
+					if (ds.currUIC.firstturnactive && ds.currUIC.state==FirstTurnState.STARTED && ds.currUIC.controlledPlayer.isFirstBuildPossible(Buildable.Settlement, selectedVertex)) {
 						
 							ds.currUIC.state=FirstTurnState.CITYBUILT;
 							ds.currUIC.controlledPlayer.firstBuild(Buildable.Settlement, selectedVertex);
