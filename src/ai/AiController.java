@@ -667,6 +667,103 @@ public class AiController extends PlayerController {
 		}*/
 	}
 	
+	// az adott building építéséhez megadja, hogy melyik nyersanyagból
+	// mennyit kell beváltani az építéshez
+	private HashMap<Resource, Integer> whatCanChange(Buildable what){
+		// ezt adom vissza
+		HashMap<Resource, Integer> result = new HashMap<Resource, Integer>();
+		// ez az, ami az adott building építéséhez már megvan nyersanyag
+		HashMap<Resource, Integer> ownedResources = new HashMap<Resource, Integer>();
+		// ez a maradék nyersanyag, ezeket lehet cserélni
+		HashMap<Resource, Integer> changableResources = new HashMap<Resource, Integer>();
+		// ezek a nyersanyagok hiányoznak még az építéshez
+		HashMap<Resource, Integer> neededResources = new HashMap<Resource, Integer>();
+		changableResources.put(Resource.Brick, me.getChangeLUT(Resource.Brick));
+		changableResources.put(Resource.Lumber, me.getChangeLUT(Resource.Lumber));
+		changableResources.put(Resource.Grain, me.getChangeLUT(Resource.Grain));
+		changableResources.put(Resource.Ore, me.getChangeLUT(Resource.Ore));
+		changableResources.put(Resource.Wool, me.getChangeLUT(Resource.Wool));
+		if(what.equals(Buildable.Road)){
+			// ebbe kerül az út
+			neededResources.put(Resource.Brick, 1);
+			neededResources.put(Resource.Lumber, 1);
+			int neededRes = 0;
+			// ha van téglánk
+			if(me.getChangeLUT(Resource.Brick) > 0){
+				ownedResources.put(Resource.Brick, 1);
+				changableResources.put(Resource.Brick, changableResources.get(Resource.Brick) - 1);
+				neededRes++;
+			}
+			// ha van fánk :-)
+			if(me.getChangeLUT(Resource.Lumber) > 0){
+				ownedResources.put(Resource.Lumber, 1);
+				changableResources.put(Resource.Lumber, changableResources.get(Resource.Lumber) - 1);
+				neededRes++;
+			}
+			
+			HashMap<Resource, Integer> obtainableRes = this.resourcesThatCanBeChangedFromThisResourcePool(changableResources);
+			if(neededRes > obtainableRes.size()){
+				return result;
+			}
+			for(Map.Entry<Resource, Integer> item : obtainableRes.entrySet()){
+				if(neededRes > 0){
+					result.put(item.getKey(), item.getValue());
+					--neededRes;
+				} else {
+					return result;
+				}
+			}
+		} else if(what.equals(Buildable.Settlement)){
+			
+		} else if(what.equals(Buildable.City)){
+			
+		} else if(what.equals(Buildable.Development)){
+			
+		} else {
+			
+		}
+		return result;
+	}
+	
+	private HashMap<Resource, Integer> resourceNeeded(Building what){
+		// ez az, ami az adott building építéséhez már megvan nyersanyag
+		HashMap<Resource, Integer> ownedResources = new HashMap<Resource, Integer>();
+		// ezek a nyersanyagok hiányoznak még az építéshez
+		HashMap<Resource, Integer> neededResources = new HashMap<Resource, Integer>();
+		if(what.equals(Buildable.Road)){
+			// ennyibe kerül az út
+			neededResources.put(Resource.Brick, 1);
+			neededResources.put(Resource.Lumber, 1);
+			int neededRes = 0;
+			// ha van téglánk
+			if(me.getResourceAmount(Resource.Brick) > 0){
+				neededResources.put(Resource.Brick, 0);
+			}
+			// ha van fánk :-)
+			if(me.getResourceAmount(Resource.Lumber) > 0){
+				neededResources.put(Resource.Lumber, 0);
+			}
+			
+		} else if(what.equals(Buildable.Settlement)){
+			
+		} else if(what.equals(Buildable.City)){
+			
+		} else if(what.equals(Buildable.Development)){
+			
+		} else {
+			
+		}
+		return neededResources;
+	}
+	
+	private HashMap<Resource, Integer> resourcesThatCanBeChangedFromThisResourcePool(HashMap<Resource, Integer> pool){
+		HashMap<Resource, Integer> result = new HashMap<Resource, Integer>();
+		for(Map.Entry<Resource, Integer> item : pool.entrySet()){
+			result.put(item.getKey(), item.getValue() / me.getChangeLUT(item.getKey()));
+		}
+		return result;
+	}
+	
 	/**
 	 * firstturn. The main calculator of the first moves.
 	 * @author Hollo-Szabo Akos 
@@ -757,9 +854,9 @@ public class AiController extends PlayerController {
 		}
 		return sum;
 	}
-	
+	/*
 	public double nodeFirstPersonalValue(Vertex v){
-		if(!(v.isFirstBuildPossible(new Settlement(me)))){
+		if(!(me.isFirstBuildPossible(Buildable.Settlement, v))){
 			return 0;
 		}
 		double sum = 0;
@@ -768,7 +865,7 @@ public class AiController extends PlayerController {
 			sum += territoryPersonalValue(x);
 		}
 		return sum;
-	}
+	}*/
 	
 	public double territoryPersonalValue(Hex h){
 		ArrayList<Hex> valid = map.getValidFields();
