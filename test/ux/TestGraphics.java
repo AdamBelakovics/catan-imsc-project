@@ -35,7 +35,7 @@ public class TestGraphics {
 		p=new Player("testPlayer", 0, new Table());
 		testArray=new ArrayList();
 		testArray.add(p);
-		testGame= new Game(new Table(), testArray);
+		Game.initializeGame(new Table(), testArray);
 		Game.players.add(p);
 
 	}

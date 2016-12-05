@@ -350,6 +350,23 @@ public class Player {
 		return result;
 	}
 	
+	public void updateChangeLUT(Vertex where){
+		for(Hex h : where.getNeighbourHexes()){
+			if(h.getPort() != null){
+				if(h.getPort().getRes() == null){
+					for(Resource r : Resource.values()){
+						changeLUT.replace(r, h.getPort().getChangeNumber());
+					}
+				}
+				else{
+					if(changeLUT.get(h.getPort().getRes()) > h.getPort().getChangeNumber()){
+						changeLUT.replace(h.getPort().getRes(), h.getPort().getChangeNumber());
+					}
+				}
+			}
+		}
+	}
+	
 	//PLAYER ACTIONS---------------------------------------------------------------------->
 	
 	/**
@@ -488,7 +505,8 @@ public class Player {
 				where.setBuilding(s);
 				erectedBuildings.add(s);
 				this.incPoints(1);
-			}	
+			}
+			updateChangeLUT((Vertex)where);
 		}
 		else if(what == Buildable.City){
 			succesful = false;
@@ -615,6 +633,7 @@ public class Player {
 					}
 				}
 			}
+			updateChangeLUT((Vertex)where);
 		}
 		else if(what == Buildable.City){
 			if(getResourceAmount(g) >= 2 && getResourceAmount(o) >= 3){
@@ -661,7 +680,7 @@ public class Player {
 	public void change(Resource give , Resource get) {
 		System.out.println("Hello from change");
 		try {
-			if(this.getResourceAmount(give) >= 4)
+			if(this.getResourceAmount(give) >= changeLUT.get(give))
 				this.decResourceAmount(give, 4);
 		} catch (OutOfRangeException e) {
 			e.printStackTrace();
