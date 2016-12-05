@@ -11,6 +11,7 @@ import controller.map.Hex;
 import controller.map.MapXMLParser;
 import controller.map.Table;
 import controller.player.GameEndsException;
+import controller.player.OutOfRangeException;
 import controller.player.Player;
 import controller.player.PlayerController;
 import controller.player.Resource;
@@ -33,12 +34,19 @@ public class Controller {
 		playerList.add(AI03);
 		playerList.add(HUMAN);
 		
+		for(Resource r : Resource.values())
+			try {
+				HUMAN.incResourceAmount(r, 100);
+			} catch (OutOfRangeException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		
 		Game game = new Game(board, playerList);
 		
 		AiController AICONT01 = new AiController(board, AI01, playerList);
 		AiController AICONT02 = new AiController(board, AI02, playerList);
 		AiController AICONT03 = new AiController(board, AI03, playerList);
-		
 		UIController HUMCONT = new UIController(HUMAN);
 		
 		ArrayList<PlayerController> pclist = new ArrayList<PlayerController>();
@@ -55,12 +63,12 @@ public class Controller {
 		Renderer rend = new Renderer(HUMCONT, board, 1024, 768);
 		
 		for(int i = 0; i < pclist.size(); i++){
-			Thread.sleep(1000);
+			Thread.sleep(10);
 			pclist.get(i).firstturn();
 		}
 		
 		for(int i = pclist.size()-1; i >= 0; i--){
-			Thread.sleep(1000);
+			Thread.sleep(10);
 			pclist.get(i).firstturn();
 		}
 		
@@ -68,7 +76,7 @@ public class Controller {
 		while(true){
 			for(PlayerController pc : pclist){
 				try {
-					Thread.sleep(1000);
+					Thread.sleep(10);
 					pc.turn();
 				} catch (GameEndsException e) {
 					e.printStackTrace();
