@@ -6,7 +6,7 @@ import controller.player.Resource;
 
 public class RoadBuildingCard extends DevCard {
 	/**
-	 * Get 2-2 Brick and Lumber, Player can spend them to 2 road
+	 * Get 2-2 Brick and Lumber, Player can spend them to 2 roads
 	 */
 	@Override
 	public void doCard(Player p) {
