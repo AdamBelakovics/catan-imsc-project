@@ -731,11 +731,7 @@ public class Player {
 				e1.printStackTrace();
 			}
 			
-			try {
 				devCards.add(DevCardShop.buyDevCard());
-			} catch (OutOfRangeException e) {
-				e.printStackTrace();
-			}
 		}
 	}
 	
