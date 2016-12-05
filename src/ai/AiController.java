@@ -14,6 +14,7 @@ import controller.map.Table;
 import controller.map.Vertex;
 import controller.player.GameEndsException;
 import controller.player.NotEnoughResourcesException;
+import controller.player.OutOfRangeException;
 import controller.player.Player;
 import controller.player.PlayerController;
 import controller.player.Resource;
@@ -139,24 +140,27 @@ public class AiController extends PlayerController {
 		boolean playedCard = true;
 		int index = 0;
 		while(playedCard){
+			System.out.println("development card ciklus");
 			playedCard = false;
 			if(me.getDevCards().size() > index){
 				if(me.getDevCards().get(index).getClass().equals(KnightCard.class)){
 					if(isRobbed()){
-						me.getDevCards().get(index).doCard(me);
+						me.playDev(me.getDevCards().get(index), null);
 						playedCard = true;
+					} else {
+						index++;
 					}
 				}
 				else if (me.getDevCards().get(index).getClass().equals(YearOfPlentyCard.class)){
-					me.getDevCards().get(index).doCard(me);
+					me.playDev(me.getDevCards().get(index), null);
 					playedCard = true;
 				}
 				else if (me.getDevCards().get(index).getClass().equals(MonopolyCard.class)){
-					me.getDevCards().get(index).doCard(me);
+					me.playDev(me.getDevCards().get(index), null);
 					playedCard = true;
 				}
 				else if (me.getDevCards().get(index).getClass().equals(RoadBuildingCard.class)){
-					me.getDevCards().get(index).doCard(me);
+					me.playDev(me.getDevCards().get(index), null);
 					playedCard = true;
 				}
 				else if (me.getDevCards().get(index).getClass().equals(VictoryPointCard.class)){
@@ -167,7 +171,7 @@ public class AiController extends PlayerController {
 						}
 					}
 					if(me.getPoints() + victoryPoints >= 10){
-						me.getDevCards().get(index).doCard(me);
+						me.playDev(me.getDevCards().get(index), null);
 						playedCard = true;
 					}
 				}
@@ -235,16 +239,24 @@ public class AiController extends PlayerController {
 					}
 				}
 				else if(b.equals(Buildable.Development)){
-					if(buildDevelopment.getBuildValue() > 0){
-						try {
-							me.buyDevCard();
-							buildSuccesful = true;
-							System.out.println("Successful development");
-						} catch (NotEnoughResourcesException e) {
+					if(me.getResourceAmount(Resource.Grain) >= 1 &&
+							me.getResourceAmount(Resource.Wool) >= 1 &&
+							me.getResourceAmount(Resource.Ore) >= 1){
+						if(buildDevelopment.getBuildValue() > 0){
+							try {
+								me.buyDevCard();
+								buildSuccesful = true;
+								System.out.println("Successful development");
+							} catch (NotEnoughResourcesException e) {
+								buildSuccesful = false;
+							}
+						} else {
+							System.out.println("Nulla az erteke a fejlesztesnek");
 							buildSuccesful = false;
 						}
-					} else {
-						System.out.println("Nulla az erteke a fejlesztesnek");
+					}
+					else {
+						buildSuccesful = false;
 					}
 				}
 			}
@@ -299,14 +311,22 @@ public class AiController extends PlayerController {
 					}
 				}
 				else if(b.equals(Buildable.Development)){
-					if(buildDevelopment.getBuildValue() > 0){
-						try {
-							me.buyDevCard();
-							buildSuccesful = true;
-							System.out.println("Successful development");
-						} catch (NotEnoughResourcesException e) {
+					if(me.getResourceAmount(Resource.Grain) >= 1 &&
+							me.getResourceAmount(Resource.Wool) >= 1 &&
+							me.getResourceAmount(Resource.Ore) >= 1){
+						if(buildDevelopment.getBuildValue() > 0){
+							try {
+								me.buyDevCard();
+								buildSuccesful = true;
+								System.out.println("Successful development");
+							} catch (NotEnoughResourcesException e) {
+								buildSuccesful = false;
+							}
+						} else {
 							buildSuccesful = false;
 						}
+					} else{
+						buildSuccesful = false;
 					}
 				}
 			}
