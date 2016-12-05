@@ -32,6 +32,10 @@ public class MapXMLParser {
 			}
 		}
 		fields.removeAll(waters);
+		for(Hex h : waters){
+			h.setResource(null);
+			h.setProsperity(0);
+		}
 
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		try {
