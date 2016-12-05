@@ -46,7 +46,7 @@ public class InterfaceRenderer extends ImageRenderer {
 		buttonsList.add(new BuildButton("Road",Buildable.Road, ds.width*31/40, ds.height*17/20, ds.width*3/20-20, 30));
 		
 		buttonsList.add(new TradeButton("Trade", ds.width*37/40, ds.height*61/80, ds.width*3/20-20, 30));
-		buttonsList.add(new TradeButton("Dev Card", ds.width*37/40, ds.height*67/80, ds.width*3/20-20, 30));
+		buttonsList.add(new DevButton(ds, "Dev Card", ds.width*37/40, ds.height*67/80, ds.width*3/20-20, 30));
 
 		buttonsList.add(new EndTurnButton(ds.currUIC,"End turn", ds.width*17/20,ds.height*26/40,ds.width*3/10-10,50));
 		
@@ -168,6 +168,10 @@ public class InterfaceRenderer extends ImageRenderer {
 	}
 	
 	public void pressButton(Button b) {
+		if (b instanceof DevButton) {
+			b.press();
+			return;
+		}
 		for (Button allB : buttonsList) allB.setSelected(b.equals(allB)&&!b.isSelected());
 		if (b.isSelected()) b.press();
 	}

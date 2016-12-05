@@ -17,6 +17,8 @@ public class UIController extends PlayerController {
 
 	public FirstTurnState state=FirstTurnState.NULL;
 	
+	public boolean tradeWindowActive=false;
+	
 	public UIController(Player _controlledPlayer) {
 		controlledPlayer=_controlledPlayer;
 	}

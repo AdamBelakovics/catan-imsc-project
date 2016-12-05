@@ -631,7 +631,7 @@ public class AiController extends PlayerController {
 		boolean canBuild = true;
 		boolean canTryAgain = true;
 		
-		Vertex vBuild = buildVillage.getNode();
+		/*Vertex vBuild = buildVillage.getNode();
 		if(vBuild != null)
 			me.build(Buildable.Settlement, vBuild);
 		vBuild = buildCity.getNode();
@@ -642,6 +642,98 @@ public class AiController extends PlayerController {
 		if(edgeRoad != null){
 			if(me.isBuildPossible(Buildable.Road, edgeRoad))
 				me.build(Buildable.Road, edgeRoad);
+		}*/
+		boolean buildSuccesful = true;
+		while(buildSuccesful){
+			buildSuccesful = false;
+			ArrayList<Buildable> choices = new ArrayList<Buildable>();
+			choices.add(Buildable.Settlement);
+			choices.add(Buildable.Road);
+			choices.add(Buildable.City);
+			choices.sort(new BuildableComparator(map, me, this, players));
+			for(Buildable b : choices){
+				if(b.equals(Buildable.City)){
+					if(buildCity.getNode() != null){
+						if(me.build(b, buildCity.getNode())){
+							buildSuccesful = true;
+							break;
+						} else {
+							buildSuccesful = false;
+						}
+					}
+				}
+				else if(b.equals(Buildable.Settlement)){
+					if(buildVillage.getNode() != null){
+						if(me.build(b, buildVillage.getNode())){
+							buildSuccesful = true;
+							break;
+						} else {
+							buildSuccesful = false;
+						}
+					}
+				}
+				else if(b.equals(Buildable.Road)){
+					if(buildRoad.getEdge() != null){
+						if(me.build(b, buildRoad.getEdge())){
+							buildSuccesful = true;
+							break;
+						} else {
+							buildSuccesful = false;
+						}
+					}
+				}
+			}
+			if(buildSuccesful){
+				continue;
+			}
+			for(Buildable b : choices){
+				HashMap<Resource, Integer> whatToChange = this.whatCanChange(b);
+				if(whatToChange.isEmpty()){
+					continue;
+				}
+				ArrayList<Resource> neededRes = this.resourceMissing(b);
+				for(Map.Entry<Resource, Integer> item : whatToChange.entrySet()){
+					while(item.getValue() > 0){
+						System.out.println("Change in ai needed " + neededRes.toString());
+						System.out.println("Change in ai to change " + whatToChange.toString());
+						me.change(item.getKey(), neededRes.remove(0));
+						item.setValue(item.getValue() - me.getChangeLUT(item.getKey()));
+					}
+				}
+				if(b.equals(Buildable.City)){
+					if(buildCity.getNode() != null){		
+						if(me.build(b, buildCity.getNode())){
+							buildSuccesful = true;
+							System.out.println("Build succesful with change: " + b.toString());
+							break;
+						} else {
+							buildSuccesful = false;
+						}
+					}
+				}
+				else if(b.equals(Buildable.Settlement)){
+					if(buildVillage.getNode() != null){
+						if(me.build(b, buildVillage.getNode())){
+							buildSuccesful = true;
+							System.out.println("Build succesful with change: " + b.toString());
+							break;
+						} else {
+							buildSuccesful = false;
+						}
+					}
+				}
+				else if(b.equals(Buildable.Road)){
+					if(buildRoad.getEdge() != null){
+						if(me.build(b, buildRoad.getEdge())){
+							buildSuccesful = true;
+							System.out.println("Build succesful with change: " + b.toString());
+							break;
+						} else {
+							buildSuccesful = false;
+						}
+					}
+				}
+			}
 		}
 		
 		/*for(Edge e : map.edgeList) {
@@ -678,54 +770,138 @@ public class AiController extends PlayerController {
 		HashMap<Resource, Integer> changableResources = new HashMap<Resource, Integer>();
 		// ezek a nyersanyagok hiányoznak még az építéshez
 		HashMap<Resource, Integer> neededResources = new HashMap<Resource, Integer>();
-		changableResources.put(Resource.Brick, me.getChangeLUT(Resource.Brick));
-		changableResources.put(Resource.Lumber, me.getChangeLUT(Resource.Lumber));
-		changableResources.put(Resource.Grain, me.getChangeLUT(Resource.Grain));
-		changableResources.put(Resource.Ore, me.getChangeLUT(Resource.Ore));
-		changableResources.put(Resource.Wool, me.getChangeLUT(Resource.Wool));
+		changableResources.put(Resource.Brick, me.getResourceAmount(Resource.Brick));
+		changableResources.put(Resource.Lumber, me.getResourceAmount(Resource.Lumber));
+		changableResources.put(Resource.Grain, me.getResourceAmount(Resource.Grain));
+		changableResources.put(Resource.Ore, me.getResourceAmount(Resource.Ore));
+		changableResources.put(Resource.Wool, me.getResourceAmount(Resource.Wool));
+		int neededResCnt = 0;
 		if(what.equals(Buildable.Road)){
 			// ebbe kerül az út
 			neededResources.put(Resource.Brick, 1);
 			neededResources.put(Resource.Lumber, 1);
-			int neededRes = 0;
+			neededResCnt = 2;
 			// ha van téglánk
-			if(me.getChangeLUT(Resource.Brick) > 0){
+			if(me.getResourceAmount(Resource.Brick) > 0){
 				ownedResources.put(Resource.Brick, 1);
 				changableResources.put(Resource.Brick, changableResources.get(Resource.Brick) - 1);
-				neededRes++;
+				neededResCnt--;
 			}
 			// ha van fánk :-)
-			if(me.getChangeLUT(Resource.Lumber) > 0){
+			if(me.getResourceAmount(Resource.Lumber) > 0){
 				ownedResources.put(Resource.Lumber, 1);
 				changableResources.put(Resource.Lumber, changableResources.get(Resource.Lumber) - 1);
-				neededRes++;
-			}
-			
-			HashMap<Resource, Integer> obtainableRes = this.resourcesThatCanBeChangedFromThisResourcePool(changableResources);
-			if(neededRes > obtainableRes.size()){
-				return result;
-			}
-			for(Map.Entry<Resource, Integer> item : obtainableRes.entrySet()){
-				if(neededRes > 0){
-					result.put(item.getKey(), item.getValue());
-					--neededRes;
-				} else {
-					return result;
-				}
+				neededResCnt--;
 			}
 		} else if(what.equals(Buildable.Settlement)){
-			
+			// ebbe kerül a település
+			neededResources.put(Resource.Brick, 1);
+			neededResources.put(Resource.Grain, 1);
+			neededResources.put(Resource.Wool, 1);
+			neededResources.put(Resource.Lumber, 1);
+			neededResCnt = 4;
+			// ha van téglánk
+			if(me.getResourceAmount(Resource.Brick) > 0){
+				ownedResources.put(Resource.Brick, 1);
+				changableResources.put(Resource.Brick, changableResources.get(Resource.Brick) - 1);
+				neededResCnt--;
+			}
+			// ha van fánk :-)
+			if(me.getResourceAmount(Resource.Lumber) > 0){
+				ownedResources.put(Resource.Lumber, 1);
+				changableResources.put(Resource.Lumber, changableResources.get(Resource.Lumber) - 1);
+				neededResCnt--;
+			}
+			// ha van gyapjúnk
+			if(me.getResourceAmount(Resource.Wool) > 0){
+				ownedResources.put(Resource.Wool, 1);
+				changableResources.put(Resource.Wool, changableResources.get(Resource.Wool) - 1);
+				neededResCnt--;
+			}
+			// ha van búzánk
+			if(me.getResourceAmount(Resource.Grain) > 0){
+				ownedResources.put(Resource.Grain, 1);
+				changableResources.put(Resource.Grain, changableResources.get(Resource.Grain) - 1);
+				neededResCnt--;
+			}
 		} else if(what.equals(Buildable.City)){
-			
+			// ebbe kerül a city;
+			neededResources.put(Resource.Grain, 2);
+			neededResources.put(Resource.Ore, 3);
+			neededResCnt = 5;
+			// ha van ércünk
+			if(me.getResourceAmount(Resource.Ore) > 0){
+				if(me.getResourceAmount(Resource.Ore) == 1){
+					ownedResources.put(Resource.Ore, 1);
+					changableResources.put(Resource.Ore, 0);
+					neededResCnt--;
+				} else if(me.getResourceAmount(Resource.Ore) == 2){
+					ownedResources.put(Resource.Ore, 2);
+					changableResources.put(Resource.Ore, 0);
+					neededResCnt = neededResCnt - 2;
+				} else{
+					ownedResources.put(Resource.Ore, 3);
+					changableResources.put(Resource.Ore, changableResources.get(Resource.Ore) - 3);
+					neededResCnt = neededResCnt - 3;
+				}
+			}
+			// ha van búzánk
+			if(me.getResourceAmount(Resource.Grain) > 0){
+				if(me.getResourceAmount(Resource.Grain) == 1){
+					ownedResources.put(Resource.Grain, 1);
+					changableResources.put(Resource.Grain, 0);
+					neededResCnt--;
+				} else{
+					ownedResources.put(Resource.Grain, 2);
+					changableResources.put(Resource.Grain, changableResources.get(Resource.Grain) - 2);
+					neededResCnt = neededResCnt - 2;
+				}
+			}
 		} else if(what.equals(Buildable.Development)){
-			
+			// ebbe kerül a fejlesztés
+			neededResources.put(Resource.Grain, 1);
+			neededResources.put(Resource.Wool, 1);
+			neededResources.put(Resource.Ore, 1);
+			neededResCnt = 3;
+			// ha van ércünk
+			if(me.getResourceAmount(Resource.Ore) > 0){
+				ownedResources.put(Resource.Ore, 1);
+				changableResources.put(Resource.Ore, changableResources.get(Resource.Ore) - 1);
+				neededResCnt--;
+			}
+			// ha van gyapjúnk
+			if(me.getResourceAmount(Resource.Wool) > 0){
+				ownedResources.put(Resource.Wool, 1);
+				changableResources.put(Resource.Wool, changableResources.get(Resource.Wool) - 1);
+				neededResCnt--;
+			}
+			// ha van búzánk
+			if(me.getResourceAmount(Resource.Grain) > 0){
+				ownedResources.put(Resource.Grain, 1);
+				changableResources.put(Resource.Grain, changableResources.get(Resource.Grain) - 1);
+				neededResCnt--;
+			}
 		} else {
 			
 		}
+		HashMap<Resource, Integer> obtainableRes = this.resourcesThatCanBeChangedFromThisResourcePool(changableResources);
+		if(neededResCnt > obtainableRes.size()){
+			return result;
+		}
+		for(Map.Entry<Resource, Integer> item : obtainableRes.entrySet()){
+			while(neededResCnt > 0 && item.getValue() > 0){
+				result.put(item.getKey(), item.getValue());
+				item.setValue(item.getValue() - 1);
+				--neededResCnt;
+			}
+			if(neededResCnt <= 0) {
+				return result;
+			}
+		}
 		return result;
 	}
-	
-	private HashMap<Resource, Integer> resourceNeeded(Building what){
+	// ennyi nyersanyag hiányzik a building megépítéséhez
+	private ArrayList<Resource> resourceMissing(Buildable what){
 		// ez az, ami az adott building építéséhez már megvan nyersanyag
 		HashMap<Resource, Integer> ownedResources = new HashMap<Resource, Integer>();
 		// ezek a nyersanyagok hiányoznak még az építéshez
@@ -737,23 +913,86 @@ public class AiController extends PlayerController {
 			int neededRes = 0;
 			// ha van téglánk
 			if(me.getResourceAmount(Resource.Brick) > 0){
-				neededResources.put(Resource.Brick, 0);
+				neededResources.remove(Resource.Brick);
 			}
 			// ha van fánk :-)
 			if(me.getResourceAmount(Resource.Lumber) > 0){
-				neededResources.put(Resource.Lumber, 0);
+				neededResources.remove(Resource.Lumber);
 			}
 			
 		} else if(what.equals(Buildable.Settlement)){
-			
+			// ennyibe kerül a település
+			neededResources.put(Resource.Brick, 1);
+			neededResources.put(Resource.Grain, 1);
+			neededResources.put(Resource.Wool, 1);
+			neededResources.put(Resource.Lumber, 1);
+			int neededRes = 0;
+			// ha van téglánk
+			if(me.getResourceAmount(Resource.Brick) > 0){
+				neededResources.remove(Resource.Brick);
+			}
+			// ha van fánk :-)
+			if(me.getResourceAmount(Resource.Lumber) > 0){
+				neededResources.remove(Resource.Lumber);
+			}
+			// ha van búzánk
+			if(me.getResourceAmount(Resource.Grain) > 0){
+				neededResources.remove(Resource.Grain);
+			}
+			// ha van bárányunk
+			if(me.getResourceAmount(Resource.Wool) > 0){
+				neededResources.remove(Resource.Wool);
+			}
 		} else if(what.equals(Buildable.City)){
-			
+			// ebbe kerül a city;
+			neededResources.put(Resource.Grain, 2);
+			neededResources.put(Resource.Ore, 3);
+			// ha van ércünk
+			if(me.getResourceAmount(Resource.Ore) > 0){
+				if(me.getResourceAmount(Resource.Ore) == 1){
+					neededResources.put(Resource.Ore, 2);
+				} else if(me.getResourceAmount(Resource.Ore) == 2){
+					neededResources.put(Resource.Ore, 1);
+				} else{
+					neededResources.put(Resource.Ore, 0);
+				}
+			}
+			// ha van búzánk
+			if(me.getResourceAmount(Resource.Grain) > 0){
+				if(me.getResourceAmount(Resource.Grain) == 1){
+					neededResources.put(Resource.Grain, 1);
+				} else{
+					neededResources.put(Resource.Grain, 0);
+				}
+			}
 		} else if(what.equals(Buildable.Development)){
-			
+			// ennyibe kerül a fejlesztés
+			neededResources.put(Resource.Grain, 1);
+			neededResources.put(Resource.Wool, 1);
+			neededResources.put(Resource.Ore, 1);
+			int neededRes = 0;
+			// ha van ércünk
+			if(me.getResourceAmount(Resource.Ore) > 0){
+				neededResources.remove(Resource.Ore);
+			}
+			// ha van búzánk
+			if(me.getResourceAmount(Resource.Grain) > 0){
+				neededResources.remove(Resource.Grain);
+			}
+			// ha van bárányunk
+			if(me.getResourceAmount(Resource.Wool) > 0){
+				neededResources.remove(Resource.Wool);
+			}
 		} else {
 			
 		}
-		return neededResources;
+		ArrayList<Resource> result = new ArrayList<Resource>();
+		for(Map.Entry<Resource, Integer> item : neededResources.entrySet()){
+			for(int i = 0; i < item.getValue(); i++){
+				result.add(item.getKey());
+			}
+		}
+		return result;
 	}
 	
 	private HashMap<Resource, Integer> resourcesThatCanBeChangedFromThisResourcePool(HashMap<Resource, Integer> pool){

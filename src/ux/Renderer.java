@@ -103,6 +103,10 @@ public class Renderer {
 	public void updateDevCards(Player actualPlayer){};
 	public void updateResources(Player actualPlayer){};
 	public void updateThief(Hex to) {};
+	
+	public void displayGameEndScreen(Player p) {
+		
+	}
 
 	
 	/**
@@ -186,12 +190,15 @@ public class Renderer {
 			}
 			
 			DevCard selectedCard=hudPanel.cardRenderer.getDevCardUnderCursor(ev.getX(), ev.getY());
-			if (selectedCard!=null) {
+			if (selectedCard!=null && selectedCard!=hudPanel.cardRenderer.getSelectedDevCard()) {
 				boardPanel.resetBoardSelection();
 				hudPanel.resetInterfaceSelection();
 				
 				hudPanel.cardRenderer.selectDevCard(selectedCard);
-			}		
+			} else if (ds.currUIC.active && selectedCard!=null && selectedCard==hudPanel.cardRenderer.getSelectedDevCard()) { 
+				ds.currUIC.controlledPlayer.playDev(selectedCard, null);
+				hudPanel.cardRenderer.deselectDevCards();
+			} else {hudPanel.cardRenderer.deselectDevCards();}		
 			} catch (GameEndsException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
