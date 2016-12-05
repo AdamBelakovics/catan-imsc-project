@@ -105,7 +105,7 @@ public class Renderer {
 	public void updateThief(Hex to) {};
 	
 	public void displayGameEndScreen(Player p) {
-		
+		System.out.println(p.getName().toUpperCase());
 	}
 
 	
