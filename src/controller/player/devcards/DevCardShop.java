@@ -36,10 +36,12 @@ public class DevCardShop {
 	 * @return random DevCard from devCardList
 	 */
 	
-	public static DevCard buyDevCard() throws OutOfRangeException{
-		if(devCardList.isEmpty()) throw new OutOfRangeException("DevCardList is empty.");
-		DevCard d = devCardList.remove((int)((Math.random()*devCardList.size())));
-		return d;
+	public static DevCard buyDevCard() {
+		if(!devCardList.isEmpty()){
+			DevCard d = devCardList.remove((int)((Math.random()*devCardList.size())));
+			return d;
+		}
+		return null;
 	}
 	
 	/**
