@@ -644,10 +644,11 @@ public class Player {
 					e1.printStackTrace();
 				}
 				City c = availableCities.remove(0);
-				succesful = c.build(where);
+				succesful = isBuildPossible(Buildable.City, where);
 				if(succesful){
 					availableSettlements.add((Settlement) where.getBuilding());
 					erectedBuildings.remove(where.getBuilding());
+					c.build(where);
 					erectedBuildings.add(c);
 					this.incPoints(1);
 				}
@@ -681,7 +682,7 @@ public class Player {
 		System.out.println("Hello from change");
 		try {
 			if(this.getResourceAmount(give) >= changeLUT.get(give))
-				this.decResourceAmount(give, 4);
+				this.decResourceAmount(give, changeLUT.get(give));
 		} catch (OutOfRangeException e) {
 			e.printStackTrace();
 		}
