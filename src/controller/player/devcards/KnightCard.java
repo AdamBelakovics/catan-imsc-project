@@ -13,7 +13,7 @@ public class KnightCard extends DevCard{
 	 * @throws GameEndsException 
 	 */
 	@Override
-	public void doCard(Player p, Resource r) throws GameEndsException {
+	public void doCard(Player p) throws GameEndsException {
 		boolean anyoneHaveBiggestArmy = false;
 		p.incActiveKnights(1);
 		p.handleThief();

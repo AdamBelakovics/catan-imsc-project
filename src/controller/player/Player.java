@@ -746,7 +746,7 @@ public class Player {
 	 */
 	public void playDev(DevCard dc, Resource r) throws GameEndsException{
 		System.out.println("Hello from playDev");
-		dc.doCard(this, r);
+		dc.doCard(this);
 		playedDevCards.add(dc);
 		devCards.remove(dc);
 	}

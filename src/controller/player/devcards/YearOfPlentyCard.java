@@ -7,9 +7,11 @@ import controller.player.Resource;
 public class YearOfPlentyCard extends DevCard{
 	
 	@Override
-	public void doCard(Player p, Resource r) {
+	public void doCard(Player p) {
+		int rnd = (int)(Math.random()*5);
+		Resource randRes = Resource.values()[rnd];
 		try {
-			p.incResourceAmount(r, 2);
+			p.incResourceAmount(randRes, 2);
 		} catch (OutOfRangeException e) {
 			e.printStackTrace();
 		}

@@ -11,7 +11,7 @@ abstract public class DevCard {
 	 * @throws GameEndsException  KnightCard can increase player's point
 	 *
 	 */
-	public void doCard(Player p, Resource r) throws GameEndsException {
+	public void doCard(Player p) throws GameEndsException {
 		
 	}		
 }
