@@ -19,12 +19,17 @@ public class Hex implements Comparable {
 	Resource res = Resource.Lumber;
 	int prosperity = 0;
 	public boolean hasThief = false;
+	public Port port;
 	
 	public Hex (String identifier){
 		id = identifier;
 	}
 	
 	//INTERFACE public methods -------------------------------------------->
+	
+	public Port getPort(){
+		return port;
+	}
 	
 	public String getID(){
 		return id;
