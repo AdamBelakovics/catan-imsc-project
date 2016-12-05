@@ -2,7 +2,8 @@ package controller;
 
 import java.io.File;
 import java.util.ArrayList;
-
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -74,18 +75,16 @@ public class Controller {
 			pclist.get(i).firstturn();
 		}
 		
-		int i = 0;
-		while(true){
-			for(PlayerController pc : pclist){
-				try {
-					Thread.sleep(10);
-					pc.turn();
-				} catch (GameEndsException e) {
-					e.printStackTrace();
-					
+		try {
+			while(true){
+				for(PlayerController pc : pclist){
+						Thread.sleep(10);
+						pc.turn();
 				}
 			}
-		}
+		} catch (GameEndsException e) {
+			rend.displayGameEndScreen(playerList.stream().filter(x -> (Integer)e.getPlayerID() == x.getId()).findFirst().get());
+		}	
 	}
 }
 
