@@ -224,8 +224,15 @@ public class BuildDevelopment {
 		}
 		allCnt += aiPlayer.getDevCards().size();
 		
+		if(allCnt == 25){
+			pKnight = 0;
+			pInvention = 0;
+			pMonopoly = 0;
+			pTwoRoad = 0;
+			pPlusPoint = 0;
+		}
 		// to avoid divide by zero
-		if(allCnt > 0){
+		else if(allCnt > 0){
 			pKnight = (14 - knightCnt) / (25.0 - allCnt);
 			pInvention = (2 - inventionCnt) / (25.0 - allCnt);
 			pMonopoly = (2 - monopolyCnt) / (25.0 - allCnt);
