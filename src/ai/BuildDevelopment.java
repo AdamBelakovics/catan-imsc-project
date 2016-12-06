@@ -64,13 +64,25 @@ public class BuildDevelopment {
 	 */
 	public double getBuildValue(){
 		calculateProbabilities();
+		/*double inv = calculateInventionValue();
+		double kni = calculateKnightValue();
+		double mon = calculateMonopolyValue();
+		double pls = calculatePlusPointValue();
+		double two = calculateTwoRoadValue();
+		System.out.println("-");
+		System.out.println("Invention value: " + inv + ", prob: " + pInvention);
+		System.out.println("Knight value: " + kni + ", prob: " + pKnight);
+		System.out.println("Monopoly value: " + mon + ", prob: " + pMonopoly);
+		System.out.println("PlusPoint value: " + pls + ", prob: " + pPlusPoint);
+		System.out.println("TwoRoad value: " + two + ", prob: " + pTwoRoad);*/
 		double result =
 				pInvention * calculateInventionValue() + 
 				pKnight * calculateKnightValue() + 
 				pMonopoly * calculateMonopolyValue() + 
 				pPlusPoint * calculatePlusPointValue() +
 				pTwoRoad * calculateTwoRoadValue();
-		System.out.println("Development value: " + result);
+		//System.out.println("Development value: " + result);
+		//System.out.println("-");
 		return result;
 	}
 	/**
@@ -131,7 +143,10 @@ public class BuildDevelopment {
 			double currentValue;
 			// handling division by zero
 			try{
-				currentValue = it.getValue().personalValue() * it.getValue().globalFrequency() / it.getValue().personalFrequency();
+				if(it.getValue().personalFrequency() > 0)
+					currentValue = 0.1 * it.getValue().personalValue() * it.getValue().globalFrequency() / it.getValue().personalFrequency();
+				else
+					currentValue = 0;
 			} catch(IllegalArgumentException e){
 				currentValue = 0;
 			}

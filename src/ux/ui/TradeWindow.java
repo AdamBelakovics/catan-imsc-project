@@ -75,8 +75,9 @@ public class TradeWindow {
 		final int eps=8;
 		do {
 			if (Math.abs(x-ds.width*3/20-50-left.getWidth(null)/2)<eps) {
-				if (Math.abs(y-ds.height*15/20+10-left.getHeight(null)/2)<eps)
+				if (Math.abs(y-ds.height*15/20+10-left.getHeight(null)/2)<eps) {
 					col1=Resource.values()[(col1.ordinal()+4)%5];
+				}
 				else if (Math.abs(y-ds.height*17/20+10-left.getHeight(null)/2)<eps)
 					col2=Resource.values()[(col2.ordinal()+4)%5];
 			} else if (Math.abs(x-ds.width*3/20+46+right.getWidth(null)/2)<eps) {
@@ -85,6 +86,8 @@ public class TradeWindow {
 				else if (Math.abs(y-ds.height*17/20+10-left.getHeight(null)/2)<eps)
 					col2=Resource.values()[(col2.ordinal()+1)%5];
 			}
+			button.active=ds.currUIC.controlledPlayer.getResourceAmount(col1)>=ds.currUIC.controlledPlayer.getChangeLUT(col1);
+
 		} while (col1.equals(col2));
 		if (Math.abs(button.x-x)<button.width/2 && Math.abs(button.y-y)<button.height/2) {
 			button.press();
@@ -93,6 +96,7 @@ public class TradeWindow {
 	}
 	
 	private class ChangeButton extends Button {
+		boolean active=true;
 
 		ChangeButton(String _text, int _x, int _y, int _width, int _height) {
 			super(_text, _x, _y, _width, _height);
@@ -100,7 +104,7 @@ public class TradeWindow {
 		
 		@Override
 		void press() {
-			ds.currUIC.controlledPlayer.change(col1, col2);
+			if (active)	ds.currUIC.controlledPlayer.change(col1, col2);
 		}
 	}
 }
