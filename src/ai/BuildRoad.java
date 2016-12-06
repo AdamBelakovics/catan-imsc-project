@@ -61,7 +61,7 @@ public class BuildRoad {
 	 */
 	public Edge getEdge(){
 		refresh();
-		System.out.println("Road value: " + buildValue);
+		//System.out.println("Road value: " + buildValue);
 		return edge;
 	}
 		
@@ -242,7 +242,7 @@ public class BuildRoad {
 	
 	private double nodePersonalValueForRoadLocal(Vertex v){
 		if(owner.isNodeValid(v))
-			return owner.nodePersonalValue(v);
+			return 2 * owner.nodePersonalValue(v);
 		return 0;
 	}
 

@@ -172,29 +172,10 @@ public class AiController extends PlayerController {
 					}
 					if(me.getPoints() + victoryPoints >= 10){
 						me.playDev(me.getDevCards().get(index), null);
-						System.out.println("Victory point played");
+						//System.out.println("Victory point played");
 						playedCard = true;
 					}
 				}
-			}
-		}
-		for(DevCard card : me.getDevCards()){
-			if(card.getClass().equals(KnightCard.class)){
-				if(isRobbed()){
-					card.doCard(me);
-				}
-			}
-			else if (card.getClass().equals(YearOfPlentyCard.class)){
-				card.doCard(me);
-			}
-			else if (card.getClass().equals(MonopolyCard.class)){
-				card.doCard(me);			
-			}
-			else if (card.getClass().equals(RoadBuildingCard.class)){
-				card.doCard(me);
-			}
-			else if (card.getClass().equals(VictoryPointCard.class)){
-				
 			}
 		}
 		
@@ -247,12 +228,12 @@ public class AiController extends PlayerController {
 							try {
 								me.buyDevCard();
 								buildSuccesful = true;
-								System.out.println("Successful development");
+								//System.out.println("Successful development");
 							} catch (NotEnoughResourcesException e) {
 								buildSuccesful = false;
 							}
 						} else {
-							System.out.println("Nulla az erteke a fejlesztesnek");
+							//System.out.println("Nulla az erteke a fejlesztesnek");
 							buildSuccesful = false;
 						}
 					}
@@ -272,8 +253,8 @@ public class AiController extends PlayerController {
 				ArrayList<Resource> neededRes = this.resourceMissing(b);
 				for(Map.Entry<Resource, Integer> item : whatToChange.entrySet()){
 					while(item.getValue() > 0){
-						System.out.println("Change in ai needed " + neededRes.toString());
-						System.out.println("Change in ai to change " + whatToChange.toString());
+						//System.out.println("Change in ai needed " + neededRes.toString());
+						//System.out.println("Change in ai to change " + whatToChange.toString());
 						me.change(item.getKey(), neededRes.remove(0));
 						item.setValue(item.getValue() - me.getChangeLUT(item.getKey()));
 					}
@@ -282,7 +263,7 @@ public class AiController extends PlayerController {
 					if(buildCity.getNode() != null){		
 						if(me.build(b, buildCity.getNode())){
 							buildSuccesful = true;
-							System.out.println("Build succesful with change: " + b.toString());
+							//System.out.println("Build succesful with change: " + b.toString());
 							break;
 						} else {
 							buildSuccesful = false;
@@ -293,7 +274,7 @@ public class AiController extends PlayerController {
 					if(buildVillage.getNode() != null){
 						if(me.build(b, buildVillage.getNode())){
 							buildSuccesful = true;
-							System.out.println("Build succesful with change: " + b.toString());
+							//System.out.println("Build succesful with change: " + b.toString());
 							break;
 						} else {
 							buildSuccesful = false;
@@ -304,7 +285,7 @@ public class AiController extends PlayerController {
 					if(buildRoad.getEdge() != null){
 						if(me.build(b, buildRoad.getEdge())){
 							buildSuccesful = true;
-							System.out.println("Build succesful with change: " + b.toString());
+							//System.out.println("Build succesful with change: " + b.toString());
 							break;
 						} else {
 							buildSuccesful = false;
@@ -319,7 +300,7 @@ public class AiController extends PlayerController {
 							try {
 								me.buyDevCard();
 								buildSuccesful = true;
-								System.out.println("Successful development");
+								//System.out.println("Successful development");
 							} catch (NotEnoughResourcesException e) {
 								buildSuccesful = false;
 							}

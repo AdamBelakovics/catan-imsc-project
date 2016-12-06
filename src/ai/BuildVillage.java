@@ -61,7 +61,7 @@ public class BuildVillage {
 	 */
 	public Vertex getNode(){
 		refresh();
-		System.out.println("Village value: " + buildValue);
+		//System.out.println("Village value: " + buildValue);
 		return node;
 	}
 	
@@ -94,7 +94,7 @@ public class BuildVillage {
 		if(isVillageAvailable()){
 			ArrayList<Vertex> nodes = listValidNodes();		
 			for(Vertex n : nodes){
-				double currentValue = 5 * owner.nodePersonalValue(n);
+				double currentValue = 8 * owner.nodePersonalValue(n);
 				if(currentValue > buildValue){
 					buildValue = currentValue;
 					node = n;
