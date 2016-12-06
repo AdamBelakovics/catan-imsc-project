@@ -427,14 +427,14 @@ public class Player {
 		Resource g = Resource.Grain;
 		Resource l = Resource.Lumber;
 		Resource b = Resource.Brick;
-		System.out.println(this.getName());
-		System.out.println("W " + getResourceAmount(w));
-		System.out.println("O " + getResourceAmount(o));
-		System.out.println("G " + getResourceAmount(g));
-		System.out.println("L " + getResourceAmount(l));
-		System.out.println("B " + getResourceAmount(b));
+		//System.out.println(this.getName());
+		//System.out.println("W " + getResourceAmount(w));
+		//System.out.println("O " + getResourceAmount(o));
+		//System.out.println("G " + getResourceAmount(g));
+		//System.out.println("L " + getResourceAmount(l));
+		//System.out.println("B " + getResourceAmount(b));
 		int result = (int)(Math.random()*6+1) + (int)(Math.random()*6+1);
-		System.out.println("Hello from rollthedice"+result);
+		//System.out.println("Hello from rollthedice"+result);
 		Dice.setCurrentValue(result);
 		if(result == 7){
 			for(int i = 0; i < Game.players.size(); i++){
@@ -474,7 +474,7 @@ public class Player {
 	 * 
 	 */
 	public void handleThief(){
-		System.out.println("Hello from handlethief");
+		//System.out.println("Hello from handlethief");
 		for(int i = 0; i < table.getFields().size(); i++){
 			if(table.getFields().get(i).hasThief() == true){
 				table.getFields().get(i).setHasThief(false);
@@ -494,7 +494,7 @@ public class Player {
 	}
 	
 	public boolean isFirstBuildPossible(Buildable what, TableElement where){
-		System.out.println("Hello from is1bud");
+		//System.out.println("Hello from is1bud");
 		if(what == Buildable.Road){
 			boolean rightInput = where != null;;
 			if(rightInput){
@@ -534,7 +534,7 @@ public class Player {
 	}
 	
 	public boolean firstBuild(Buildable what, TableElement where) throws GameEndsException{
-		System.out.println("Hello from 1buid");
+		//System.out.println("Hello from 1buid");
 		boolean succesful = false;	
 		if(what == Buildable.Road){
 			succesful = isFirstBuildPossible(Buildable.Road, where);
@@ -561,7 +561,7 @@ public class Player {
 	}
 	
 	public boolean isBuildPossible(Buildable what, TableElement where){
-		System.out.println("Hello from isbuild");
+		//System.out.println("Hello from isbuild");
 		if(what == Buildable.Road){
 			boolean hasEnoughAvailableRoads = (availableRoads.size() > 0);
 			boolean isEmpty = where.getBuilding() == null;
@@ -620,7 +620,7 @@ public class Player {
 	 * @throws GameEndsException Building Settlement or City increases Player's points.
 	 */
 	public boolean build(Buildable what, TableElement where) throws GameEndsException{
-		System.out.println("Hello from build " + what + " " + where);
+		//System.out.println("Hello from build " + what + " " + where);
 		Resource w = Resource.Wool;
 		Resource o = Resource.Ore;
 		Resource g = Resource.Grain;
@@ -720,13 +720,13 @@ public class Player {
 	 * Modifies resources accordingly.
 	 */
 	public boolean trade(int amountW, Resource What, int amountFW, Resource ForWhat,Player with){
-		System.out.println("Hello from trade");
+		//System.out.println("Hello from trade");
 		boolean succesfull=false;
 		return succesfull;
 	}
 	
 	public void change(Resource give , Resource get) {
-		System.out.println("Hello from change");
+		//System.out.println("Hello from change");
 		try {
 			if(this.getResourceAmount(give) >= changeLUT.get(give))
 				this.decResourceAmount(give, changeLUT.get(give));
@@ -747,7 +747,7 @@ public class Player {
 	 * @throws NotEnoughResourcesException if Player don't have enough resources to buy DevCard
 	 */
 	public void buyDevCard() throws NotEnoughResourcesException {
-		System.out.println("Hello from buyDev");
+		//System.out.println("Hello from buyDev");
 		Resource w = Resource.Wool;
 		Resource o = Resource.Ore;
 		Resource g = Resource.Grain;
@@ -772,7 +772,7 @@ public class Player {
 	 * @throws Throwable VictoryPointCard increase player's score, so it can throw GameEndsException
 	 */
 	public void playDev(DevCard dc, Resource r) throws GameEndsException{
-		System.out.println("Hello from playDev");
+		//System.out.println("Hello from playDev");
 		dc.doCard(this);
 		playedDevCards.add(dc);
 		devCards.remove(dc);
