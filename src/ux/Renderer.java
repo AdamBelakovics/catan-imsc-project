@@ -115,7 +115,7 @@ public class Renderer {
 			Color c= Color.BLACK;
 			gr.setColor(c);
 			gr.fillRect(0, 0, dataStore.width, dataStore.height);
-			StringPainter.printString(gr, "Congratulations " + p.getName() + " you won!!!", InterfaceColorProfile.getPlayerColor(p), dataStore.width/2, dataStore.height/2);
+			StringPainter.printString(gr, "Game Over " + p.getName() + " you won!!!", InterfaceColorProfile.getPlayerColor(p), dataStore.width/2, dataStore.height/2);
 			mainFrame.getGraphics().drawImage(bufferImg, 0, 0, null);		
 	}
 

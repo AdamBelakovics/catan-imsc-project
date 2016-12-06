@@ -1,5 +1,6 @@
 package ux.ui;
 
+import java.awt.AlphaComposite;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -56,6 +57,11 @@ public class CardRenderer extends ImageRenderer {
 
 	public void paint(Graphics g) {
 		cardCanvas=(Graphics2D)g;
+		cardCanvas.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR));
+		cardCanvas.fillRect(ds.width*3/10, ds.height*7/10, ds.width*4/10, ds.height*2/10);
+
+		//reset composite
+		cardCanvas.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
 		paintCards();
 		paintCardInfo();
 	}
@@ -64,8 +70,8 @@ public class CardRenderer extends ImageRenderer {
 
 		refreshCardMap();
 		
-		cardCanvas.setColor(InterfaceColorProfile.bgWaterColor);
-		cardCanvas.fillRect(ds.width*3/10, ds.height*7/10, ds.width*4/10, ds.height*2/10);
+		//cardCanvas.setColor(InterfaceColorProfile.bgWaterColor);
+		//cardCanvas.fillRect(ds.width*3/10, ds.height*7/10, ds.width*4/10, ds.height*2/10);
 		
 		for (HashMap.Entry<DevCard,Rectangle> dc : devCards.entrySet()) {
 			cardCanvas.setColor(

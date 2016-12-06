@@ -751,7 +751,7 @@ public class Player {
 		Resource w = Resource.Wool;
 		Resource o = Resource.Ore;
 		Resource g = Resource.Grain;
-		if(!DevCardShop.isShopEmpty() && !(resourcePool.get(w)<1) | !(resourcePool.get(o)<1) |  !(resourcePool.get(g)<1)){
+		if(!DevCardShop.isShopEmpty() && !(resourcePool.get(w)<1) && !(resourcePool.get(o)<1) &&  !(resourcePool.get(g)<1)){
 			
 			try {
 				decResourceAmount(w, 1);
