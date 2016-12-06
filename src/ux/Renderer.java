@@ -112,10 +112,12 @@ public class Renderer {
 		System.out.println(p.getName().toUpperCase());
 		updateTimer.stop();
 		Graphics gr = bufferImg.getGraphics();
-			Color c= Color.BLACK;
+			Color c = new Color(InterfaceColorProfile.getPlayerColor(p).getRed(), InterfaceColorProfile.getPlayerColor(p).getGreen(),
+					InterfaceColorProfile.getPlayerColor(p).getBlue(), 150);
+			c = c.darker();
 			gr.setColor(c);
 			gr.fillRect(0, 0, dataStore.width, dataStore.height);
-			StringPainter.printString(gr, "Game Over " + p.getName() + " you won!!!", InterfaceColorProfile.getPlayerColor(p), dataStore.width/2, dataStore.height/2);
+			StringPainter.printString(gr, "Game Over " + p.getName() + " you won!!!", InterfaceColorProfile.getPlayerColor(p).brighter(), dataStore.width/2, (int)(dataStore.height * 0.25));
 			mainFrame.getGraphics().drawImage(bufferImg, 0, 0, null);		
 	}
 
