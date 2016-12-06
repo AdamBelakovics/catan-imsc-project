@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import controller.map.Buildable;
+import controller.map.Edge;
 import controller.map.Hex;
 import controller.map.Table;
 import controller.map.Vertex;
@@ -31,4 +32,5 @@ public class RendererDataStore {
 	public Hex selectedTile=null;
 	public BoardOrientation boardOrientation=BoardOrientation.NORTH;
 	public boolean changeActive=false;
+	public HashMap<Edge, ArrayList<Vertex> > edgeMap=new HashMap();
 }
