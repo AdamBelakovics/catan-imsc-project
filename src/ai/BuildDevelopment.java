@@ -64,11 +64,14 @@ public class BuildDevelopment {
 	 */
 	public double getBuildValue(){
 		calculateProbabilities();
-		return pInvention * calculateInventionValue() + 
+		double result =
+				pInvention * calculateInventionValue() + 
 				pKnight * calculateKnightValue() + 
 				pMonopoly * calculateMonopolyValue() + 
 				pPlusPoint * calculatePlusPointValue() +
 				pTwoRoad * calculateTwoRoadValue();
+		System.out.println("Development value: " + result);
+		return result;
 	}
 	/**
 	 * Calculates the value of getting a single two-road development card.
@@ -111,7 +114,7 @@ public class BuildDevelopment {
 		}
 		// the return value is between 0 and 10
 		if(minResourceFrequency > 0)
-			return Math.max(10 / minResourceFrequency, 10);
+			return 10.0 / minResourceFrequency;
 		else
 			return 0;
 	}
@@ -136,7 +139,7 @@ public class BuildDevelopment {
 				maxMaterialValue = currentValue;
 			}
 		}
-		return Math.max(maxMaterialValue, 10);
+		return maxMaterialValue;
 	}
 	
 	/**
@@ -158,7 +161,7 @@ public class BuildDevelopment {
 			difVal = 2;
 		// TODO getRobbedSum() in AiController, not very important
 		//return Math.max(robbed * difVal + owner.getRobbedSum() + 2.5, 10);
-		return Math.max(robbed * difVal + 2.5, 10);
+		return robbed * difVal + 2.5;
 	}
 	
 	/**
@@ -216,14 +219,13 @@ public class BuildDevelopment {
 				allCnt++;
 			}
 		}
+		for(Player player : otherPlayers){
+			allCnt += player.getDevCards().size();
+		}
+		allCnt += aiPlayer.getDevCards().size();
+		
 		// to avoid divide by zero
-		if(allCnt == 0){
-			pKnight = 0;
-			pInvention = 0;
-			pMonopoly = 0;
-			pTwoRoad = 0;
-			pPlusPoint = 0;
-		} else {
+		if(allCnt > 0){
 			pKnight = (14 - knightCnt) / (25.0 - allCnt);
 			pInvention = (2 - inventionCnt) / (25.0 - allCnt);
 			pMonopoly = (2 - monopolyCnt) / (25.0 - allCnt);

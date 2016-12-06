@@ -35,7 +35,7 @@ public class TestGraphics {
 		p=new Player("testPlayer", 0, new Table());
 		testArray=new ArrayList();
 		testArray.add(p);
-		testGame= new Game(new Table(), testArray);
+		Game.initializeGame(new Table(), testArray);
 		Game.players.add(p);
 
 	}
@@ -43,7 +43,7 @@ public class TestGraphics {
 	@Test
 	public void colorChangeTest() {
 		Building testBuilding=new City(p);
-		InterfaceColorProfile.setPlayerColor(testCanvas, testBuilding);
+		InterfaceColorProfile.setPlayerColor(testCanvas, testBuilding.getOwner());
 		assertEquals(InterfaceColorProfile.player1Color,testCanvas.getColor());
 	}
 	

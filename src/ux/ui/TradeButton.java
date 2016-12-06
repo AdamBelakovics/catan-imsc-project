@@ -1,14 +1,18 @@
 package ux.ui;
 
-public class TradeButton extends Button {
+import ux.RendererDataStore;
 
-	TradeButton(String _text, int _x, int _y, int _width, int _height) {
+public class TradeButton extends Button {
+	
+	RendererDataStore ds;
+	TradeButton(RendererDataStore _ds, String _text, int _x, int _y, int _width, int _height) {
 		super(_text, _x, _y, _width, _height);
+		ds=_ds;
 	}
 	
 	@Override
 	void press() {
-		//TODO
+		ds.changeActive=!(ds.changeActive);
 	}
 
 }

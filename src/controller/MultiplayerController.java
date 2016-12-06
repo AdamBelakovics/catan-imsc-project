@@ -20,15 +20,15 @@ import controller.player.devcards.DevCardShop;
 import ux.Renderer;
 import ux.ui.UIController;
 
-public class Controller {
+public class MultiplayerController {
 	public static void main(String[] args) throws InterruptedException, OutOfRangeException{
 		Table board = new Table();
 		MapXMLParser.readCatanMap(new File(System.getProperty("user.dir") + System.getProperty("file.separator") + "catan_base_map.xml"), board);
 		
 		Player AI01 = new Player("AI01", 01, board);
 		Player AI02 = new Player("AI02", 02, board);
-		Player AI03 = new Player("AI03", 03, board);
-		Player HUMAN = new Player("HUMAN", 04, board);
+		Player AI03 = new Player("Adam", 03, board);
+		Player HUMAN = new Player("Mate", 04, board);
 		
 		ArrayList<Player> playerList = new ArrayList<Player>();
 		playerList.add(AI01);
@@ -49,7 +49,7 @@ public class Controller {
 		
 		AiController AICONT01 = new AiController(board, AI01, playerList);
 		AiController AICONT02 = new AiController(board, AI02, playerList);
-		AiController AICONT03 = new AiController(board, AI03, playerList);
+		UIController AICONT03 = new UIController(AI03);
 		UIController HUMCONT = new UIController(HUMAN);
 		
 		ArrayList<PlayerController> pclist = new ArrayList<PlayerController>();
@@ -63,7 +63,8 @@ public class Controller {
 		AI03.setPlayerController(AICONT03);
 		HUMAN.setPlayerController(HUMCONT);
 		
-		Renderer rend = new Renderer(HUMCONT, board, 1280, 1024);
+		Renderer rend = new Renderer(HUMCONT, board, 1024, 768);
+		Renderer rend2 = new Renderer(AICONT03, board, 1024, 768);
 		
 		for(int i = 0; i < pclist.size(); i++){
 			Thread.sleep(10);
@@ -78,6 +79,10 @@ public class Controller {
 		try {
 			while(true){
 				for(PlayerController pc : pclist){
+						if(HUMCONT == pc || AICONT03 == pc){
+							HUMAN.incResourceAmount(Resource.values()[(int)(Math.random()*5)], 1);
+							AI03.incResourceAmount(Resource.values()[(int)(Math.random()*5)], 1);
+						}
 						Thread.sleep(10);
 						pc.turn();
 				}
@@ -87,4 +92,5 @@ public class Controller {
 		}	
 	}
 }
+
 

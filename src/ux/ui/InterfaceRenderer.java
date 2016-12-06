@@ -14,9 +14,12 @@ import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 
+import controller.Game;
 import controller.map.Buildable;
+import controller.map.Dice;
 import controller.map.Hex;
 import controller.player.Building;
+import controller.player.Player;
 import ux.FirstTurnState;
 import ux.ImageRenderer;
 import ux.RendererDataStore;
@@ -29,9 +32,11 @@ public class InterfaceRenderer extends ImageRenderer {
 	ArrayList<Button> buttonsList;
 	TextureManager textureManager;
 	RendererDataStore ds;
+	TradeWindow tw;
 
 	public InterfaceRenderer(RendererDataStore _ds) {
 		ds=_ds;
+		tw=new TradeWindow(ds,this);
 		textureManager=new TextureManager(30, 50);
 		generateButtons();
 	}
@@ -42,8 +47,8 @@ public class InterfaceRenderer extends ImageRenderer {
 		buttonsList.add(new BuildButton("City", Buildable.City, ds.width*31/40, ds.height*16/20, ds.width*3/20-20, 30));
 		buttonsList.add(new BuildButton("Road",Buildable.Road, ds.width*31/40, ds.height*17/20, ds.width*3/20-20, 30));
 		
-		buttonsList.add(new TradeButton("Trade", ds.width*37/40, ds.height*61/80, ds.width*3/20-20, 30));
-		buttonsList.add(new TradeButton("Dev Card", ds.width*37/40, ds.height*67/80, ds.width*3/20-20, 30));
+		buttonsList.add(new TradeButton(ds, "Trade", ds.width*37/40, ds.height*61/80, ds.width*3/20-20, 30));
+		buttonsList.add(new DevButton(ds, "Dev Card", ds.width*37/40, ds.height*67/80, ds.width*3/20-20, 30));
 
 		buttonsList.add(new EndTurnButton(ds.currUIC,"End turn", ds.width*17/20,ds.height*26/40,ds.width*3/10-10,50));
 		
@@ -56,53 +61,68 @@ public class InterfaceRenderer extends ImageRenderer {
 		paintHexInfo();
 		paintButtons();
 		paintDice();
+		paintPoints();
+		if (ds.changeActive) tw.paint(intCanvas);
+	}
+	
+	private void paintPoints() {
+		int i=0;
+		for (Player p : Game.players) {
+			StringPainter.printString(intCanvas, p.getName()+": "+p.getPoints(),InterfaceColorProfile.getPlayerColor(p), (ds.width-60)/8+(ds.width-60)*i/4, 40);
+			i++;
+		}
+	}
+	
+	public void paintButton(Button b) {
+		boolean active=false;
+		//if (!ds.currUIC.active)
+		//	intCanvas.setColor(InterfaceColorProfile.inactiveColor);
+		if (ds.currUIC.firstturnactive && 
+				((b.text.equals("Settlement") && ds.currUIC.state==FirstTurnState.STARTED) || 
+				((b.text.equals("Road") && ds.currUIC.state==FirstTurnState.CITYBUILT))|| 
+				b.text.equals("End turn")) || ds.currUIC.active)
+			active=true;
+			//intCanvas.setColor(InterfaceColorProfile.bgColor);
+		
+		
+		if (b.isSelected()) {
+			intCanvas.setColor(InterfaceColorProfile.selectedColor);
+			if (b instanceof BuildButton) {
+				int i=0;
+				for (HashMap.Entry e : ((BuildButton)b).buildCost.entrySet())
+					StringPainter.printString(intCanvas, e.getKey().toString()+ ": "+e.getValue(), 
+							textureManager.leftRect.width/2, 
+							textureManager.leftRect.y+50+textureManager.leftRect.height*(i++)/8);
+			}
+		}
+
+		if (textureManager.fallback) {
+			intCanvas.fillRect(b.x-b.width/2, b.y-b.height/2, b.width, b.height);
+			intCanvas.setColor(InterfaceColorProfile.fgColor);
+			intCanvas.drawRect(b.x-b.width/2, b.y-b.height/2, b.width, b.height);
+
+			StringPainter.printString(intCanvas, b.text, b.x, b.y);
+		} else {
+			if (b instanceof EndTurnButton)
+				textureManager.drawEndTurnButton(intCanvas, b.isSelected(), b.x-b.width/2, b.y-b.height/2, b.width);
+			else textureManager.drawButton(intCanvas, b.isSelected(),active, b.x-b.width/2, b.y-b.height/2, b.width);
+			StringPainter.printString(intCanvas, b.text, b.x, b.y);
+
+		}
 	}
 
 	private void paintButtons() {
-		
-		
 		for (Button b : buttonsList) {
-			boolean active=false;
-			//if (!ds.currUIC.active)
-			//	intCanvas.setColor(InterfaceColorProfile.inactiveColor);
-			if (ds.currUIC.firstturnactive && 
-					((b.text.equals("Settlement") && ds.currUIC.state==FirstTurnState.STARTED) || 
-					((b.text.equals("Road") && ds.currUIC.state==FirstTurnState.CITYBUILT))|| 
-					b.text.equals("End turn")) || ds.currUIC.active)
-				active=true;
-				//intCanvas.setColor(InterfaceColorProfile.bgColor);
-			
-			
-			if (b.isSelected()) {
-				intCanvas.setColor(InterfaceColorProfile.selectedColor);
-				if (b instanceof BuildButton) {
-					int i=0;
-					for (HashMap.Entry e : ((BuildButton)b).buildCost.entrySet())
-						StringPainter.printString(intCanvas, e.getKey().toString()+ ": "+e.getValue(), 
-								textureManager.leftRect.width/2, 
-								textureManager.leftRect.y+50+textureManager.leftRect.height*(i++)/8);
-				}
-			}
-
-			if (textureManager.fallback) {
-				intCanvas.fillRect(b.x-b.width/2, b.y-b.height/2, b.width, b.height);
-				intCanvas.setColor(InterfaceColorProfile.fgColor);
-				intCanvas.drawRect(b.x-b.width/2, b.y-b.height/2, b.width, b.height);
-
-				StringPainter.printString(intCanvas, b.text, b.x, b.y);
-			} else {
-				if (b instanceof EndTurnButton)
-					textureManager.drawEndTurnButton(intCanvas, b.isSelected(), b.x-b.width/2, b.y-b.height/2, b.width);
-				else textureManager.drawButton(intCanvas, b.isSelected(),active, b.x-b.width/2, b.y-b.height/2, b.width);
-				StringPainter.printString(intCanvas, b.text, b.x, b.y);
-
-			}
+			if (b.text.equals("Trade")) ds.changeActive=b.isSelected();
+			paintButton(b);
 		}
 	}
 	
 	private void paintDice() {
 		intCanvas.setColor(InterfaceColorProfile.bgColor);
-		StringPainter.printString(intCanvas, "3 4", ds.width-30, 45);
+		StringPainter.printString(intCanvas, "Dice", ds.width-30, 35);
+		Integer currDice=new Integer(Dice.getCurrentValue());
+		if (currDice!=0) StringPainter.printString(intCanvas, currDice.toString(), ds.width-30, 50);
 	}
 	
 	private void paintHexInfo() {
@@ -146,6 +166,7 @@ public class InterfaceRenderer extends ImageRenderer {
 			if (Math.abs(b.x-x)<b.width/2 && Math.abs(b.y-y)<b.height/2) {
 				return b;
 			}
+		if (ds.changeActive) tw.click(x, y);
 		return null;
 	}
 	
@@ -154,6 +175,10 @@ public class InterfaceRenderer extends ImageRenderer {
 	}
 	
 	public void pressButton(Button b) {
+		if (b instanceof DevButton) {
+			b.press();
+			return;
+		}
 		for (Button allB : buttonsList) allB.setSelected(b.equals(allB)&&!b.isSelected());
 		if (b.isSelected()) b.press();
 	}
@@ -195,6 +220,7 @@ public class InterfaceRenderer extends ImageRenderer {
 			drawFrame(rectImg.getGraphics(),ds.width*3/10-5, ds.height*9/10,ds.width*4/10+10, ds.height*1/10);
 			drawFrame(rectImg.getGraphics(),0,ds.height*7/10, ds.width*3/10, ds.height*3/10);
 			drawFrame(rectImg.getGraphics(),ds.width*7/10, ds.height*7/10, ds.width*3/10, ds.height*3/10);
+			drawFrame(rectImg.getGraphics(),0,0,ds.width,60);
 			drawFrame(rectImg.getGraphics(),ds.width-60, 0, 60, 70);
 			
 			try {

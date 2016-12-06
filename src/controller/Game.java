@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import controller.map.Table;
 import controller.player.Player;
+import controller.player.devcards.DevCardShop;
 
 
 /**
@@ -17,7 +18,7 @@ public class Game {
 	public static ArrayList<Player> players;
 	public static int turn_number;
 	
-	public Game(Table t, ArrayList<Player> p){
+	public static void initializeGame(Table t, ArrayList<Player> p){
 		table = t;
 		players = p;
 		turn_number = 0;

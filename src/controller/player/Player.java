@@ -37,6 +37,8 @@ public class Player {
 	int points;
 	int activeKnights;
 	Table table;
+	boolean biggestArmy = false;
+	boolean longestRoad = false;
 	
 	HashMap<Resource, Integer> changeLUT = new HashMap<Resource, Integer>();
 	HashMap<Resource, Integer> resourcePool = new HashMap<Resource, Integer>();
@@ -122,7 +124,7 @@ public class Player {
 	 * @param value
 	 * @throws OutOfRangeException if (points - value) goes negative
 	 */
-	protected final void decPoints(int value) throws OutOfRangeException{
+	public final void decPoints(int value) throws OutOfRangeException{
 		if((points - value) < 0) throw new OutOfRangeException("Points goes negative");
 		points -= value;
 	}
@@ -211,6 +213,22 @@ public class Player {
 	 */
 	public int getResourceAmount(Resource r){
 		return resourcePool.get(r);
+	}
+	
+	/**
+	 * Getter for BiggestArmy
+	 * @return BiggestArmy
+	 */
+	public boolean isBiggestArmy(){
+		return biggestArmy;
+	}
+	
+	/**
+	 * Setter for BiggestArmy
+	 * @param b boolean for BiggestArmy
+	 */
+	public void setBiggestArmy(boolean b){
+		biggestArmy = b;
 	}
 	
 	/**
@@ -350,6 +368,51 @@ public class Player {
 		return result;
 	}
 	
+	public void updateChangeLUT(Vertex where){
+		for(Hex h : where.getNeighbourHexes()){
+			if(h.getPort() != null){
+				if(h.getPort().getRes() == null){
+					for(Resource r : Resource.values()){
+						changeLUT.replace(r, h.getPort().getChangeNumber());
+					}
+				}
+				else{
+					if(changeLUT.get(h.getPort().getRes()) > h.getPort().getChangeNumber()){
+						changeLUT.replace(h.getPort().getRes(), h.getPort().getChangeNumber());
+					}
+				}
+			}
+		}
+	}
+	
+	public void updateLongestRoad() throws GameEndsException{
+		Player longestRoadOwner = this;
+		for(Player p: Game.players){
+			if(p.longestRoad){
+				longestRoadOwner = p;
+				try {
+					p.decPoints(2);
+				} catch (OutOfRangeException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			p.longestRoad = false;
+		}
+		int max = longestRoadOwner.calculateMaxRoad();
+		for(Player p: Game.players){
+			int current = p.calculateMaxRoad();
+			if(current > max){
+				max = current;
+				longestRoadOwner = p;
+			}
+		}
+		if(max >= 5){
+			longestRoadOwner.longestRoad = true;
+			longestRoadOwner.incPoints(2);
+		}
+	}
+	
 	//PLAYER ACTIONS---------------------------------------------------------------------->
 	
 	/**
@@ -452,9 +515,10 @@ public class Player {
 			if (rightInput){
 				boolean isEmpty = where.getBuilding() == null;
 				boolean isTheRightPlace = where.getClass().equals(Vertex.class);
-				boolean hasNeighbouringSettlement = ((Vertex)where).getNeighbours().get(0).getBuilding() != null || 
-													((Vertex)where).getNeighbours().get(1).getBuilding() != null || 
-													((Vertex)where).getNeighbours().get(2).getBuilding() != null;
+				boolean hasNeighbouringSettlement = false;
+				for(Vertex v : ((Vertex)where).getNeighbours())									
+					if(v.getBuilding() != null)
+						hasNeighbouringSettlement = true;
 				if(isEmpty && isTheRightPlace && !hasNeighbouringSettlement){
 					return true;
 				}
@@ -473,26 +537,22 @@ public class Player {
 		System.out.println("Hello from 1buid");
 		boolean succesful = false;	
 		if(what == Buildable.Road){
-			Road u = availableRoads.remove(0);
-			succesful = where.getClass().equals(Edge.class) && where.getBuilding() == null;
+			succesful = isFirstBuildPossible(Buildable.Road, where);
 			if(succesful){
+				Road u = availableRoads.remove(0);
 				where.setBuilding(u);
 				erectedBuildings.add(u);
 			}
-			else
-				availableRoads.add(u);
 		}
 		else if(what == Buildable.Settlement){
-			Settlement s = availableSettlements.remove(0);
-			succesful = where.getClass().equals(Vertex.class) && where.getBuilding() == null;
+			succesful = isFirstBuildPossible(Buildable.Settlement, where);;
 			if(succesful){
+				Settlement s = availableSettlements.remove(0);
 				where.setBuilding(s);
 				erectedBuildings.add(s);
 				this.incPoints(1);
 			}
-			else
-				availableSettlements.add(s);
-				
+			updateChangeLUT((Vertex)where);
 		}
 		else if(what == Buildable.City){
 			succesful = false;
@@ -503,25 +563,49 @@ public class Player {
 	public boolean isBuildPossible(Buildable what, TableElement where){
 		System.out.println("Hello from isbuild");
 		if(what == Buildable.Road){
-			Road r = availableRoads.get(0);
-			if(where.getBuilding() == null && where.isBuildPossible(r) && where.getClass().equals(Edge.class)){
+			boolean hasEnoughAvailableRoads = (availableRoads.size() > 0);
+			boolean isEmpty = where.getBuilding() == null;
+			boolean isTheRightPlace = where.getClass().equals(Edge.class);
+			boolean hasNeighbouringSettlement = (((Edge)where).getEnds().get(0).getBuilding() == null ? false :  (((Edge)where).getEnds().get(0).getBuilding().getClass() == Settlement.class && ((Edge)where).getEnds().get(0).getBuilding().getOwner().equals(this)))
+											|| (((Edge)where).getEnds().get(1).getBuilding() == null ? false :  (((Edge)where).getEnds().get(1).getBuilding().getClass() == Settlement.class && ((Edge)where).getEnds().get(1).getBuilding().getOwner().equals(this)));
+			boolean hasNeighbouringCity = (((Edge)where).getEnds().get(0).getBuilding() == null ? false :  (((Edge)where).getEnds().get(0).getBuilding().getClass() == City.class && ((Edge)where).getEnds().get(0).getBuilding().getOwner().equals(this)))
+											|| (((Edge)where).getEnds().get(1).getBuilding() == null ? false :  (((Edge)where).getEnds().get(1).getBuilding().getClass() == City.class && ((Edge)where).getEnds().get(1).getBuilding().getOwner().equals(this)));
+			boolean hasNeighbouringRoad = false;
+			for(Vertex v : ((Edge)where).getEnds())
+				if(v.getBuilding() == null ? true : v.getBuilding().getOwner().equals(this)){
+					for(Edge e : v.getNeighbourEdges())
+							if(e.getBuilding() == null ? false : e.getBuilding().getOwner().equals(this))
+									hasNeighbouringRoad = true;
+					}
+			if(hasEnoughAvailableRoads && isEmpty && isTheRightPlace && (hasNeighbouringSettlement || hasNeighbouringCity || hasNeighbouringRoad)){
 				return true;
 			}
 			return false;
 		}
 		else if(what == Buildable.Settlement){
-			Settlement s = availableSettlements.get(0);
-			if(where.getBuilding() == null && where.isBuildPossible(s) && where.getClass().equals(Vertex.class)){
+			boolean hasEnoughAvailableSettlements = (availableSettlements.size() > 0);
+			boolean isEmpty = where.getBuilding() == null;
+			boolean isTheRightPlace = where.getClass().equals(Vertex.class);
+			boolean hasNeighbouringSettlement = false;
+			for(Vertex v : ((Vertex)where).getNeighbours())									
+				if(v.getBuilding() != null)
+					hasNeighbouringSettlement = true;
+			boolean hasNeighbouringRoad = false;
+			for(Edge e : ((Vertex)where).getNeighbourEdges()){
+				if(e.getBuilding() == null ? false : (e.getBuilding().getClass().equals(Road.class) && e.getBuilding().getOwner().equals(this))){
+					hasNeighbouringRoad = true;
+				}
+			}
+			if(hasEnoughAvailableSettlements && isEmpty && isTheRightPlace && !hasNeighbouringSettlement && hasNeighbouringRoad){
 				return true;
 			}
 			return false;
 		}
 		else if(what == Buildable.City){
-			City c = availableCities.get(0);
-			if(where.getBuilding() != null){ //to avoid null pointers
-				if(where.getBuilding().getClass().equals(Settlement.class) && where.getBuilding().getOwner().equals(this) && where.isBuildPossible(c) && where.getClass().equals(Vertex.class)){
-					return true;
-				}
+			boolean hasEnoughAvailableCities = (availableCities.size() > 0);
+			boolean hasSettlement = ((Vertex)where).getBuilding() == null ? false : ((Vertex)where).getBuilding().getClass().equals(Settlement.class) && ((Vertex)where).getBuilding().getOwner().equals(this); 
+			if(hasEnoughAvailableCities && hasSettlement){
+				return true;
 			}
 			return false;
 		}	
@@ -566,6 +650,7 @@ public class Player {
 					}
 				}
 			}
+			updateLongestRoad();
 		}
 		else if(what == Buildable.Settlement){
 			if(getResourceAmount(b) >= 1 && getResourceAmount(l) >= 1 && getResourceAmount(g) >= 1 && getResourceAmount(w) >= 1){
@@ -595,6 +680,7 @@ public class Player {
 					}
 				}
 			}
+			updateChangeLUT((Vertex)where);
 		}
 		else if(what == Buildable.City){
 			if(getResourceAmount(g) >= 2 && getResourceAmount(o) >= 3){
@@ -605,10 +691,11 @@ public class Player {
 					e1.printStackTrace();
 				}
 				City c = availableCities.remove(0);
-				succesful = c.build(where);
+				succesful = isBuildPossible(Buildable.City, where);
 				if(succesful){
 					availableSettlements.add((Settlement) where.getBuilding());
 					erectedBuildings.remove(where.getBuilding());
+					c.build(where);
 					erectedBuildings.add(c);
 					this.incPoints(1);
 				}
@@ -641,8 +728,8 @@ public class Player {
 	public void change(Resource give , Resource get) {
 		System.out.println("Hello from change");
 		try {
-			if(this.getResourceAmount(give) >= 4)
-				this.decResourceAmount(give, 4);
+			if(this.getResourceAmount(give) >= changeLUT.get(give))
+				this.decResourceAmount(give, changeLUT.get(give));
 		} catch (OutOfRangeException e) {
 			e.printStackTrace();
 		}
@@ -664,20 +751,17 @@ public class Player {
 		Resource w = Resource.Wool;
 		Resource o = Resource.Ore;
 		Resource g = Resource.Grain;
-		
-		if((resourcePool.get(w)<0) | (resourcePool.get(o)<0) |  (resourcePool.get(g)<0)) throw new NotEnoughResourcesException("You dont't have enough resoureces to buy developement card.");
-		try {
-			decResourceAmount(w, 1);
-			decResourceAmount(o, 1);
-			decResourceAmount(g, 1);
-		} catch (OutOfRangeException e1) {
-			e1.printStackTrace();
-		}
-		
-		try {
-			devCards.add(DevCardShop.buyDevCard());
-		} catch (OutOfRangeException e) {
-			e.printStackTrace();
+		if(!DevCardShop.isShopEmpty() && !(resourcePool.get(w)<1) && !(resourcePool.get(o)<1) &&  !(resourcePool.get(g)<1)){
+			
+			try {
+				decResourceAmount(w, 1);
+				decResourceAmount(o, 1);
+				decResourceAmount(g, 1);
+			} catch (OutOfRangeException e1) {
+				e1.printStackTrace();
+			}
+			
+				devCards.add(DevCardShop.buyDevCard());
 		}
 	}
 	
@@ -689,10 +773,7 @@ public class Player {
 	 */
 	public void playDev(DevCard dc, Resource r) throws GameEndsException{
 		System.out.println("Hello from playDev");
-		if(dc.getClass().equals(MonopolyCard.class) | dc.getClass().equals(YearOfPlentyCard.class))
-			dc.doCard(this, r);
-		if(dc.getClass().equals(KnightCard.class) | dc.getClass().equals(RoadBuildingCard.class) | dc.getClass().equals(VictoryPointCard.class))
-			dc.doCard(this);
+		dc.doCard(this);
 		playedDevCards.add(dc);
 		devCards.remove(dc);
 	}

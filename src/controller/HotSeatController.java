@@ -24,7 +24,7 @@ public class HotSeatController {
 		Table board = new Table();
 		MapXMLParser.readCatanMap(new File(System.getProperty("user.dir") + System.getProperty("file.separator") + "catan_base_map.xml"), board);
 		ArrayList<Player> playerList = new ArrayList<Player>();
-		Game game = new Game(board, playerList);
+		Game.initializeGame(board, playerList);
 		ArrayList<UIController> pclist = new ArrayList<UIController>();
 		for (int i = 0; i < 4; i++) {
 			playerList.add(new Player("Belam", i, board));

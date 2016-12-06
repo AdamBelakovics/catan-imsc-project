@@ -1,7 +1,10 @@
 package ux;
 
+import java.awt.Color;
+
 import java.awt.Cursor;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Polygon;
@@ -31,6 +34,7 @@ import ux.board.BoardRenderer;
 import ux.ui.BuildButton;
 import ux.ui.Button;
 import ux.ui.HUDRenderer;
+import ux.ui.InterfaceColorProfile;
 import ux.ui.StringPainter;
 import ux.ui.UIController;
 
@@ -103,6 +107,17 @@ public class Renderer {
 	public void updateDevCards(Player actualPlayer){};
 	public void updateResources(Player actualPlayer){};
 	public void updateThief(Hex to) {};
+	
+	public void displayGameEndScreen(Player p) {
+		System.out.println(p.getName().toUpperCase());
+		updateTimer.stop();
+		Graphics gr = bufferImg.getGraphics();
+			Color c= Color.BLACK;
+			gr.setColor(c);
+			gr.fillRect(0, 0, dataStore.width, dataStore.height);
+			StringPainter.printString(gr, "Game Over " + p.getName() + " you won!!!", InterfaceColorProfile.getPlayerColor(p), dataStore.width/2, dataStore.height/2);
+			mainFrame.getGraphics().drawImage(bufferImg, 0, 0, null);		
+	}
 
 	
 	/**
@@ -134,7 +149,7 @@ public class Renderer {
 			Vertex selectedVertex=boardPanel.vertexRenderer.getVertexUnderCursor(ev.getX(), ev.getY());
 			if (selectedVertex!=null) {
 				if (ds.currentlyBuilding!=null) {
-					if (ds.currUIC.firstturnactive && ds.currUIC.state==FirstTurnState.STARTED) {
+					if (ds.currUIC.firstturnactive && ds.currUIC.state==FirstTurnState.STARTED && ds.currUIC.controlledPlayer.isFirstBuildPossible(Buildable.Settlement, selectedVertex)) {
 						
 							ds.currUIC.state=FirstTurnState.CITYBUILT;
 							ds.currUIC.controlledPlayer.firstBuild(Buildable.Settlement, selectedVertex);
@@ -186,15 +201,17 @@ public class Renderer {
 			}
 			
 			DevCard selectedCard=hudPanel.cardRenderer.getDevCardUnderCursor(ev.getX(), ev.getY());
-			if (selectedCard!=null) {
+			if (selectedCard!=null && selectedCard!=hudPanel.cardRenderer.getSelectedDevCard()) {
 				boardPanel.resetBoardSelection();
 				hudPanel.resetInterfaceSelection();
 				
 				hudPanel.cardRenderer.selectDevCard(selectedCard);
-			}		
+			} else if (ds.currUIC.active && selectedCard!=null && selectedCard==hudPanel.cardRenderer.getSelectedDevCard()) { 
+				ds.currUIC.controlledPlayer.playDev(selectedCard, null);
+				hudPanel.cardRenderer.deselectDevCards();
+			} else {hudPanel.cardRenderer.deselectDevCards();}		
 			} catch (GameEndsException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				displayGameEndScreen(Game.players.stream().filter(x -> (Integer)e.getPlayerID() == x.getId()).findFirst().get());
 			}
 		}
 

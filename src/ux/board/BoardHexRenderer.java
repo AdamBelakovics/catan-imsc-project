@@ -16,8 +16,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import java.awt.BasicStroke;
+
 import controller.map.Buildable;
+import controller.map.Edge;
 import controller.map.Hex;
+import controller.map.Port;
 import controller.map.Table;
 import controller.map.Vertex;
 import controller.player.Building;
@@ -40,6 +44,8 @@ public class BoardHexRenderer extends ImageRenderer {
 	private double zoomLevel;
 	
 	private RendererDataStore ds;
+	private Map<Vertex, Hex> hvMap=new HashMap();
+	private Map<Edge, Hex> portMap=new HashMap();
 
 	//Constants
 	final double eps=0.01;
@@ -53,11 +59,33 @@ public class BoardHexRenderer extends ImageRenderer {
 		
 		ds=_dataStore;
 		generateHexes();
+		getPorts();
 		rotationLeft=0;
 		zoomLevel=1;
 		
 	}
 	
+	private void getPorts() {
+		
+		for (Map.Entry<Hex, HexPoly> entry : ds.hexMap.entrySet()){
+			Hex portHex=entry.getKey();
+			if (portHex.getPort()!=null) {
+				for (Vertex v : portHex.getNeighbouringVertices()) {
+					for (Hex h: v.getNeighbourHexes()) {
+						if (h.getResource()!=null) {
+							hvMap.put(v, portHex);
+						}
+					}
+				}
+			}
+		}
+		
+		for (Edge e : ds.board.edgeList) {
+			if (hvMap.containsKey(e.getEnds().get(0)) && hvMap.get(e.getEnds().get(0)).equals(hvMap.get(e.getEnds().get(1)))) 
+				portMap.put(e,hvMap.get(e.getEnds().get(0)));				
+		}
+	}
+
 	public void paint(Graphics g) {
 		hexCanvas=(Graphics2D)g;
 		hexCanvas.setFont(hexCanvas.getFont().deriveFont(18.0f));
@@ -65,6 +93,7 @@ public class BoardHexRenderer extends ImageRenderer {
 		hexCanvas.fillRect(0, 0, ds.width, ds.height);
 		translateBoardCanvas();
 		paintHexes();
+		paintPorts();
 	}
 
 	/**
@@ -144,11 +173,7 @@ public class BoardHexRenderer extends ImageRenderer {
 			hexCanvas.draw(currHexPoly);
 			hexCanvas.fillPolygon(currHexPoly);
 			
-			if (currHex.getProsperity()!=0) StringPainter.printString(hexCanvas, new Integer(currHex.getProsperity()).toString(), 14, currHexPoly.x, currHexPoly.y);
-			if (currHex.hasThief) {
-				hexCanvas.setColor(Color.black);
-				hexCanvas.fillOval(currHexPoly.x-10, currHexPoly.y-10, 14, 14);
-			}
+			if (currHex.getProsperity()!=0) StringPainter.printString(hexCanvas, new Integer(currHex.getProsperity()).toString(), 18, currHexPoly.x, currHexPoly.y);
 			
 			if (currHexPoly.selected) ds.selectedTile=currHex;
 		}
@@ -158,6 +183,56 @@ public class BoardHexRenderer extends ImageRenderer {
 			hexCanvas.draw(ds.hexMap.get(ds.selectedTile));
 		}
 	}
+	
+	private void paintPorts() {
+		hexCanvas.setColor(Color.BLACK);
+		/*for (Map.Entry<Vertex,Hex> entry : hvMap.entrySet()) {
+			
+			Point p=ds.vertexMap.get(entry.getKey());
+			hexCanvas.fillOval(p.x, p.y, 8, 8);
+		}*/
+		final int step=15;
+		final int dec=10;
+		hexCanvas.setStroke(new BasicStroke((float) 3.0));
+		for (Map.Entry<Edge, Hex> e :portMap.entrySet()) {
+			ArrayList<Vertex> eVertices=e.getKey().getEnds();
+			Port p=e.getValue().getPort();
+			Color portC=p.getRes()==null?Color.white:ds.colorMap.get(p.getRes());
+			Point pointA=ds.vertexMap.get(eVertices.get(0));
+			Point pointB=ds.vertexMap.get(eVertices.get(1));
+			int pointAx=pointA.x;
+			int pointAy=pointA.y;
+			int pointBx=pointB.x;
+			int pointBy=pointB.y;
+			/*int dist=(int)Math.floor((Math.sqrt(pointAx*pointAx+pointBx*pointBx)));
+			
+			pointAx=pointAx+(pointBx-pointAx)*dec/dist;
+			pointAy=pointAy+(pointBy-pointAy)*dec/dist;
+			pointBx=pointBx+(pointAx-pointBx)*dec/dist;
+			pointBy=pointBy+(pointAy-pointBy)*dec/dist;
+
+			
+			
+			int pointHx=ds.hexMap.get(e.getValue()).x;
+			int pointHy=ds.hexMap.get(e.getValue()).y;
+			
+			for (int i=1;i<=step;i++) {
+				hexCanvas.setColor(new Color(portC.getRed(), portC.getGreen(), portC.getBlue(), 200/i));
+				hexCanvas.drawLine(
+						pointAx+(pointHx-pointAx)*i/(step*3), 
+						pointAy+(pointHy-pointAy)*i/(step*3), 
+						pointBx+(pointHx-pointBx)*i/(step*3), 
+						pointBy+(pointHy-pointBy)*i/(step*3));*/
+			hexCanvas.setColor(portC);
+			hexCanvas.drawLine(
+					pointAx, 
+					pointAy, 
+					pointBx, 
+					pointBy);
+						
+			}
+			
+		}
 	
 	
 

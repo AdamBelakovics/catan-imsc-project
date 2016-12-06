@@ -14,6 +14,7 @@ public class City extends Building{
 		if(t != null && t.getBuilding() != null)
 			if( t.getBuilding().getClass().equals(Settlement.class) && t.isBuildPossible(this) && t.getClass().equals(Vertex.class)){
 				t.setBuilding(this);
+				return true;
 			}
 		return false;
 	}

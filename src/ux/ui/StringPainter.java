@@ -26,8 +26,7 @@ public class StringPainter {
 	}
 	
 	public static void printString(Graphics canvas, String str, int x, int y) {
-		if (!fallback) canvas.setFont(mainFont);
-		paintString(canvas, str, x, y);
+		printString(canvas, str, InterfaceColorProfile.fgColor,x,y);
 	}
 
 	public static void printString(Graphics canvas, String str, int size, int x, int y) {
@@ -35,15 +34,24 @@ public class StringPainter {
 		else canvas.setFont(canvas.getFont().deriveFont(Font.PLAIN,size));
 		int prevFontHeight=fontHeight;
 		fontHeight=size;
+		Color previousColor=canvas.getColor();
+		canvas.setColor(InterfaceColorProfile.fgColor);
 		paintString(canvas, str, x, y);
+		canvas.setColor(previousColor);
 		fontHeight=prevFontHeight;
+	}
+	
+	public static void printString(Graphics canvas, String str, Color c, int x, int y) {
+		if (!fallback) canvas.setFont(mainFont);
+		Color previousColor=canvas.getColor();
+		canvas.setColor(c);
+		paintString(canvas, str, x, y);
+		canvas.setColor(previousColor);
 	}
 	
 	private static void paintString(Graphics canvas, String str, int x, int y) {
 		FontMetrics metrics=canvas.getFontMetrics();
-		Color previousColor=canvas.getColor();
-		canvas.setColor(InterfaceColorProfile.fgColor);
 		canvas.drawString(str, x-metrics.stringWidth(str)/2, y-metrics.getHeight()/2 + fontHeight);
-		canvas.setColor(previousColor);
+
 	}
 }

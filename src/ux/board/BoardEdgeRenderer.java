@@ -32,7 +32,6 @@ public class BoardEdgeRenderer extends ImageRenderer {
 
 	private Graphics2D edgeCanvas;
 	private RendererDataStore ds;
-	private HashMap<Edge, ArrayList<Vertex> > edgeMap=new HashMap();
 	private HashMap<Edge, Polygon> edgeClickMap=new HashMap();
 
 	
@@ -69,9 +68,9 @@ public class BoardEdgeRenderer extends ImageRenderer {
 	private void paintEdges() {
 		Stroke prevStroke = edgeCanvas.getStroke();
 		edgeCanvas.setStroke(new BasicStroke(5));
-		for (HashMap.Entry<Edge, ArrayList<Vertex> > e : edgeMap.entrySet() ) {
+		for (HashMap.Entry<Edge, ArrayList<Vertex> > e : ds.edgeMap.entrySet() ) {
 			if (e.getKey().getBuilding()!=null) {
-				InterfaceColorProfile.setPlayerColor(edgeCanvas, e.getKey().getBuilding());
+				InterfaceColorProfile.setPlayerColor(edgeCanvas, e.getKey().getBuilding().getOwner());
 				edgeCanvas.drawLine(
 						ds.vertexMap.get(e.getValue().get(0)).x,
 						ds.vertexMap.get(e.getValue().get(0)).y,
@@ -89,7 +88,7 @@ public class BoardEdgeRenderer extends ImageRenderer {
 	 */
 	private void generateEdges() {
 		for (Edge e : ds.board.getEdges()) {
-			edgeMap.put(e, e.getEnds());
+			ds.edgeMap.put(e, e.getEnds());
 			
 			double eps=0.3;
 			
