@@ -61,6 +61,7 @@ public class BuildRoad {
 	 */
 	public Edge getEdge(){
 		refresh();
+		System.out.println("Road value: " + buildValue);
 		return edge;
 	}
 		
@@ -224,7 +225,7 @@ public class BuildRoad {
 		}
 		double ownPersVal = nodePersonalValueForRoadLocal(n);
 		// some magic formula, looks useable
-		result +=  ownPersVal * ownPersVal * (10) * (cnt + 1) * (cnt + 1) * (cnt + 1) * 0.0156215;
+		result +=  ownPersVal * ownPersVal * (cnt + 1) * (cnt + 1) * (cnt + 1) * 0.0156215;
 		//System.out.println("MagicRoadVal: " + result + " cnt: " + cnt);
 		for(Double val : persValues){
 			result += val;

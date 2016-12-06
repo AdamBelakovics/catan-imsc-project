@@ -140,7 +140,7 @@ public class AiController extends PlayerController {
 		boolean playedCard = true;
 		int index = 0;
 		while(playedCard){
-			System.out.println("development card ciklus");
+			//System.out.println("development card ciklus");
 			playedCard = false;
 			if(me.getDevCards().size() > index){
 				if(me.getDevCards().get(index).getClass().equals(KnightCard.class)){
@@ -172,6 +172,7 @@ public class AiController extends PlayerController {
 					}
 					if(me.getPoints() + victoryPoints >= 10){
 						me.playDev(me.getDevCards().get(index), null);
+						System.out.println("Victory point played");
 						playedCard = true;
 					}
 				}
@@ -626,7 +627,7 @@ public class AiController extends PlayerController {
 			double resourceValue = 1;
 			if(this.resources.get(h.getResource()).personalFrequency() < (1.0 / 36.0))
 				resourceValue = 3;
-			return Material.frequencyLUT(h.getProsperity()) * resources.get(h.getResource()).personalValue() * numberValue * resourceValue;
+			return 0.3 * Material.frequencyLUT(h.getProsperity()) * resources.get(h.getResource()).personalValue() * numberValue * resourceValue;
 		}
 		return 0;
 	}

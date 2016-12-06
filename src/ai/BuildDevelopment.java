@@ -64,11 +64,14 @@ public class BuildDevelopment {
 	 */
 	public double getBuildValue(){
 		calculateProbabilities();
-		return pInvention * calculateInventionValue() + 
+		double result =
+				pInvention * calculateInventionValue() + 
 				pKnight * calculateKnightValue() + 
 				pMonopoly * calculateMonopolyValue() + 
 				pPlusPoint * calculatePlusPointValue() +
 				pTwoRoad * calculateTwoRoadValue();
+		System.out.println("Development value: " + result);
+		return result;
 	}
 	/**
 	 * Calculates the value of getting a single two-road development card.
@@ -111,7 +114,7 @@ public class BuildDevelopment {
 		}
 		// the return value is between 0 and 10
 		if(minResourceFrequency > 0)
-			return Math.min(10 / minResourceFrequency, 10);
+			return 10.0 / minResourceFrequency;
 		else
 			return 0;
 	}
@@ -136,7 +139,7 @@ public class BuildDevelopment {
 				maxMaterialValue = currentValue;
 			}
 		}
-		return Math.min(maxMaterialValue, 10);
+		return maxMaterialValue;
 	}
 	
 	/**
@@ -158,7 +161,7 @@ public class BuildDevelopment {
 			difVal = 2;
 		// TODO getRobbedSum() in AiController, not very important
 		//return Math.max(robbed * difVal + owner.getRobbedSum() + 2.5, 10);
-		return Math.min(robbed * difVal + 2.5, 10);
+		return robbed * difVal + 2.5;
 	}
 	
 	/**

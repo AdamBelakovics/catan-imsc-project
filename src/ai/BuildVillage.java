@@ -61,6 +61,7 @@ public class BuildVillage {
 	 */
 	public Vertex getNode(){
 		refresh();
+		System.out.println("Village value: " + buildValue);
 		return node;
 	}
 	
