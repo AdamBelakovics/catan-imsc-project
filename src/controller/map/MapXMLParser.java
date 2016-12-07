@@ -56,7 +56,7 @@ public class MapXMLParser {
 				}else {
 					for(Resource r : Resource.values()){
 						if (docelements.item(i).getAttributes().getNamedItem("resourcetype").getNodeValue().equals(r.name())){
-							waters.get(i).setPort(new Port(r , 3));
+							waters.get(i).setPort(new Port(r , 2));
 						}
 					}
 				}

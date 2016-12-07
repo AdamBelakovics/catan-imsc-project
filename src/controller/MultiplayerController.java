@@ -3,11 +3,13 @@ package controller;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 import ai.AiController;
+import aitest.AiParameter;
 import controller.map.Hex;
 import controller.map.MapXMLParser;
 import controller.map.Table;
@@ -47,8 +49,8 @@ public class MultiplayerController {
 		Game.initializeGame(board, playerList);
 		DevCardShop.initializeShop();
 		
-		AiController AICONT01 = new AiController(board, AI01, playerList);
-		AiController AICONT02 = new AiController(board, AI02, playerList);
+		AiController AICONT01 = new AiController(board, AI01, playerList, new HashSet<AiParameter>());
+		AiController AICONT02 = new AiController(board, AI02, playerList, new HashSet<AiParameter>());
 		UIController AICONT03 = new UIController(AI03);
 		UIController HUMCONT = new UIController(HUMAN);
 		

@@ -58,19 +58,19 @@ public class Material {
 		 */
 		switch (myresource) {
 		case Brick:
-			baseValue = 6;
+			baseValue = 5;
 			break;
 		case Lumber:
 			baseValue = 5;
 			break;
 		case Ore:
-			baseValue = 4;
+			baseValue = 5;
 			break;
 		case Grain:
-			baseValue = 3;
+			baseValue = 5;
 			break;
 		case Wool:
-			baseValue = 2;
+			baseValue = 5;
 			break;
 		case Desert:
 			baseValue = 0;
