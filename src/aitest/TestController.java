@@ -26,7 +26,7 @@ import ux.ui.UIController;
 
 public class TestController {
 	public static void main(String[] args) throws InterruptedException, OutOfRangeException{
-		run(2500);
+		run(800);
 	}
 	
 	private static void run(int turns){
@@ -39,8 +39,18 @@ public class TestController {
 		int ai3Points = 0;
 		int ai4Points = 0;
 		int gameTurns = 0;
-		int minTurns = 1000;
-		int maxTurns = 0;
+		int ai1GameTurns = 0;
+		int ai2GameTurns = 0;
+		int ai3GameTurns = 0;
+		int ai4GameTurns = 0;
+		int ai1MinTurns = 1000;
+		int ai2MinTurns = 1000;
+		int ai3MinTurns = 1000;
+		int ai4MinTurns = 1000;
+		int ai1MaxTurns = 0;
+		int ai2MaxTurns = 0;
+		int ai3MaxTurns = 0;
+		int ai4MaxTurns = 0;
 		int hibak = 0;
 		for(int j = 0; j < turns; j++){
 			System.out.println(j);
@@ -110,22 +120,39 @@ public class TestController {
 				ai2Points += AI02.getPoints();
 				ai3Points += AI03.getPoints();
 				ai4Points += AI04.getPoints();
+				gameTurns += tmpTurns;
 				if(AI01.getPoints() >= 10){
 					ai1Wins++;
+					ai1GameTurns += tmpTurns;
+					if(tmpTurns > ai1MaxTurns)
+						ai1MaxTurns = tmpTurns;
+					if(tmpTurns < ai1MinTurns)
+						ai1MinTurns = tmpTurns;
 				} else if(AI02.getPoints() >= 10){
 					ai2Wins++;
+					ai2GameTurns += tmpTurns;
+					if(tmpTurns > ai2MaxTurns)
+						ai2MaxTurns = tmpTurns;
+					if(tmpTurns < ai2MinTurns)
+						ai2MinTurns = tmpTurns;
 				} else if(AI03.getPoints() >= 10){
 					ai3Wins++;
+					ai3GameTurns += tmpTurns;
+					if(tmpTurns > ai3MaxTurns)
+						ai3MaxTurns = tmpTurns;
+					if(tmpTurns < ai3MinTurns)
+						ai3MinTurns = tmpTurns;
 				} else if(AI04.getPoints() >= 10){
 					ai4Wins++;
+					ai4GameTurns += tmpTurns;
+					if(tmpTurns > ai4MaxTurns)
+						ai4MaxTurns = tmpTurns;
+					if(tmpTurns < ai4MinTurns)
+						ai4MinTurns = tmpTurns;
 				} else {
 					hibak++;
 				}
-				gameTurns += tmpTurns;
-				if(tmpTurns > maxTurns)
-					maxTurns = tmpTurns;
-				if(tmpTurns < minTurns)
-					minTurns = tmpTurns;
+				
 				if(AI01.getPoints() > 10)
 					hibak++;
 				if(AI02.getPoints() > 10)
@@ -136,14 +163,15 @@ public class TestController {
 					hibak++;
 			}	
 		}
-		System.out.println("\nAI01 wins: " + ai1Wins + "\tpoints / turns: " + (double)(ai1Points) / (double)(gameTurns));
-		System.out.println("AI02 wins: " + ai2Wins + "\tpoints / turns: " + (double)(ai2Points) / (double)(gameTurns));
-		System.out.println("AI03 wins: " + ai3Wins + "\tpoints / turns: " + (double)(ai3Points) / (double)(gameTurns));
-		System.out.println("AI04 wins: " + ai4Wins + "\tpoints / turns: " + (double)(ai4Points) / (double)(gameTurns));
-		System.out.println("\nTurns:");
-		System.out.println("\tMin: " + minTurns);
-		System.out.println("\tMax: " + maxTurns);
-		System.out.println("\tAvg: " + gameTurns / turns);
+		System.out.println("");
+		if(ai1Wins > 0)
+			System.out.println("AI01 wins: " + ai1Wins + "\tmin: " + ai1MinTurns + "\t\tmax: " + ai1MaxTurns + "\t\tavg: " + ai1GameTurns / ai1Wins + "\t\tpoints / turns: " + (double)(ai1Points) / (double)(gameTurns));
+		if(ai2Wins > 0)
+			System.out.println("AI02 wins: " + ai2Wins + "\tmin: " + ai2MinTurns + "\t\tmax: " + ai2MaxTurns + "\t\tavg: " + ai2GameTurns / ai2Wins + "\t\tpoints / turns: " + (double)(ai2Points) / (double)(gameTurns));
+		if(ai3Wins > 0)
+			System.out.println("AI03 wins: " + ai3Wins + "\tmin: " + ai3MinTurns + "\t\tmax: " + ai3MaxTurns + "\t\tavg: " + ai3GameTurns / ai3Wins + "\t\tpoints / turns: " + (double)(ai3Points) / (double)(gameTurns));
+		if(ai4Wins > 0)
+			System.out.println("AI04 wins: " + ai4Wins + "\tmin: " + ai4MinTurns + "\t\tmax: " + ai4MaxTurns + "\t\tavg: " + ai4GameTurns / ai4Wins + "\t\tpoints / turns: " + (double)(ai4Points) / (double)(gameTurns));
 		System.out.println("\nHibak: " + hibak);
 	}
 }
