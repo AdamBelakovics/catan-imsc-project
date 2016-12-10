@@ -648,7 +648,7 @@ public class AiController extends PlayerController {
 				}
 				return 0.3 * Material.frequencyLUT(h.getProsperity()) * resources.get(h.getResource()).personalValue() * numberValue * resourceValue;
 			}
-			else if(params.contains(AiParameter.Port)) {
+			else if(!isFirstTurn && params.contains(AiParameter.Port)) {
 				// ha kikoto
 				if(h.getPort().getRes() == null){
 					return threeToOnePortPersonalValue();
@@ -853,7 +853,7 @@ public class AiController extends PlayerController {
 		
 		System.out.println("Nodes:");
 		for(Vertex v : map.getNodes()){
-			System.out.println(v.getID() + "\t\t" + nodePersonalValue(v) + "\troad: " + buildRoad.nodePersonalValueForRoad(v));
+			System.out.println(v.getID() + "\t\t" + nodePersonalValue(v) + "\troad: " + buildRoad.nodePersonalValueForRoad(v, null));
 			for(Hex h : v.getNeighbourHexes()){
 				if(h.getPort() == null)
 					System.out.println("\t(field)\t" + h.getResource() + "\t" + h.getProsperity() + "\t" + territoryPersonalValue(h));

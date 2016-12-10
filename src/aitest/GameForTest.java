@@ -34,13 +34,22 @@ public class GameForTest {
 			villages.put(p, new HashSet<Vertex>());
 			maxRoadLengths.put(p, 0);
 			maxRoadLengthsFromNode.put(p, new HashMap<Vertex, Integer>());
-			for(Vertex v : t.getNodes()){
-				maxRoadLengthsFromNode.get(p).put(v, 0);
-			}
 		}
 		freeNodes = new HashSet<Vertex>();
 		freeNodes.addAll(t.getNodes());
 	}
+	
+	public static void settlementBuiltFirst(Player p, Vertex where){
+		freeNodes.remove(where);
+		for(Vertex v : where.getNeighbours()){
+			freeNodes.remove(v);
+		}
+		villages.get(p).add(where);
+		reachedNodes.get(p).add(where);
+		maxRoadLengths.put(p, 0);
+		maxRoadLengthsFromNode.get(p).put(where, 0);
+	}
+	
 	public static void settlementBuilt(Player p, Vertex where){
 		freeNodes.remove(where);
 		for(Vertex v : where.getNeighbours()){
@@ -48,30 +57,37 @@ public class GameForTest {
 		}
 		villages.get(p).add(where);
 	}
+	
 	public static void cityBuilt(Player p, Vertex where){
 		villages.get(p).remove(where);
 	}
-	public static void roadBuild(Edge where, Player p){
+	
+	public static void roadBuilt(Edge where, Player p){
 		reachedNodes.get(p).add(where.getEnds().get(0));
 		reachedNodes.get(p).add(where.getEnds().get(1));
 	}
+	
 	public static void updateMaxRoadLength(Player p, int l){
 		maxRoadLengths.put(p, l);
 	}
+	
 	public static void updateMaxRoadLengthForNode(Player p, Vertex v, int l){
 		maxRoadLengthsFromNode.get(p).put(v, l);
 	}
+	
 	public static ArrayList<Vertex> validNodesForSettlement(Player p){
 		ArrayList<Vertex> result = new ArrayList<Vertex>();
 		result.addAll(reachedNodes.get(p));
 		result.retainAll(freeNodes);
 		return result;
 	}
+	
 	public static ArrayList<Vertex> getVillages(Player p){
 		ArrayList<Vertex> result = new ArrayList<>();
 		result.addAll(villages.get(p));
 		return result;
 	}
+	
 	public static int maxRoadLength(){
 		int result = 0;
 		for(Integer current : maxRoadLengths.values()){
@@ -80,10 +96,15 @@ public class GameForTest {
 		}
 		return result;
 	}
+	
 	public static int maxRoadLength(Player p){
 		return maxRoadLengths.get(p);
 	}
+	
 	public static int maxRoadLengthFromNode(Player p, Vertex v){
+		//System.out.println(maxRoadLengthsFromNode.toString());
+		if(!maxRoadLengthsFromNode.get(p).containsKey(v))
+			return -1;
 		return maxRoadLengthsFromNode.get(p).get(v);
 	}
 }

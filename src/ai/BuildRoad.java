@@ -30,6 +30,8 @@ public class BuildRoad {
 	private Player aiPlayer;
 	private ArrayList<Player> otherPlayers;
 	
+	private int difForTest;
+	
 	/**
 	 * Constructor. Initializes attributes.
 	 * @param map - the table
@@ -43,6 +45,8 @@ public class BuildRoad {
 		buildValue = 0;
 		this.aiPlayer = aiPlayer;
 		this.otherPlayers = otherPlayers;
+		
+		difForTest = 0;
 	}
 	
 	/**
@@ -79,12 +83,13 @@ public class BuildRoad {
 			double maxVal = -1;
 			double difVal = 1;
 			double val;
+			difForTest = calculateMaxRoadDifference();
 			for(Edge e : listValidEdges()){
 				Vertex node1 = e.getEnds().get(0);
 				Vertex node2 = e.getEnds().get(1);
 				if(aiPlayer.getRoadsFromNode(node1).isEmpty()){
 					// if we haven't reached node1
-					val = nodePersonalValueForRoad(node1);
+					val = nodePersonalValueForRoad(node1, node2);
 					//System.out.println("SpecialRoadValue: " + val);
 					if(val > maxVal){
 						maxVal = val;
@@ -92,7 +97,7 @@ public class BuildRoad {
 					}
 				} else if(aiPlayer.getRoadsFromNode(node2).isEmpty()){
 					// if we haven't reached node2
-					val = nodePersonalValueForRoad(node2);
+					val = nodePersonalValueForRoad(node2, node1);
 					//System.out.println("SpecialRoadValue: " + val);
 					if(val > maxVal){
 						maxVal = val;
@@ -107,6 +112,10 @@ public class BuildRoad {
 						int max2 = GameForTest.maxRoadLengthFromNode(aiPlayer, node2);
 						int max = GameForTest.maxRoadLength();
 						int aiMax = GameForTest.maxRoadLength(aiPlayer);
+						/*int max1 = aiPlayer.calculateMaxRoadFromNode(node1, new HashSet<Vertex>());
+						int max2 = aiPlayer.calculateMaxRoadFromNode(node2, new HashSet<Vertex>());
+						int max = calculateMaxRoadLength();
+						int aiMax = aiPlayer.calculateMaxRoad();*/
 						if(aiMax < max && max1 + max2 + 1 > max){
 							val = 8;
 							if(val > maxVal){
@@ -124,11 +133,13 @@ public class BuildRoad {
 	private int calculateMaxRoadLength(){
 		int max = 0;
 		for(Player p : otherPlayers){
-			int tmp = p.calculateMaxRoad();
+			int tmp = GameForTest.maxRoadLength(p);
+			//int tmp = p.calculateMaxRoad();
 			if(tmp > max)
 				max = tmp;
 		}
-		int tmp = aiPlayer.calculateMaxRoad();
+		int tmp = GameForTest.maxRoadLength(aiPlayer);
+		//int tmp = aiPlayer.calculateMaxRoad();
 		if(tmp > max)
 			max = tmp;
 		return max;
@@ -175,7 +186,7 @@ public class BuildRoad {
 		Vertex bestNode = null;
 		double maxVal = 0;
 		for(Vertex v : where.getNeighbours()){
-			double val = nodePersonalValueForRoad(v);
+			double val = nodePersonalValueForRoad(v, where);
 			if(val > maxVal){
 				bestNode = v;
 				maxVal = val;
@@ -212,10 +223,12 @@ public class BuildRoad {
 		int maxRoadVal = 0;
 		for(Player player : otherPlayers){
 			int playersMax = GameForTest.maxRoadLength(player);
+			//int playersMax = player.calculateMaxRoad();
 			if(playersMax > maxRoadVal)
 				maxRoadVal = playersMax;
 		}
 		int AIMaxVal = GameForTest.maxRoadLength(aiPlayer);
+		//int AIMaxVal = aiPlayer.calculateMaxRoad();
 		return maxRoadVal - AIMaxVal;
 	}
 	
@@ -228,9 +241,13 @@ public class BuildRoad {
 	 * @author Gergely Olah
 	 */
 	private boolean isMaxRoadStart(Vertex fromNode){
-		HashSet<Vertex> visitedNodes = new HashSet<Vertex>();
+		if(fromNode == null)
+			return false;
+		//System.out.println(fromNode.getID());
 		int nodesMaxRoad = GameForTest.maxRoadLengthFromNode(aiPlayer, fromNode);
 		int maxRoad = GameForTest.maxRoadLength(aiPlayer);
+		//int nodesMaxRoad = aiPlayer.calculateMaxRoadFromNode(fromNode, new HashSet<Vertex>());
+		//int maxRoad = aiPlayer.calculateMaxRoad();
 		return nodesMaxRoad == maxRoad;
 	}
 	/**
@@ -239,18 +256,22 @@ public class BuildRoad {
 	 * @param n - the node
 	 * @return - the personal value from 0 to 10
 	 */
-	public double nodePersonalValueForRoad(Vertex n){
+	public double nodePersonalValueForRoad(Vertex n, Vertex fromNode){
 		double val;
 		HashSet<Vertex> visitedNodes = new HashSet<Vertex>();
 		val = nodePersonalValueForRoadRecursive(n, visitedNodes, 3);
-		int dif = calculateMaxRoadDifference();
+		//int dif = calculateMaxRoadDifference();
+		//System.out.println(aiPlayer);
+		//System.out.println(n);
+		//System.out.println(fromNode);
+		int dif = difForTest;
 		double difVal = 1;
 		if(dif < 2){
 			if(dif >= -1)
 				difVal = 1.5;
 			else
 				difVal = 1.2;
-			if(isMaxRoadStart(n))
+			if(isMaxRoadStart(fromNode))
 				val = difVal * val;
 		}
 		return val;
@@ -322,12 +343,9 @@ public class BuildRoad {
 	 */
 	private boolean isRoadAvailable(){
 		int cnt = 0;
-		Building tmpRoad;
-		for(Edge e : map.getEdges()){
-			tmpRoad = (Road)e.getBuilding();
-			if(tmpRoad != null && tmpRoad.getOwner().equals(aiPlayer)){
+		for(Building build : aiPlayer.getAllBuildings()){
+			if(build.getClass().equals(Road.class))
 				cnt++;
-			}
 		}
 		return cnt < 15;
 	}

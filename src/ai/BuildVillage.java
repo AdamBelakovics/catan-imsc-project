@@ -27,6 +27,8 @@ public class BuildVillage {
 	private Player aiPlayer;
 	private ArrayList<Player> otherPlayers;
 	
+	
+	
 	/**
 	 * Constructor. Initializes attributes.
 	 * @param map - the table
@@ -74,7 +76,7 @@ public class BuildVillage {
 		ArrayList<Vertex> result = new ArrayList<Vertex>();
 		
 		for(Vertex n : map.getNodes()){
-			if(aiPlayer.getRoadsFromNode( n).size() > 0 && aiPlayer.isBuildPossible(Buildable.Settlement, n)){
+			if(aiPlayer.getRoadsFromNode(n).size() > 0 && aiPlayer.isBuildPossible(Buildable.Settlement, n)){
 				result.add(n);
 			}
 		}

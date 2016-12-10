@@ -41,6 +41,14 @@ public class Player {
 	boolean biggestArmy = false;
 	boolean longestRoad = false;
 	
+	// the player is stupid when he/she/it may build circuit with roads
+	// this is for testing, to optimize max road length calculation
+	// user, and random ai is considered stupid
+	private boolean isPlayerStupid;
+	
+	public static int stupidUpdateCount = 0;
+	public static int cleverUpdateCount = 0;
+	
 	HashMap<Resource, Integer> changeLUT = new HashMap<Resource, Integer>();
 	HashMap<Resource, Integer> resourcePool = new HashMap<Resource, Integer>();
 	ArrayList<DevCard> devCards = new ArrayList<DevCard>();
@@ -91,7 +99,16 @@ public class Player {
 		}
 		
 		table = t;
-				
+		
+		isPlayerStupid = true;
+	}
+	
+	public void setStupidity(boolean isStupid){
+		isPlayerStupid = isStupid;
+	}
+	@Override
+	public String toString(){
+		return name;
 	}
 	
 	//PLAYER GETTER/SETTER METHODS PRIVATE---------------------------------------------------------------------->
@@ -311,6 +328,7 @@ public class Player {
 				max = currentMax;
 			}
 		}
+		GameForTest.updateMaxRoadLength(this, max);
 		return max;
 	}
 	
@@ -323,7 +341,8 @@ public class Player {
 	 * @author Gergely Olah
 	 */
 	public int calculateMaxRoadFromNode(Vertex fromNode, HashSet<Vertex> visitedNodes){
-		
+		if(getRoadsFromNode(fromNode).isEmpty() && (fromNode.getBuilding() == null || !fromNode.getBuilding().getOwner().equals(this)))
+			return -1;
 		int dist, max = 0;
 	    visitedNodes.add(fromNode);
 	    for(Edge road : getRoadsFromNode(fromNode)){
@@ -389,33 +408,82 @@ public class Player {
 	}
 	
 	public void updateLongestRoad() throws GameEndsException{
-		Player longestRoadOwner = this;
-		for(Player p: Game.players){
-			if(p.longestRoad){
-				longestRoadOwner = p;
-				try {
-					p.decPoints(2);
-				} catch (OutOfRangeException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+		stupidUpdateCount++;
+		
+		// to update the values in GameForTest
+		calculateMaxRoad();
+		
+		int max = GameForTest.maxRoadLength();
+		Player roadKing = null;
+		boolean lawfulKing = true;
+		for(Player player : Game.players){
+			if(player.longestRoad){
+				player.longestRoad = false;
+				try{
+					player.decPoints(2);
+				} catch(OutOfRangeException ex){
+					// nem fog idekerulni sose
 				}
 			}
-			p.longestRoad = false;
-		}
-		int max = longestRoadOwner.calculateMaxRoad();
-		for(Player p: Game.players){
-			int current = p.calculateMaxRoad();
-			// for testing
-			GameForTest.updateMaxRoadLength(p, current);
-			if(current > max){
-				max = current;
-				longestRoadOwner = p;
+			
+			if(GameForTest.maxRoadLength(player) == max){
+				roadKing = player;
+				if(roadKing != null)
+					lawfulKing = false;
 			}
 		}
-		if(max >= 5){
-			longestRoadOwner.longestRoad = true;
-			longestRoadOwner.incPoints(2);
+		// if only one player has longest road
+		if(lawfulKing){
+			roadKing.incPoints(2);
+			roadKing.longestRoad = true;
 		}
+	}
+	
+	public void updateLongestRoad(Edge newEdge) throws GameEndsException{
+		Vertex v1 = newEdge.getEnds().get(0);
+		Vertex v2 = newEdge.getEnds().get(1);
+		int max1 = GameForTest.maxRoadLengthFromNode(this, v1);
+		int max2 = GameForTest.maxRoadLengthFromNode(this, v2);
+		int max = GameForTest.maxRoadLength(this);
+		if(max1 > -1 && max2 > -1){
+			updateLongestRoad();
+			return;
+		} else if(max1 > -1){
+			if(max1 == max){
+				updateLongestRoad();
+				return;
+			}
+			GameForTest.updateMaxRoadLengthForNode(this, v2, max1 + 1);
+		} else {
+			if(max2 == max){
+				updateLongestRoad();
+				return;
+			}
+			GameForTest.updateMaxRoadLengthForNode(this, v1, max2 + 1);
+		}
+		Player roadKing = null;
+		boolean lawfulKing = true;
+		for(Player player : Game.players){
+			if(player.longestRoad){
+				player.longestRoad = false;
+				try{
+					player.decPoints(2);
+				} catch(OutOfRangeException ex){
+					// nem fog idekerulni sose
+				}
+			}
+			
+			if(GameForTest.maxRoadLength(player) == max){
+				roadKing = player;
+				if(roadKing != null)
+					lawfulKing = false;
+			}
+		}
+		if(lawfulKing){
+			roadKing.incPoints(2);
+			roadKing.longestRoad = true;
+		}
+		cleverUpdateCount++;
 	}
 	
 	//PLAYER ACTIONS---------------------------------------------------------------------->
@@ -539,7 +607,7 @@ public class Player {
 	}
 	
 	public boolean firstBuild(Buildable what, TableElement where) throws GameEndsException{
-		//System.out.println("Hello from 1buid");
+		//System.out.println("Hello from 1buid " + otherPlayers);
 		boolean succesful = false;	
 		if(what == Buildable.Road){
 			succesful = isFirstBuildPossible(Buildable.Road, where);
@@ -547,8 +615,12 @@ public class Player {
 				Road u = availableRoads.remove(0);
 				where.setBuilding(u);
 				erectedBuildings.add(u);
+				if(isPlayerStupid)
+					updateLongestRoad();
+				else
+					updateLongestRoad((Edge)where);
 				// for testing
-				GameForTest.roadBuild((Edge)where, this);
+				GameForTest.roadBuilt((Edge)where, this);
 			}
 		}
 		else if(what == Buildable.Settlement){
@@ -559,7 +631,7 @@ public class Player {
 				erectedBuildings.add(s);
 				this.incPoints(1);
 				// for testing
-				GameForTest.settlementBuilt(this, (Vertex)where);
+				GameForTest.settlementBuiltFirst(this, (Vertex)where);
 			}
 			updateChangeLUT((Vertex)where);
 		}
@@ -649,8 +721,12 @@ public class Player {
 				succesful = u.build(where);
 				if(succesful){
 					erectedBuildings.add(u);
+					if(isPlayerStupid)
+						updateLongestRoad();
+					else
+						updateLongestRoad((Edge)where);
 					// for testing
-					GameForTest.roadBuild((Edge)where, this);
+					GameForTest.roadBuilt((Edge)where, this);
 				}
 				else{
 					availableRoads.add(u);
@@ -662,7 +738,6 @@ public class Player {
 					}
 				}
 			}
-			updateLongestRoad();
 		}
 		else if(what == Buildable.Settlement){
 			if(getResourceAmount(b) >= 1 && getResourceAmount(l) >= 1 && getResourceAmount(g) >= 1 && getResourceAmount(w) >= 1){

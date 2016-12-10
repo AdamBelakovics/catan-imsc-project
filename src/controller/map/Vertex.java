@@ -23,6 +23,10 @@ public class Vertex implements TableElement{
 		return ID;
 	}
 	
+	public String toString(){
+		return ID;
+	}
+	
 	private Building town;
 	
 	public Map<String, Hex> hexes = new TreeMap<String, Hex>();
