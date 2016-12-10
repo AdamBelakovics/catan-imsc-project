@@ -65,7 +65,7 @@ public class Controller {
 		AI03.setPlayerController(AICONT03);
 		HUMAN.setPlayerController(HUMCONT);
 		
-		Renderer rend = new Renderer(HUMCONT, board, 1280, 1024);
+		Renderer rend = new Renderer(HUMCONT, board, 1280, 700);
 		
 		for(int i = 0; i < pclist.size(); i++){
 			Thread.sleep(10);

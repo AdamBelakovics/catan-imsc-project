@@ -16,10 +16,15 @@ public class InterfaceColorProfile {
 	public static Color waterColor=new Color(Integer.decode("0x4d79cc"));
 	public static Color bgWaterColor=new Color(Integer.decode("0x214587"));
 	
-	public static Color player1Color=new Color(Integer.decode("0xAA3939"));
-	public static Color player2Color=new Color(Integer.decode("0xAA7F39"));
-	public static Color player3Color=new Color(Integer.decode("0x2B4970"));
-	public static Color player4Color=new Color(Integer.decode("0x2D882D"));
+	//public static Color player1Color=new Color(Integer.decode("0xAA3939"));
+	//public static Color player2Color=new Color(Integer.decode("0xAA7F39"));
+	//public static Color player3Color=new Color(Integer.decode("0x2B4970"));
+	//public static Color player4Color=new Color(Integer.decode("0x2D882D"));
+	
+	public static Color player1Color=new Color(100, 255, 0);
+	public static Color player2Color=new Color(255, 100, 0);
+	public static Color player3Color=new Color(0, 100, 255);
+	public static Color player4Color=new Color(255, 0, 100);
 	
 	public static void setPlayerColor(Graphics2D canvas, Player player) {
 		canvas.setPaint(getPlayerColor(player));
