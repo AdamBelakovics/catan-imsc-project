@@ -103,6 +103,14 @@ public class BuildVillage {
 		}
 	}
 	
+	// For the ai's test to see the value of a node
+	public double nodeValueForTest(Vertex v){
+		ArrayList<Vertex> nodes = listValidNodes();	
+		if(nodes.contains(v))
+			return 8 * owner.nodePersonalValue(v);
+		return 0;
+	}
+	
 	/**
 	 * Lists roads starting from the given vertex
 	 * owned by given player as list of Edge-s
