@@ -648,13 +648,13 @@ public class AiController extends PlayerController {
 				}
 				return 0.3 * Material.frequencyLUT(h.getProsperity()) * resources.get(h.getResource()).personalValue() * numberValue * resourceValue;
 			}
-			else if(!isFirstTurn && params.contains(AiParameter.Port)) {
+			else if(params.contains(AiParameter.Port)) {
 				// ha kikoto
 				if(h.getPort().getRes() == null){
 					return threeToOnePortPersonalValue();
 				} else{
 					if(me.getChangeLUT(h.getPort().getRes()) > h.getPort().getChangeNumber()){
-						return 6 * resources.get(h.getPort().getRes()).personalValue() * resources.get(h.getPort().getRes()).personalFrequency();
+						return 0.1 * resources.get(h.getPort().getRes()).personalValue() * resources.get(h.getPort().getRes()).personalFrequency();
 					}
 				}
 			}
@@ -671,7 +671,7 @@ public class AiController extends PlayerController {
 		double result = 0;
 		for(Resource res : Resource.values()){
 			if(me.getChangeLUT(res) > 3)
-				result +=  resources.get(res).personalValue() * 0.2;
+				result +=  resources.get(res).personalValue() * 0.008;
 		}
 		return result;
 	}
@@ -829,5 +829,38 @@ public class AiController extends PlayerController {
 
 		}
 	}
-
+	public void printStatus(){
+		System.out.println("Materials:");
+		for(Map.Entry<Resource, Material> item : resources.entrySet()){
+			System.out.println("\t" + item.getKey() + "\t" + item.getValue().personalValue());
+		}
+		/*
+		HashSet<Hex> ports = new HashSet<Hex>();
+		for(Vertex v : map.getNodes()){
+			for(Hex h : v.getNeighbourHexes()){
+				if(h.getPort() != null)
+					ports.add(h);
+			}
+		}
+		System.out.println("Fields:");
+		for(Hex h : map.getFields()){
+			System.out.println("\t" + h.getResource() + "\t" + h.getProsperity() + "\t" + territoryPersonalValue(h));
+		}
+		System.out.println("Ports:");
+		for(Hex h : ports){
+			System.out.println("\t" + h.getPort().getRes() + "\t" + h.getPort().getChangeNumber() + "\t" + territoryPersonalValue(h));
+		}*/
+		
+		System.out.println("Nodes:");
+		for(Vertex v : map.getNodes()){
+			System.out.println(v.getID() + "\t\t" + nodePersonalValue(v) + "\troad: " + buildRoad.nodePersonalValueForRoad(v));
+			for(Hex h : v.getNeighbourHexes()){
+				if(h.getPort() == null)
+					System.out.println("\t(field)\t" + h.getResource() + "\t" + h.getProsperity() + "\t" + territoryPersonalValue(h));
+				else
+					System.out.println("\t(port)\t" + h.getPort().getRes() + "\t" + h.getPort().getChangeNumber() + "\t" + territoryPersonalValue(h));
+			}
+			System.out.println("");
+		}
+	}
 }
