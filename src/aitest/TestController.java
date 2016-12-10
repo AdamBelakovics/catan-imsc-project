@@ -26,7 +26,7 @@ import ux.ui.UIController;
 
 public class TestController {
 	public static void main(String[] args) throws InterruptedException, OutOfRangeException{
-		run(10);
+		run(2000);
 		//printStatus();
 	}
 	
@@ -156,6 +156,8 @@ public class TestController {
 			AI02.setPlayerController(AICONT02);
 			AI03.setPlayerController(AICONT03);
 			AI04.setPlayerController(AICONT04);
+			
+			GameForTest.initialize(playerList, board);
 			
 			Collections.shuffle(pclist);
 			

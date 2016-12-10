@@ -3,6 +3,7 @@ package aitest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import controller.map.Edge;
 import controller.map.Table;
@@ -17,30 +18,38 @@ import controller.player.Player;
  */
 public class GameForTest {
 	
-	private static ArrayList<Player> players;
 	private static HashMap<Player, HashSet<Vertex>> reachedNodes;
 	private static HashSet<Vertex> freeNodes;
+	private static HashMap<Player, HashSet<Vertex>> villages;
 	private static HashMap<Player, Integer> maxRoadLengths;
 	private static HashMap<Player, HashMap<Vertex, Integer>> maxRoadLengthsFromNode;
 	
-	public static void initialize(ArrayList<Player> pls, Table t){
-		players = pls;
-		reachedNodes = new HashMap<>();
-		maxRoadLengths = new HashMap<>();
-		maxRoadLengthsFromNode = new HashMap<>();
+	public static void initialize(ArrayList<Player> players, Table t){
+		reachedNodes = new HashMap<Player, HashSet<Vertex>>();
+		villages = new HashMap<Player, HashSet<Vertex>>();
+		maxRoadLengths = new HashMap<Player, Integer>();
+		maxRoadLengthsFromNode = new HashMap<Player, HashMap<Vertex, Integer>>();
 		for(Player p : players){
 			reachedNodes.put(p, new HashSet<Vertex>());
+			villages.put(p, new HashSet<Vertex>());
 			maxRoadLengths.put(p, 0);
 			maxRoadLengthsFromNode.put(p, new HashMap<Vertex, Integer>());
+			for(Vertex v : t.getNodes()){
+				maxRoadLengthsFromNode.get(p).put(v, 0);
+			}
 		}
 		freeNodes = new HashSet<Vertex>();
 		freeNodes.addAll(t.getNodes());
 	}
-	public static void settlementBuilt(Vertex where){
+	public static void settlementBuilt(Player p, Vertex where){
 		freeNodes.remove(where);
 		for(Vertex v : where.getNeighbours()){
 			freeNodes.remove(v);
 		}
+		villages.get(p).add(where);
+	}
+	public static void cityBuilt(Player p, Vertex where){
+		villages.get(p).remove(where);
 	}
 	public static void roadBuild(Edge where, Player p){
 		reachedNodes.get(p).add(where.getEnds().get(0));
@@ -56,6 +65,19 @@ public class GameForTest {
 		ArrayList<Vertex> result = new ArrayList<Vertex>();
 		result.addAll(reachedNodes.get(p));
 		result.retainAll(freeNodes);
+		return result;
+	}
+	public static ArrayList<Vertex> getVillages(Player p){
+		ArrayList<Vertex> result = new ArrayList<>();
+		result.addAll(villages.get(p));
+		return result;
+	}
+	public static int maxRoadLength(){
+		int result = 0;
+		for(Integer current : maxRoadLengths.values()){
+			if(current > result)
+				result = current;
+		}
 		return result;
 	}
 	public static int maxRoadLength(Player p){

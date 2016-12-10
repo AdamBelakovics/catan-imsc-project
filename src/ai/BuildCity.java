@@ -9,6 +9,8 @@ import controller.player.Settlement;
 
 import java.util.ArrayList;
 
+import aitest.GameForTest;
+
 
 /**
  * Building a city
@@ -75,7 +77,7 @@ public class BuildCity {
 		buildValue = 0;
 		node = null;
 		if(isCityAvailable()){
-			ArrayList<Vertex> nodes = getVillages();
+			ArrayList<Vertex> nodes = GameForTest.getVillages(aiPlayer);
 			for(Vertex n: nodes){
 				double currentVal = 9 * owner.nodePersonalValue(n);
 				if(currentVal > buildValue){

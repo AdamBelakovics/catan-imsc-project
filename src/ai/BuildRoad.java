@@ -7,6 +7,7 @@ import java.util.Set;
 
 import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.Collections;
 
+import aitest.GameForTest;
 import controller.map.Vertex;
 import controller.map.Table;
 import controller.map.Edge;
@@ -25,8 +26,6 @@ public class BuildRoad {
 	private Table map;
 	private AiController owner;
 	private double buildValue;
-	//private Vertex nodeFrom;
-	//private Vertex nodeTo;
 	private Edge edge;
 	private Player aiPlayer;
 	private ArrayList<Player> otherPlayers;
@@ -78,9 +77,8 @@ public class BuildRoad {
 		buildValue = 0;
 		if(isRoadAvailable()){
 			double maxVal = -1;
-			double val;
-			int dif = calculateMaxRoadDifference();
 			double difVal = 1;
+			double val;
 			for(Edge e : listValidEdges()){
 				Vertex node1 = e.getEnds().get(0);
 				Vertex node2 = e.getEnds().get(1);
@@ -88,14 +86,6 @@ public class BuildRoad {
 					// if we haven't reached node1
 					val = nodePersonalValueForRoad(node1);
 					//System.out.println("SpecialRoadValue: " + val);
-					if(dif < 2){
-						if(dif >= -1)
-							difVal = 1.5;
-						else
-							difVal = 1.2;
-						if(isMaxRoadStart(node1))
-							val = difVal * val;
-					}
 					if(val > maxVal){
 						maxVal = val;
 						edge = e;
@@ -104,14 +94,6 @@ public class BuildRoad {
 					// if we haven't reached node2
 					val = nodePersonalValueForRoad(node2);
 					//System.out.println("SpecialRoadValue: " + val);
-					if(dif < 2){
-						if(dif >= -1)
-							difVal = 1.5;
-						else
-							difVal = 1.2;
-						if(isMaxRoadStart(node2))
-							val = difVal * val;
-					}
 					if(val > maxVal){
 						maxVal = val;
 						edge = e;
@@ -121,10 +103,10 @@ public class BuildRoad {
 					// is when our max road will be bigger than before
 					// TODO to check if we will have a longer max road
 					if(!isVertexReachable(node1, node2)){
-						int max1 = aiPlayer.calculateMaxRoadFromNode(node1, new HashSet<Vertex>());
-						int max2 = aiPlayer.calculateMaxRoadFromNode(node2, new HashSet<Vertex>());
-						int max = calculateMaxRoadLength();
-						int aiMax = aiPlayer.calculateMaxRoad();
+						int max1 = GameForTest.maxRoadLengthFromNode(aiPlayer, node1);
+						int max2 = GameForTest.maxRoadLengthFromNode(aiPlayer, node2);
+						int max = GameForTest.maxRoadLength();
+						int aiMax = GameForTest.maxRoadLength(aiPlayer);
 						if(aiMax < max && max1 + max2 + 1 > max){
 							val = 8;
 							if(val > maxVal){
@@ -229,11 +211,11 @@ public class BuildRoad {
 	public int calculateMaxRoadDifference(){
 		int maxRoadVal = 0;
 		for(Player player : otherPlayers){
-			int playersMax = player.calculateMaxRoad();
+			int playersMax = GameForTest.maxRoadLength(player);
 			if(playersMax > maxRoadVal)
 				maxRoadVal = playersMax;
 		}
-		int AIMaxVal = aiPlayer.calculateMaxRoad();
+		int AIMaxVal = GameForTest.maxRoadLength(aiPlayer);
 		return maxRoadVal - AIMaxVal;
 	}
 	
@@ -247,8 +229,8 @@ public class BuildRoad {
 	 */
 	private boolean isMaxRoadStart(Vertex fromNode){
 		HashSet<Vertex> visitedNodes = new HashSet<Vertex>();
-		int nodesMaxRoad = aiPlayer.calculateMaxRoadFromNode(fromNode, visitedNodes);
-		int maxRoad = aiPlayer.calculateMaxRoad();
+		int nodesMaxRoad = GameForTest.maxRoadLengthFromNode(aiPlayer, fromNode);
+		int maxRoad = GameForTest.maxRoadLength(aiPlayer);
 		return nodesMaxRoad == maxRoad;
 	}
 	/**
@@ -257,9 +239,21 @@ public class BuildRoad {
 	 * @param n - the node
 	 * @return - the personal value from 0 to 10
 	 */
-	private double nodePersonalValueForRoad(Vertex n){
+	public double nodePersonalValueForRoad(Vertex n){
+		double val;
 		HashSet<Vertex> visitedNodes = new HashSet<Vertex>();
-		return nodePersonalValueForRoadRecursive(n, visitedNodes, 3);
+		val = nodePersonalValueForRoadRecursive(n, visitedNodes, 3);
+		int dif = calculateMaxRoadDifference();
+		double difVal = 1;
+		if(dif < 2){
+			if(dif >= -1)
+				difVal = 1.5;
+			else
+				difVal = 1.2;
+			if(isMaxRoadStart(n))
+				val = difVal * val;
+		}
+		return val;
 	}
 	
 	/**
