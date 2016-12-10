@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import aitest.GameForTest;
 import controller.Game;
 import controller.map.Buildable;
 import controller.map.Dice;
@@ -304,6 +305,8 @@ public class Player {
 		for(Vertex n : table.getNodes()){
 			visitedNodes.clear();
 			int currentMax = calculateMaxRoadFromNode(n, visitedNodes);
+			// for testing
+			GameForTest.updateMaxRoadLengthForNode(this, n, currentMax);
 			if(currentMax > max){
 				max = currentMax;
 			}
@@ -402,6 +405,8 @@ public class Player {
 		int max = longestRoadOwner.calculateMaxRoad();
 		for(Player p: Game.players){
 			int current = p.calculateMaxRoad();
+			// for testing
+			GameForTest.updateMaxRoadLength(p, current);
 			if(current > max){
 				max = current;
 				longestRoadOwner = p;
@@ -542,6 +547,8 @@ public class Player {
 				Road u = availableRoads.remove(0);
 				where.setBuilding(u);
 				erectedBuildings.add(u);
+				// for testing
+				GameForTest.roadBuild((Edge)where, this);
 			}
 		}
 		else if(what == Buildable.Settlement){
@@ -551,6 +558,8 @@ public class Player {
 				where.setBuilding(s);
 				erectedBuildings.add(s);
 				this.incPoints(1);
+				// for testing
+				GameForTest.settlementBuilt(this, (Vertex)where);
 			}
 			updateChangeLUT((Vertex)where);
 		}
@@ -638,8 +647,11 @@ public class Player {
 				}
 				Road u = availableRoads.remove(0);
 				succesful = u.build(where);
-				if(succesful)
+				if(succesful){
 					erectedBuildings.add(u);
+					// for testing
+					GameForTest.roadBuild((Edge)where, this);
+				}
 				else{
 					availableRoads.add(u);
 					try {
@@ -667,6 +679,8 @@ public class Player {
 				if(succesful){
 					erectedBuildings.add(s);
 					this.incPoints(1);
+					// for testing
+					GameForTest.settlementBuilt(this, (Vertex)where);
 				}
 				else{
 					availableSettlements.add(s);
@@ -698,6 +712,8 @@ public class Player {
 					c.build(where);
 					erectedBuildings.add(c);
 					this.incPoints(1);
+					// for testing
+					GameForTest.cityBuilt(this, (Vertex)where);
 				}
 				else{
 					availableCities.add(c);
