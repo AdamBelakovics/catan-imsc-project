@@ -228,7 +228,7 @@ public class BuildDevelopment {
 			// handling division by zero
 			try{
 				if(it.getValue().personalFrequency() > 0.025)
-					currentValue = 0.001 * it.getValue().personalValue() * it.getValue().globalFrequency() / it.getValue().personalFrequency();
+					currentValue = Math.min(7, 0.2 * it.getValue().personalValue() * it.getValue().globalFrequency() / it.getValue().personalFrequency());
 			} catch(IllegalArgumentException e){
 				currentValue = 0;
 			}

@@ -86,7 +86,7 @@ public class BuildCity {
 			ArrayList<Vertex> nodes = GameForTest.getVillages(aiPlayer);
 			//ArrayList<Vertex> nodes = getVillages();
 			for(Vertex n: nodes){
-				double currentVal = 9 * owner.nodePersonalValue(n);
+				double currentVal = 8 * owner.nodePersonalValue(n);
 				if(currentVal > buildValue){
 					buildValue = currentVal;
 					node = n;
@@ -139,5 +139,11 @@ public class BuildCity {
 			}
 		}
 		return cnt < 4;
+	}
+	//---------------------------------------------------------------------------------------------------------
+	// For testing purposes
+	//---------------------------------------------------------------------------------------------------------
+	public double nodeValue(Vertex v){
+		return 8 * owner.nodePersonalValue(v);
 	}
 }

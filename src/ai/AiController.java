@@ -890,4 +890,39 @@ public class AiController extends PlayerController {
 			System.out.println("");
 		}
 	}
+	
+	
+	//---------------------------------------------------------------------------------------------------------
+	// For testing purposes
+	//---------------------------------------------------------------------------------------------------------
+	public double buildRoadEdgeValueFirstTurn(Edge where){
+		return buildRoad.edgeValueFirstTurn(where);
+	}
+	/**
+	 * The value of the edge that BuildRoad calculates.
+	 * It can calculate it for every edge.
+	 * @param where - the edge
+	 * @return - the value
+	 */
+	public double buildRoadEdgeValue(Edge where){
+		return buildRoad.edgeValue(where);
+	}
+	/**
+	 * The recursive node value of a node that BuildRoad calculates
+	 * It can calculate it for every edge.
+	 * @param where - the node
+	 * @return - the value
+	 */
+	public double buildRoadNodeValue(Vertex where){
+		return buildRoad.nodePersonalValueForRoadRecursive(where, new HashSet<Vertex>(), 3);
+	}
+	public double buildVillageNodeValueFirstTurn(Vertex where){
+		return buildVillage.nodeValueFirstTurn(where);
+	}
+	public double buildVillageNodeValue(Vertex where){
+		return buildVillage.nodeValue(where);
+	}
+	public double buildCityNodeValue(Vertex where){
+		return buildCity.nodeValue(where);
+	}
 }

@@ -117,12 +117,12 @@ public class BuildVillage {
 	}
 	
 	// For the ai's test to see the value of a node
-	public double nodeValueForTest(Vertex v){
+	/*public double nodeValueForTest(Vertex v){
 		ArrayList<Vertex> nodes = listValidNodes();	
 		if(nodes.contains(v))
 			return 8 * owner.nodePersonalValue(v);
 		return 0;
-	}
+	}*/
 	
 	/**
 	 * Lists roads starting from the given vertex
@@ -197,12 +197,21 @@ public class BuildVillage {
 		node = null;		
 		for(Vertex n : map.getNodes()){
 			if(owner.isNodeValid(n)){
-				double currentValue = owner.nodePersonalValue(n);
+				double currentValue = 8 * owner.nodePersonalValue(n);
 				if(currentValue > buildValue){
 					buildValue = currentValue;
 					node = n;
 				}
 			}
 		}
+	}
+	//---------------------------------------------------------------------------------------------------------
+	// For testing purposes
+	//---------------------------------------------------------------------------------------------------------
+	public double nodeValueFirstTurn(Vertex v){
+		return 8 * owner.nodePersonalValue(v);
+	}
+	public double nodeValue(Vertex v){
+		return 8 * owner.nodePersonalValue(v);
 	}
 }

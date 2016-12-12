@@ -200,7 +200,7 @@ public class BuildRoad {
 		Vertex bestNode = null;
 		double maxVal = 0;
 		for(Vertex v : where.getNeighbours()){
-			double val = nodePersonalValueForRoad(v, where);
+			double val = nodePersonalValueForRoadRecursive(v, new HashSet<Vertex>(), 3);
 			if(val > maxVal){
 				bestNode = v;
 				maxVal = val;
@@ -304,7 +304,8 @@ public class BuildRoad {
 	 * @param cnt - distance of neighbors that should be counted in
 	 * @return - the personal value of the given node
 	 */
-	private double nodePersonalValueForRoadRecursive(Vertex n, Set<Vertex> visitedNodes, int cnt){
+	// only public for testing!
+	public double nodePersonalValueForRoadRecursive(Vertex n, Set<Vertex> visitedNodes, int cnt){
 		// if we should not go further
 		if(cnt < 0 || visitedNodes.contains(n) || n.getBuilding() != null || countOutgoingRoadsFromNode(n) > 1)
 			return 0;
@@ -316,6 +317,7 @@ public class BuildRoad {
 		}
 		double ownPersVal = nodePersonalValueForRoadLocal(n);
 		// some magic formula, looks useable
+		// TODO optimize this shit
 		result +=  ownPersVal * ownPersVal * (cnt + 1) * (cnt + 1) * (cnt + 1) * 0.0156215;
 		//System.out.println("MagicRoadVal: " + result + " cnt: " + cnt);
 		for(Double val : persValues){
@@ -364,5 +366,44 @@ public class BuildRoad {
 				cnt++;
 		}
 		return cnt < 15;
+	}
+	//---------------------------------------------------------------------------------------------------------
+	// For testing purposes
+	//---------------------------------------------------------------------------------------------------------
+	public double edgeValueFirstTurn(Edge e){
+		Vertex node1 = e.getEnds().get(0);
+		Vertex node2 = e.getEnds().get(1);
+		if(node1.getBuilding() != null && node1.getBuilding().getOwner().equals(aiPlayer) && countOutgoingRoadsFromNode(node1) == 0){
+			return nodePersonalValueForRoadRecursive(node1, new HashSet<Vertex>(), 3);
+		} else if(node2.getBuilding() != null && node2.getBuilding().getOwner().equals(aiPlayer) && countOutgoingRoadsFromNode(node2) == 0){
+			return nodePersonalValueForRoadRecursive(node2, new HashSet<Vertex>(), 3);
+		}
+		return 0;
+	}
+	public double edgeValue(Edge e){
+		Vertex node1 = e.getEnds().get(0);
+		Vertex node2 = e.getEnds().get(1);
+		if(aiPlayer.getRoadsFromNode(node1).isEmpty()){
+			// if we haven't reached node1
+			return nodePersonalValueForRoad(node1, node2);
+		} else if(aiPlayer.getRoadsFromNode(node2).isEmpty()){
+			// if we haven't reached node2
+			return nodePersonalValueForRoad(node2, node1);
+		} else {
+			// if we reached both ends, the only good possibility
+			// is when our max road will be bigger than before
+			// TODO to check if we will have a longer max road
+			if(!isVertexReachable(node1, node2)){
+				int max1 = GameForTest.maxRoadLengthFromNode(aiPlayer, node1);
+				int max2 = GameForTest.maxRoadLengthFromNode(aiPlayer, node2);
+				int max = GameForTest.maxRoadLength();
+				int aiMax = GameForTest.maxRoadLength(aiPlayer);
+				// TODO optimize, other values
+				if(aiMax < max && max1 + max2 + 1 > max){
+					return 8;
+				}
+			}
+			return 0;
+		}
 	}
 }
