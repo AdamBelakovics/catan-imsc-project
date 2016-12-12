@@ -17,6 +17,7 @@ public class DevCardShop {
 	
 	
 	static public void initializeShop(){
+		devCardList.clear();
 		for(int i = 0; i < 14; i++){
 			devCardList.add(new KnightCard());
 		}

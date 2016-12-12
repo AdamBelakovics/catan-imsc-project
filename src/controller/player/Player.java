@@ -39,7 +39,7 @@ public class Player {
 	int activeKnights;
 	Table table;
 	boolean biggestArmy = false;
-	boolean longestRoad = false;
+	public boolean longestRoad = false;
 	
 	// the player is stupid when he/she/it may build circuit with roads
 	// this is for testing, to optimize max road length calculation
@@ -414,6 +414,7 @@ public class Player {
 		calculateMaxRoad();
 		
 		int max = GameForTest.maxRoadLength();
+		GameForTest.longestRoadKing = null;
 		Player roadKing = null;
 		boolean lawfulKing = true;
 		for(Player player : Game.players){
@@ -425,17 +426,20 @@ public class Player {
 					// nem fog idekerulni sose
 				}
 			}
-			
+		}
+		for(Player player : Game.players){
 			if(GameForTest.maxRoadLength(player) == max){
-				roadKing = player;
-				if(roadKing != null)
+				if(roadKing != null){
 					lawfulKing = false;
+				}
+				roadKing = player;
 			}
 		}
 		// if only one player has longest road
 		if(lawfulKing){
-			roadKing.incPoints(2);
+			GameForTest.longestRoadKing = roadKing;
 			roadKing.longestRoad = true;
+			roadKing.incPoints(2);
 		}
 	}
 	
@@ -444,24 +448,25 @@ public class Player {
 		Vertex v2 = newEdge.getEnds().get(1);
 		int max1 = GameForTest.maxRoadLengthFromNode(this, v1);
 		int max2 = GameForTest.maxRoadLengthFromNode(this, v2);
-		int max = GameForTest.maxRoadLength(this);
+		int ourMax = GameForTest.maxRoadLength(this);
 		if(max1 > -1 && max2 > -1){
 			updateLongestRoad();
 			return;
 		} else if(max1 > -1){
-			if(max1 == max){
+			if(max1 == ourMax){
 				updateLongestRoad();
 				return;
 			}
 			GameForTest.updateMaxRoadLengthForNode(this, v2, max1 + 1);
 		} else {
-			if(max2 == max){
+			if(max2 == ourMax){
 				updateLongestRoad();
 				return;
 			}
 			GameForTest.updateMaxRoadLengthForNode(this, v1, max2 + 1);
 		}
 		Player roadKing = null;
+		GameForTest.longestRoadKing = null;
 		boolean lawfulKing = true;
 		for(Player player : Game.players){
 			if(player.longestRoad){
@@ -472,16 +477,19 @@ public class Player {
 					// nem fog idekerulni sose
 				}
 			}
-			
+		}
+		int max = GameForTest.maxRoadLength();
+		for(Player player : Game.players){
 			if(GameForTest.maxRoadLength(player) == max){
-				roadKing = player;
 				if(roadKing != null)
 					lawfulKing = false;
+				roadKing = player;
 			}
 		}
 		if(lawfulKing){
-			roadKing.incPoints(2);
+			GameForTest.longestRoadKing = roadKing;
 			roadKing.longestRoad = true;
+			roadKing.incPoints(2);
 		}
 		cleverUpdateCount++;
 	}
@@ -837,7 +845,7 @@ public class Player {
 	 * It's added to the devCards List.
 	 * @throws NotEnoughResourcesException if Player don't have enough resources to buy DevCard
 	 */
-	public void buyDevCard() throws NotEnoughResourcesException {
+	public boolean buyDevCard(){
 		//System.out.println("Hello from buyDev");
 		Resource w = Resource.Wool;
 		Resource o = Resource.Ore;
@@ -851,9 +859,10 @@ public class Player {
 			} catch (OutOfRangeException e1) {
 				e1.printStackTrace();
 			}
-			
-				devCards.add(DevCardShop.buyDevCard());
+			devCards.add(DevCardShop.buyDevCard());
+			return true;
 		}
+		return false;
 	}
 	
 	/**
