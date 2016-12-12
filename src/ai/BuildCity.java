@@ -29,7 +29,7 @@ public class BuildCity {
 	
 	// for testing, collects statistics of build value
 	public static double minValue = Double.MAX_VALUE;
-	public static double maxValue = Double.MIN_VALUE;
+	public static double maxValue = - Double.MAX_VALUE;
 	public static double sumValue = 0;
 	public static int cnt = 0;
 	

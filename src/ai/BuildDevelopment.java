@@ -39,9 +39,29 @@ public class BuildDevelopment {
 	
 	// for testing, collects statistics of build value
 	public static double minValue = Double.MAX_VALUE;
-	public static double maxValue = Double.MIN_VALUE;
+	public static double maxValue = - Double.MAX_VALUE;
 	public static double sumValue = 0;
 	public static int cnt = 0;
+	
+	public static double minValueKnight = Double.MAX_VALUE;
+	public static double maxValueKnight = - Double.MAX_VALUE;
+	public static double sumValueKnight = 0;
+	public static int cntKnight = 0;
+	
+	public static double minValueTwoRoad = Double.MAX_VALUE;
+	public static double maxValueTwoRoad = - Double.MAX_VALUE;
+	public static double sumValueTwoRoad = 0;
+	public static int cntTwoRoad = 0;
+	
+	public static double minValueMonopoly = Double.MAX_VALUE;
+	public static double maxValueMonopoly = - Double.MAX_VALUE;
+	public static double sumValueMonopoly = 0;
+	public static int cntMonopoly = 0;
+	
+	public static double minValueInvention = Double.MAX_VALUE;
+	public static double maxValueInvention = - Double.MAX_VALUE;
+	public static double sumValueInvention = 0;
+	public static int cntInvention = 0;
 	
 	/**
 	 * Constructor
@@ -133,13 +153,24 @@ public class BuildDevelopment {
 	 */
 	private double calculateTwoRoadValue(){
 		BuildRoad r = new BuildRoad(map, owner, aiPlayer, otherPlayers);
+		r.refresh();
 		int dif = r.calculateMaxRoadDifference();
 		int difVal = 1;
 		if(dif < 2 && dif >= -2)
 			difVal = 5;
 		else if(dif < -2)
 			difVal = 3;
-		return r.getBuildValue() + difVal;
+		double result = r.getBuildValue() + difVal;
+		// for testing, collects statistics of build value
+		if(result > 0){
+			sumValueTwoRoad += result;
+			cntTwoRoad++;
+			if(result > maxValueTwoRoad)
+				maxValueTwoRoad = result;
+			if(result < minValueTwoRoad)
+				minValueTwoRoad = result;
+		}
+		return result;
 	}
 	
 	/**
@@ -157,19 +188,31 @@ public class BuildDevelopment {
 	 * @author Gergely Olah
 	 */
 	private double calculateInventionValue(){
-		double minResourceFrequency = -1;
 		Map<Resource, Material> res = owner.getResources();
+		double minResourceFrequency = res.get(Resource.Brick).personalFrequency();
 		for(Map.Entry<Resource, Material> it : res.entrySet()){
 			double currentFrequency = it.getValue().personalFrequency();
-			if(minResourceFrequency == -1 || currentFrequency < minResourceFrequency){
+			if(!it.getKey().equals(Resource.Desert) && currentFrequency < minResourceFrequency){
 				minResourceFrequency = currentFrequency;
 			}
 		}
+		double result = 0;
 		// the return value is between 0 and 10
 		if(minResourceFrequency > 0.025)
-			return 0.3 / minResourceFrequency;
+			result = Math.max(3, 0.25 / minResourceFrequency);
 		else
-			return 0;
+			result = 8;
+		
+		// for testing, collects statistics of build value
+		if(result > 0){
+			sumValueInvention += result;
+			cntInvention++;
+			if(result > maxValueInvention)
+				maxValueInvention = result;
+			if(result < minValueInvention)
+				minValueInvention = result;
+		}
+		return result;
 	}
 	
 	/**
@@ -181,19 +224,26 @@ public class BuildDevelopment {
 		double maxMaterialValue = 0;
 		Map<Resource, Material> res = owner.getResources();
 		for(Map.Entry<Resource, Material> it : res.entrySet()){
-			double currentValue;
+			double currentValue = 0;
 			// handling division by zero
 			try{
 				if(it.getValue().personalFrequency() > 0.025)
 					currentValue = 0.001 * it.getValue().personalValue() * it.getValue().globalFrequency() / it.getValue().personalFrequency();
-				else
-					currentValue = 0;
 			} catch(IllegalArgumentException e){
 				currentValue = 0;
 			}
 			if(maxMaterialValue < currentValue){
 				maxMaterialValue = currentValue;
 			}
+		}
+		// for testing, collects statistics of build value
+		if(maxMaterialValue > 0){
+			sumValueMonopoly += maxMaterialValue;
+			cntMonopoly++;
+			if(maxMaterialValue > maxValueMonopoly)
+				maxValueMonopoly = maxMaterialValue;
+			if(maxMaterialValue < minValueMonopoly)
+				minValueMonopoly = maxMaterialValue;
 		}
 		return maxMaterialValue;
 	}
@@ -217,7 +267,17 @@ public class BuildDevelopment {
 			difVal = 2;
 		// TODO getRobbedSum() in AiController, not very important
 		//return Math.max(robbed * difVal + owner.getRobbedSum() + 2.5, 10);
-		return robbed * difVal + 2.5;
+		double result = robbed * difVal + 2.5;
+		// for testing, collects statistics of build value
+		if(result > 0){
+			sumValueKnight += result;
+			cntKnight++;
+			if(result > maxValueKnight)
+				maxValueKnight = result;
+			if(result < minValueKnight)
+				minValueKnight = result;
+		}
+		return result;
 	}
 	
 	/**

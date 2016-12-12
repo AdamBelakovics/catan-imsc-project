@@ -58,7 +58,7 @@ public class TestMain {
 		paramSets.add(paramSet3);
 		paramSets.add(paramSet4);
 		// turns, players count, random, is there a stupid player, paramsets
-		run(200, 4, true, false, paramSets);
+		run(100, 4, true, false, paramSets);
 		//printStatus();
 		System.out.println("Clever: " + Player.cleverUpdateCount + "\tstupid:" + Player.stupidUpdateCount);
 	}
@@ -208,7 +208,7 @@ public class TestMain {
 						pc.turn();
 					}
 					if(tmpTurns == 20){
-						GameForTest.drawMap();
+						//GameForTest.drawMap();
 					}
 					if(tmpTurns > 100){
 						Renderer rend = new Renderer(new UIController(new Player("", -1, board)), board, 1280, 700);
@@ -269,6 +269,10 @@ public class TestMain {
 		System.out.println("BuildVillage\tmin: " + BuildVillage.minValue + "\tmax: " + BuildVillage.maxValue + "\tavg: " + BuildVillage.sumValue / BuildVillage.cnt);
 		System.out.println("BuildCity\tmin: " + BuildCity.minValue + "\tmax: " + BuildCity.maxValue + "\tavg: " + BuildCity.sumValue / BuildCity.cnt);
 		System.out.println("BuildDev\tmin: " + BuildDevelopment.minValue + "\tmax: " + BuildDevelopment.maxValue + "\tavg: " + BuildDevelopment.sumValue / BuildDevelopment.cnt);
+		System.out.println("Knight\tmin: " + BuildDevelopment.minValueKnight + "\tmax: " + BuildDevelopment.maxValueKnight + "\tavg: " + BuildDevelopment.sumValueKnight / BuildDevelopment.cntKnight);
+		System.out.println("Monopoly\tmin: " + BuildDevelopment.minValueMonopoly + "\tmax: " + BuildDevelopment.maxValueMonopoly + "\tavg: " + BuildDevelopment.sumValueMonopoly / BuildDevelopment.cntMonopoly);
+		System.out.println("Invention\tmin: " + BuildDevelopment.minValueInvention + "\tmax: " + BuildDevelopment.maxValueInvention + "\tavg: " + BuildDevelopment.sumValueInvention / BuildDevelopment.cntInvention);
+		System.out.println("TwoRoad\tmin: " + BuildDevelopment.minValueTwoRoad + "\tmax: " + BuildDevelopment.maxValueTwoRoad + "\tavg: " + BuildDevelopment.sumValueTwoRoad / BuildDevelopment.cntTwoRoad);
 		System.out.println("Material\tmin: " + Material.minValue + "\tmax: " + Material.maxValue + "\tavg: " + Material.sumValue / Material.cnt);
 		System.out.println("Node value\tmin: " + AiController.minValueNode + "\tmax: " + AiController.maxValueNode + "\tavg: " + AiController.sumValueNode / AiController.cntNode);
 		System.out.println("Territory\tmin: " + AiController.minValueTerr + "\tmax: " + AiController.maxValueTerr + "\tavg: " + AiController.sumValueTerr / AiController.cntTerr);

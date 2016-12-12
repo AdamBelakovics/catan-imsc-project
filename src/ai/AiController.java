@@ -51,11 +51,11 @@ public class AiController extends PlayerController {
 	private int turnCount;
 	
 	public static double minValueNode = Double.MAX_VALUE;
-	public static double maxValueNode = Double.MIN_VALUE;
+	public static double maxValueNode = - Double.MAX_VALUE;
 	public static double sumValueNode = 0;
 	public static int cntNode = 0;
 	public static double minValueTerr = Double.MAX_VALUE;
-	public static double maxValueTerr = Double.MIN_VALUE;
+	public static double maxValueTerr = - Double.MAX_VALUE;
 	public static double sumValueTerr = 0;
 	public static int cntTerr = 0;
 

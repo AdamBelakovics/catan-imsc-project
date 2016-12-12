@@ -19,7 +19,7 @@ import controller.player.Settlement;
 public class Material {
 	// for testing, collects statistics of personal value
 	public static double minValue = Double.MAX_VALUE;
-	public static double maxValue = Double.MIN_VALUE;
+	public static double maxValue = - Double.MAX_VALUE;
 	public static double sumValue = 0;
 	public static int cnt = 0;
 	
@@ -144,15 +144,6 @@ public class Material {
 				}
 			}
 		}
-		// for testing
-		if(sum > 0){
-			sumValue += sum;
-			cnt++;
-			if(sum > maxValue)
-				maxValue = sum;
-			if(sum < minValue)
-				minValue = sum;
-		}
 		return sum;
 	}
 	
@@ -161,7 +152,17 @@ public class Material {
 	 * @return the value
 	 */
 	public double personalValue(){
-		return baseValue * factorByNumberInHandLUT(me.getResourceAmount(myresource)) + 2 * globalFrequency();
+		double result = baseValue * factorByNumberInHandLUT(me.getResourceAmount(myresource)) + 2 * globalFrequency();
+		// for testing
+		if(result > 0){
+			sumValue += result;
+			cnt++;
+			if(result > maxValue)
+				maxValue = result;
+			if(result < minValue)
+				minValue = result;
+		}
+		return result;
 	}
 	
 	/**
