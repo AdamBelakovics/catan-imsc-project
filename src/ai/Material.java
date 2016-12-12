@@ -17,7 +17,7 @@ import controller.player.Settlement;
  * Class for calculating values of materials in Catan, used by the AI player
  */
 public class Material {
-	
+	// for testing, collects statistics of personal value
 	public static double minValue = Double.MAX_VALUE;
 	public static double maxValue = Double.MIN_VALUE;
 	public static double sumValue = 0;

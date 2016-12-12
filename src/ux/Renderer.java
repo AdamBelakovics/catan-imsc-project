@@ -252,6 +252,7 @@ public class Renderer {
 				//System.out.println("[BoardRenderer]Rotated board to right");
 				boardPanel.hexRenderer.cycleOrientation(1);
 				break;
+			// for ai testing
 			case ' ':
 				GameForTest.nextPlayer = true;
 				break;

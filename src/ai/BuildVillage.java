@@ -27,6 +27,7 @@ public class BuildVillage {
 	private Player aiPlayer;
 	private ArrayList<Player> otherPlayers;
 	
+	// for testing, collects statistics of build value
 	public static double minValue = Double.MAX_VALUE;
 	public static double maxValue = Double.MIN_VALUE;
 	public static double sumValue = 0;
@@ -104,6 +105,7 @@ public class BuildVillage {
 				}
 			}
 		}
+		// for testing, collects statistics of build value
 		if(buildValue > 0){
 			sumValue += buildValue;
 			cnt++;

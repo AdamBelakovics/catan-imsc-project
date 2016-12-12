@@ -32,6 +32,7 @@ public class BuildRoad {
 	
 	private int difForTest;
 	
+	// for testing, collects statistics of build value
 	public static double minValue = Double.MAX_VALUE;
 	public static double maxValue = Double.MIN_VALUE;
 	public static double sumValue = 0;
@@ -86,7 +87,6 @@ public class BuildRoad {
 		buildValue = 0;
 		if(isRoadAvailable()){
 			double maxVal = -1;
-			double difVal = 1;
 			double val;
 			difForTest = calculateMaxRoadDifference();
 			for(Edge e : listValidEdges()){
@@ -131,6 +131,7 @@ public class BuildRoad {
 					}
 				}
 			}
+			// for testing, collects statistics of build value
 			buildValue = maxVal;
 			if(buildValue > 0){
 				sumValue += buildValue;
@@ -143,7 +144,7 @@ public class BuildRoad {
 		}
 	}
 	
-	private int calculateMaxRoadLength(){
+	/*private int calculateMaxRoadLength(){
 		int max = 0;
 		for(Player p : otherPlayers){
 			int tmp = GameForTest.maxRoadLength(p);
@@ -156,7 +157,7 @@ public class BuildRoad {
 		if(tmp > max)
 			max = tmp;
 		return max;
-	}
+	}*/
 	
 	/**
 	 * Decides whether the destination vertex is reachable

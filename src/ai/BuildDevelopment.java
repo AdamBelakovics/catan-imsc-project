@@ -37,6 +37,7 @@ public class BuildDevelopment {
 	private double pPlusPoint;
 	private double pTwoRoad;
 	
+	// for testing, collects statistics of build value
 	public static double minValue = Double.MAX_VALUE;
 	public static double maxValue = Double.MIN_VALUE;
 	public static double sumValue = 0;
@@ -62,9 +63,9 @@ public class BuildDevelopment {
 	}
 	/**
 	 * Calculates the combined values of all development
-	 * cards at the current state of the game. This does
-	 * not require a refresh function before unlike other
-	 * BuildXXX classes.
+	 * cards at the current state of the game. Refresh
+	 * should be called before, otherwise it may return
+	 * with an outdated value
 	 * @return - the value of a development card
 	 * @author Gergely Olah
 	 */
@@ -115,6 +116,7 @@ public class BuildDevelopment {
 				pMonopoly * calculateMonopolyValue() + 
 				pPlusPoint * calculatePlusPointValue() +
 				pTwoRoad * calculateTwoRoadValue();
+		// for testing, collects statistics of build value
 		if(buildValue > 0){
 			sumValue += buildValue;
 			cnt++;

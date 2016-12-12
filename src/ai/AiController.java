@@ -608,13 +608,6 @@ public class AiController extends PlayerController {
 			if(params.contains(AiParameter.Random)){
 				firstTurnRandom();
 			} else {
-				List<Double> Values=new ArrayList<Double>();
-				List<Vertex> settlementPlace=map.getNodes();
-				Vertex placeofSettlement=new Vertex(null);
-				List<Hex> sourceOfNewNumbers=new ArrayList<Hex>();
-				List<Edge> roadPlaces=new ArrayList<Edge>();
-				List<Vertex> settlementPlaceNN=new ArrayList<Vertex>();
-				List<Edge> edgesinNeighbour=new ArrayList<Edge>();
 				Vertex villageNode = buildVillage.getNodeFirstTurn();
 				me.firstBuild(Buildable.Settlement, villageNode);
 				Edge edgeRoad = buildRoad.getEdgeFirstTurn(villageNode);
@@ -702,8 +695,11 @@ public class AiController extends PlayerController {
 		}
 		return result;
 	}
-
-
+	
+	/**
+	 * The first turn method of the random ai. Builds a village
+	 * to a random node then builds a random road.
+	 */
 	private void firstTurnRandom(){
 		ArrayList<Vertex> nodes = new ArrayList<>(map.getNodes());
 		Collections.shuffle(nodes);
@@ -728,7 +724,15 @@ public class AiController extends PlayerController {
 			}
 		}
 	}
-
+	
+	/**
+	 * The turn method of the random ai. Plays all the devcards, 
+	 * then creates a build list in random order, and tries to buy
+	 * them in that order from hand. If successful, rebuilds the
+	 * list and starts again. When it can't buy any, tries the same
+	 * thing but with changing of resources.
+	 * @throws GameEndsException
+	 */
 	private void turnRandom() throws GameEndsException{
 		while(me.getDevCards().size() > 0){
 			me.playDev(me.getDevCards().get(0), null);

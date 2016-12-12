@@ -62,7 +62,9 @@ public class TestMain {
 		//printStatus();
 		System.out.println("Clever: " + Player.cleverUpdateCount + "\tstupid:" + Player.stupidUpdateCount);
 	}
-	
+	/**
+	 * This won't be needed, cooler features are about to release. ;)
+	 */
 	private static void printStatus(){
 		Table board = new Table();
 		MapXMLParser.readCatanMap(new File(System.getProperty("user.dir") + System.getProperty("file.separator") + "catan_base_map.xml"), board);
@@ -126,7 +128,15 @@ public class TestMain {
 		
 		Renderer rend = new Renderer(new UIController(new Player("", -1, board)), board, 1280, 700);
 	}
-	
+	/**
+	 * Ais play a number of games in a row. Some statistics
+	 * are printed to console after the games.
+	 * @param turns - number of games the ais play
+	 * @param playerCnt - number of ais
+	 * @param random - if random, the ais play each game in randomized order
+	 * @param isStupid - must be true only if any of the ais is random
+	 * @param paramSets - list of the ais' parameter sets, size must be same as playerCnt
+	 */
 	private static void run(int turns, int playerCnt, boolean random, boolean isStupid, ArrayList<HashSet<AiParameter>> paramSets){
 		GregorianCalendar startTime = new GregorianCalendar();
 		
