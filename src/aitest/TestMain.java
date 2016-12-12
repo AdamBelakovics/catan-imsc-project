@@ -13,6 +13,11 @@ import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
 import ai.AiController;
+import ai.BuildCity;
+import ai.BuildDevelopment;
+import ai.BuildRoad;
+import ai.BuildVillage;
+import ai.Material;
 import controller.Game;
 import controller.map.Hex;
 import controller.map.MapXMLParser;
@@ -22,13 +27,38 @@ import controller.player.OutOfRangeException;
 import controller.player.Player;
 import controller.player.PlayerController;
 import controller.player.Resource;
+import controller.player.devcards.DevCard;
 import controller.player.devcards.DevCardShop;
+import controller.player.devcards.KnightCard;
+import controller.player.devcards.VictoryPointCard;
 import ux.Renderer;
 import ux.ui.UIController;
 
-public class TestController {
+public class TestMain {
 	public static void main(String[] args) throws InterruptedException, OutOfRangeException{
-		run(1000);
+		ArrayList<HashSet<AiParameter>> paramSets = new ArrayList<>();
+		HashSet<AiParameter> paramSet1 = new HashSet<>();
+		//paramSet1.add(AiParameter.NewRes);
+		paramSet1.add(AiParameter.Port);
+		paramSet1.add(AiParameter.Orain);
+		HashSet<AiParameter> paramSet2 = new HashSet<>();
+		paramSet2.add(AiParameter.NewRes);
+		paramSet2.add(AiParameter.Port);
+		paramSet2.add(AiParameter.Orain);
+		HashSet<AiParameter> paramSet3 = new HashSet<>();
+		//paramSet3.add(AiParameter.NewRes);
+		paramSet3.add(AiParameter.Port);
+		paramSet3.add(AiParameter.Lumbrick);
+		HashSet<AiParameter> paramSet4 = new HashSet<>();
+		paramSet4.add(AiParameter.NewRes);
+		paramSet4.add(AiParameter.Port);
+		paramSet4.add(AiParameter.Lumbrick);
+		paramSets.add(paramSet1);
+		paramSets.add(paramSet2);
+		paramSets.add(paramSet3);
+		paramSets.add(paramSet4);
+		// turns, players count, random, is there a stupid player, paramsets
+		run(200, 4, true, false, paramSets);
 		//printStatus();
 		System.out.println("Clever: " + Player.cleverUpdateCount + "\tstupid:" + Player.stupidUpdateCount);
 	}
@@ -97,84 +127,60 @@ public class TestController {
 		Renderer rend = new Renderer(new UIController(new Player("", -1, board)), board, 1280, 700);
 	}
 	
-	private static void run(int turns){
+	private static void run(int turns, int playerCnt, boolean random, boolean isStupid, ArrayList<HashSet<AiParameter>> paramSets){
 		GregorianCalendar startTime = new GregorianCalendar();
 		
-		int ai1Wins = 0;
-		int ai2Wins = 0;
-		int ai3Wins = 0;
-		int ai4Wins = 0;
-		int ai1Points = 0;
-		int ai2Points = 0;
-		int ai3Points = 0;
-		int ai4Points = 0;
+		ArrayList<Integer> aiWins = new ArrayList<>();
+		ArrayList<Integer> aiPoints = new ArrayList<>();
+		ArrayList<Integer> aiGameTurns = new ArrayList<>();
+		ArrayList<Integer> aiMinTurns = new ArrayList<>();
+		ArrayList<Integer> aiMaxTurns = new ArrayList<>();
+		
+		for(int i = 0; i < playerCnt; i++){
+			aiWins.add(0);
+			aiPoints.add(0);
+			aiGameTurns.add(0);
+			aiMinTurns.add(Integer.MAX_VALUE);
+			aiMaxTurns.add(Integer.MIN_VALUE);
+		}
+		
 		int gameTurns = 0;
-		int ai1GameTurns = 0;
-		int ai2GameTurns = 0;
-		int ai3GameTurns = 0;
-		int ai4GameTurns = 0;
-		int ai1MinTurns = 1000;
-		int ai2MinTurns = 1000;
-		int ai3MinTurns = 1000;
-		int ai4MinTurns = 1000;
-		int ai1MaxTurns = 0;
-		int ai2MaxTurns = 0;
-		int ai3MaxTurns = 0;
-		int ai4MaxTurns = 0;
 		int hibak = 0;
 		
-		HashSet<AiParameter> paramSet1 = new HashSet<AiParameter>();
-		paramSet1.add(AiParameter.NewRes);
-		HashSet<AiParameter> paramSet2 = new HashSet<AiParameter>();
-		paramSet2.add(AiParameter.Port);
-		HashSet<AiParameter> paramSet3 = new HashSet<AiParameter>();
-		paramSet3.add(AiParameter.NewRes);
-		paramSet3.add(AiParameter.Port);
-		HashSet<AiParameter> paramSet4 = new HashSet<AiParameter>();
+		Table board = null;
+		
+		ArrayList<Player> playerList = new ArrayList<Player>();
+		ArrayList<PlayerController> pclist = new ArrayList<PlayerController>();
 
 		for(int j = 0; j < turns; j++){
 			System.out.println(j);
-			Table board = new Table();
+			board = new Table();
 			MapXMLParser.readCatanMap(new File(System.getProperty("user.dir") + System.getProperty("file.separator") + "catan_base_map.xml"), board);
 			
-			Player AI01 = new Player("AI01", 01, board);
-			Player AI02 = new Player("AI02", 02, board);
-			Player AI03 = new Player("AI03", 03, board);
-			Player AI04 = new Player("AI04", 04, board);
+			playerList.clear();
+			pclist.clear();
+			for(int i = 0; i < playerCnt; i++) {
+				Player p = new Player("AI0" + (i + 1), (i + 1), board);
+				playerList.add(p);
+				p.setStupidity(isStupid);
+			}
 			
-			ArrayList<Player> playerList = new ArrayList<Player>();
-			playerList.add(AI01);
-			playerList.add(AI02);
-			playerList.add(AI03);
-			playerList.add(AI04);
+			ArrayList<AiController> ais = new ArrayList<>();
 			
-			AI01.setStupidity(false);
-			AI02.setStupidity(false);
-			AI03.setStupidity(false);
-			AI04.setStupidity(false);
+			for(int i = 0; i < playerCnt; i++) {
+				AiController ai = new AiController(board, playerList.get(i), playerList, paramSets.get(i));
+				pclist.add(ai);
+				ais.add(ai);
+				playerList.get(i).setPlayerController(ai);
+			}
 			
 			Game.initializeGame(board, playerList);
 			DevCardShop.initializeShop();
 			
-			AiController AICONT01 = new AiController(board, AI01, playerList, paramSet1);
-			AiController AICONT02 = new AiController(board, AI02, playerList, paramSet2);
-			AiController AICONT03 = new AiController(board, AI03, playerList, paramSet3);
-			AiController AICONT04 = new AiController(board, AI04, playerList, paramSet4);
+			GameForTest.initialize(playerList, ais, board);
 			
-			ArrayList<PlayerController> pclist = new ArrayList<PlayerController>();
-			pclist.add(AICONT01);
-			pclist.add(AICONT02);
-			pclist.add(AICONT03);
-			pclist.add(AICONT04);
-			
-			AI01.setPlayerController(AICONT01);
-			AI02.setPlayerController(AICONT02);
-			AI03.setPlayerController(AICONT03);
-			AI04.setPlayerController(AICONT04);
-			
-			GameForTest.initialize(playerList, board);
-			
-			Collections.shuffle(pclist);
+			if(random)
+				Collections.shuffle(pclist);
 			
 			for(int i = 0; i < pclist.size(); i++){
 				pclist.get(i).firstturn();
@@ -191,67 +197,76 @@ public class TestController {
 					for(PlayerController pc : pclist){
 						pc.turn();
 					}
+					if(tmpTurns == 20){
+						GameForTest.drawMap();
+					}
+					if(tmpTurns > 100){
+						Renderer rend = new Renderer(new UIController(new Player("", -1, board)), board, 1280, 700);
+						break;
+					}
+					//System.out.println("Turn " + tmpTurns);
 					tmpTurns++;
 				}
 			} catch (GameEndsException e) {
-				ai1Points += AI01.getPoints();
-				ai2Points += AI02.getPoints();
-				ai3Points += AI03.getPoints();
-				ai4Points += AI04.getPoints();
 				gameTurns += tmpTurns;
-				if(AI01.getPoints() >= 10){
-					ai1Wins++;
-					ai1GameTurns += tmpTurns;
-					if(tmpTurns > ai1MaxTurns)
-						ai1MaxTurns = tmpTurns;
-					if(tmpTurns < ai1MinTurns)
-						ai1MinTurns = tmpTurns;
-				} else if(AI02.getPoints() >= 10){
-					ai2Wins++;
-					ai2GameTurns += tmpTurns;
-					if(tmpTurns > ai2MaxTurns)
-						ai2MaxTurns = tmpTurns;
-					if(tmpTurns < ai2MinTurns)
-						ai2MinTurns = tmpTurns;
-				} else if(AI03.getPoints() >= 10){
-					ai3Wins++;
-					ai3GameTurns += tmpTurns;
-					if(tmpTurns > ai3MaxTurns)
-						ai3MaxTurns = tmpTurns;
-					if(tmpTurns < ai3MinTurns)
-						ai3MinTurns = tmpTurns;
-				} else if(AI04.getPoints() >= 10){
-					ai4Wins++;
-					ai4GameTurns += tmpTurns;
-					if(tmpTurns > ai4MaxTurns)
-						ai4MaxTurns = tmpTurns;
-					if(tmpTurns < ai4MinTurns)
-						ai4MinTurns = tmpTurns;
-				} else {
-					hibak++;
+				for(int i = 0; i < playerCnt; i++){
+					int currentPoint = playerList.get(i).getPoints();
+					aiPoints.set(i, aiPoints.get(i) + currentPoint);
+					if(currentPoint >= 10){
+						aiWins.set(i, aiWins.get(i) + 1);
+						aiGameTurns.set(i, aiGameTurns.get(i) + tmpTurns);
+						if(aiMaxTurns.get(i) < tmpTurns){
+							aiMaxTurns.set(i, tmpTurns);
+						}
+						if(aiMinTurns.get(i) > tmpTurns){
+							aiMinTurns.set(i, tmpTurns);
+						}
+						if(currentPoint > 10)
+							hibak++;
+					}
 				}
-				
-				if(AI01.getPoints() > 10)
-					hibak++;
-				if(AI02.getPoints() > 10)
-					hibak++;
-				if(AI03.getPoints() > 10)
-					hibak++;
-				if(AI04.getPoints() > 10)
-					hibak++;
 			}	
+		}
+		if(turns == 1){
+			ArrayList<Integer> vicPts = new ArrayList<>();
+			ArrayList<Integer> knights = new ArrayList<>();
+			for (int i = 0; i < playerCnt; i++) {
+				vicPts.add(0);
+				knights.add(0);
+			}
+			for(int i = 0; i < playerCnt; i++){
+				for(DevCard card : playerList.get(i).getPlayedDevelopmentCards()){
+					if(card.getClass().equals(VictoryPointCard.class))
+						vicPts.set(i, vicPts.get(i) + 1);
+					else if(card.getClass().equals(KnightCard.class))
+						knights.set(i, knights.get(i) + 1);
+				}
+			}
+			
+			Renderer rend = new Renderer(new UIController(new Player("", -1, board)), board, 1280, 700);
+			System.out.println("Max road: " + GameForTest.maxRoadLength() + " " + GameForTest.longestRoadKing);
+			for(int i = 0; i  < playerCnt; i++){
+				System.out.println(playerList.get(i) + " road: " + GameForTest.maxRoadLength(playerList.get(i)) + " " + playerList.get(i).longestRoad + "\tVicPt: " + vicPts.get(i) + "\tknights: " + knights.get(i) + " " + playerList.get(i).isBiggestArmy());
+			}
 		}
 		GregorianCalendar endTime = new GregorianCalendar();
 		System.out.println("");
-		if(ai1Wins > 0)
-			System.out.println("AI01 wins: " + ai1Wins + "\tmin: " + ai1MinTurns + "\t\tmax: " + ai1MaxTurns + "\t\tavg: " + ai1GameTurns / ai1Wins + "\t\tpoints / turns: " + (double)(ai1Points) / (double)(gameTurns) + "\t" + paramSet1.toString());
-		if(ai2Wins > 0)
-			System.out.println("AI02 wins: " + ai2Wins + "\tmin: " + ai2MinTurns + "\t\tmax: " + ai2MaxTurns + "\t\tavg: " + ai2GameTurns / ai2Wins + "\t\tpoints / turns: " + (double)(ai2Points) / (double)(gameTurns) + "\t" + paramSet2.toString());
-		if(ai3Wins > 0)
-			System.out.println("AI03 wins: " + ai3Wins + "\tmin: " + ai3MinTurns + "\t\tmax: " + ai3MaxTurns + "\t\tavg: " + ai3GameTurns / ai3Wins + "\t\tpoints / turns: " + (double)(ai3Points) / (double)(gameTurns) + "\t" + paramSet3.toString());
-		if(ai4Wins > 0)
-			System.out.println("AI04 wins: " + ai4Wins + "\tmin: " + ai4MinTurns + "\t\tmax: " + ai4MaxTurns + "\t\tavg: " + ai4GameTurns / ai4Wins + "\t\tpoints / turns: " + (double)(ai4Points) / (double)(gameTurns) + "\t" + paramSet4.toString());
-		System.out.println("\nHibak: " + hibak);
+		for(int i = 0; i < playerCnt; i++){
+			if(aiWins.get(i) > 0)
+				System.out.println(playerList.get(i) + " wins: " + aiWins.get(i) + " (" + (int)((aiWins.get(i) / (double)turns) * 100) + "%)" + "\tmin: " + aiMinTurns.get(i) + "\t\tmax: " + aiMaxTurns.get(i) + "\t\tavg: " + aiGameTurns.get(i) / aiWins.get(i) + "\t\tpoints / turns: " + (double)(aiPoints.get(i)) / (double)(gameTurns) + "\t" + paramSets.get(i).toString());
+		}
+		System.out.println("\nBuildRoad\tmin: " + BuildRoad.minValue + "\tmax: " + BuildRoad.maxValue + "\tavg: " + BuildRoad.sumValue / BuildRoad.cnt);
+		System.out.println("BuildVillage\tmin: " + BuildVillage.minValue + "\tmax: " + BuildVillage.maxValue + "\tavg: " + BuildVillage.sumValue / BuildVillage.cnt);
+		System.out.println("BuildCity\tmin: " + BuildCity.minValue + "\tmax: " + BuildCity.maxValue + "\tavg: " + BuildCity.sumValue / BuildCity.cnt);
+		System.out.println("BuildDev\tmin: " + BuildDevelopment.minValue + "\tmax: " + BuildDevelopment.maxValue + "\tavg: " + BuildDevelopment.sumValue / BuildDevelopment.cnt);
+		System.out.println("Material\tmin: " + Material.minValue + "\tmax: " + Material.maxValue + "\tavg: " + Material.sumValue / Material.cnt);
+		System.out.println("Node value\tmin: " + AiController.minValueNode + "\tmax: " + AiController.maxValueNode + "\tavg: " + AiController.sumValueNode / AiController.cntNode);
+		System.out.println("Territory\tmin: " + AiController.minValueTerr + "\tmax: " + AiController.maxValueTerr + "\tavg: " + AiController.sumValueTerr / AiController.cntTerr);
+//		System.out.println("\nHibak: " + hibak);
+//		System.out.println("SumRoad: " + BuildRoad.sumValue);
+//		System.out.println("SumVillage: " + BuildVillage.sumValue);
+//		System.out.println("SumCity: " + BuildCity.sumValue);
+//		System.out.println("SumDevelopment: " + BuildDevelopment.sumValue);
 		long difTime = endTime.getTimeInMillis() - startTime.getTimeInMillis();
 		int hour = (int)TimeUnit.MILLISECONDS.toHours(difTime);
 		int min = (int)TimeUnit.MILLISECONDS.toMinutes(difTime);

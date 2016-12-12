@@ -1,5 +1,5 @@
 package aitest;
 
 public enum AiParameter {
-	Port, Random, NewRes, PrintStatus;
+	Port, Random, NewRes, PrintStatus, Lumbrick, Orain;
 }
