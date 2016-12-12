@@ -1,14 +1,26 @@
 package aitest;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
+
+import ai.AiController;
 import controller.map.Edge;
 import controller.map.Table;
+import controller.map.TableElement;
 import controller.map.Vertex;
+import controller.player.Building;
+import controller.player.City;
 import controller.player.Player;
+import controller.player.Road;
+import controller.player.Settlement;
+import ux.Renderer;
+import ux.ui.InterfaceColorProfile;
+import ux.ui.UIController;
 /**
  * The class stores data used by the ai to access them easily
  * and without having to recalculate them. Data is stored as
@@ -23,8 +35,16 @@ public class GameForTest {
 	private static HashMap<Player, HashSet<Vertex>> villages;
 	private static HashMap<Player, Integer> maxRoadLengths;
 	private static HashMap<Player, HashMap<Vertex, Integer>> maxRoadLengthsFromNode;
+	private static Table board;
 	
-	public static void initialize(ArrayList<Player> players, Table t){
+	private static ArrayList<AiController> aclist;
+	
+	public static boolean nextPlayer = true;
+	public static Player longestRoadKing = null;
+	
+	public static void initialize(ArrayList<Player> players, ArrayList<AiController> acs, Table t){
+		aclist = acs;
+		board = t;
 		reachedNodes = new HashMap<Player, HashSet<Vertex>>();
 		villages = new HashMap<Player, HashSet<Vertex>>();
 		maxRoadLengths = new HashMap<Player, Integer>();
@@ -106,5 +126,72 @@ public class GameForTest {
 		if(!maxRoadLengthsFromNode.get(p).containsKey(v))
 			return -1;
 		return maxRoadLengthsFromNode.get(p).get(v);
+	}
+	
+	public static void drawMap(Building lastBuild, TableElement where){
+		// TODO jo lesz ez, refresh-t kell optimalizálni
+		Renderer rend = new Renderer(new UIController(new Player("", -1, board)), board, 1280, 700);
+		//System.out.println(lastBuild.getClass() + " " + where);
+		while(true){
+			try {
+				Thread.sleep(500);
+				where.setBuilding(null);
+				Thread.sleep(500);
+				where.setBuilding(lastBuild);
+			} catch (InterruptedException e) {
+
+			}
+		}
+	}
+	
+	public static void drawMap(){
+		// TODO
+		Renderer rend = new Renderer(new UIController(new Player("", -1, board)), board, 1280, 700);
+		AiController ai = null;
+		Vertex nodeCity = null;
+		Vertex nodeVillage = null;
+		Edge edgeRoad = null;
+		City city = null;
+		Settlement villageBefore = null;
+		Settlement village = null;
+		Road road = null;
+		int index = -1;
+		while(true){
+			if(nextPlayer){
+				nextPlayer = false;
+				index = (index + 1) % aclist.size();
+				ai = aclist.get(index);
+				ai.buildCity.refresh();
+				ai.buildVillage.refresh();
+				ai.buildRoad.refresh();
+				nodeCity = ai.buildCity.getNode();
+				nodeVillage = ai.buildVillage.getNode();
+				edgeRoad = ai.buildRoad.getEdge();
+				city = new City(ai.me);
+				villageBefore = null;
+				if(nodeCity != null)
+					villageBefore = (Settlement)nodeCity.getBuilding();
+				village = new Settlement(ai.me);
+				road = new Road(ai.me);
+			}
+			try {
+				Thread.sleep(500);
+				if(nodeCity != null)
+					nodeCity.setBuilding(city);
+				if(nodeVillage != null)
+					nodeVillage.setBuilding(village);
+				if(edgeRoad != null)
+				edgeRoad.setBuilding(road);
+				Thread.sleep(500);
+				if(nodeCity != null)
+					nodeCity.setBuilding(villageBefore);
+				if(nodeVillage != null)
+					nodeVillage.setBuilding(null);
+				if(edgeRoad != null)
+					edgeRoad.setBuilding(null);
+			} catch (InterruptedException e) {
+
+			}
+		}
 	}
 }

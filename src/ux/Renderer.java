@@ -26,6 +26,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
+import aitest.GameForTest;
 import controller.Game;
 import controller.map.*;
 import controller.player.*;
@@ -250,6 +251,9 @@ public class Renderer {
 			case 'E':
 				//System.out.println("[BoardRenderer]Rotated board to right");
 				boardPanel.hexRenderer.cycleOrientation(1);
+				break;
+			case ' ':
+				GameForTest.nextPlayer = true;
 				break;
 			}
 		}
