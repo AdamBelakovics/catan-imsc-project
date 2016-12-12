@@ -1,5 +1,8 @@
 package ai;
 
+import java.util.HashSet;
+
+import aitest.AiParameter;
 import controller.map.Hex;
 import controller.map.Table;
 import controller.map.Vertex;
@@ -14,6 +17,11 @@ import controller.player.Settlement;
  * Class for calculating values of materials in Catan, used by the AI player
  */
 public class Material {
+	
+	public static double minValue = Double.MAX_VALUE;
+	public static double maxValue = Double.MIN_VALUE;
+	public static double sumValue = 0;
+	public static int cnt = 0;
 	
 	/**
 	 * the resource type this material represents
@@ -47,7 +55,7 @@ public class Material {
 	 * @param p - me
 	 * @param r - myresource
 	 */
-	public Material(Table t, Player p, Resource r){
+	public Material(Table t, Player p, Resource r, HashSet<AiParameter> params){
 		
 		me = p;
 		board = t;
@@ -58,19 +66,44 @@ public class Material {
 		 */
 		switch (myresource) {
 		case Brick:
-			baseValue = 5;
+			if(params.contains(AiParameter.Lumbrick))
+				baseValue = 7;
+			else if(params.contains(AiParameter.Orain))
+				baseValue = 2;
+			else 
+				baseValue = 5;
 			break;
 		case Lumber:
-			baseValue = 5;
+			if(params.contains(AiParameter.Lumbrick))
+				baseValue = 8;
+			else if(params.contains(AiParameter.Orain))
+				baseValue = 3;
+			else 
+				baseValue = 5;
 			break;
 		case Ore:
-			baseValue = 5;
+			if(params.contains(AiParameter.Lumbrick))
+				baseValue = 2;
+			else if(params.contains(AiParameter.Orain))
+				baseValue = 8;
+			else 
+				baseValue = 5;
 			break;
 		case Grain:
-			baseValue = 5;
+			if(params.contains(AiParameter.Lumbrick))
+				baseValue = 3;
+			else if(params.contains(AiParameter.Orain))
+				baseValue = 7;
+			else 
+				baseValue = 5;
 			break;
 		case Wool:
-			baseValue = 5;
+			if(params.contains(AiParameter.Lumbrick))
+				baseValue = 3;
+			else if(params.contains(AiParameter.Orain))
+				baseValue = 6;
+			else 
+				baseValue = 5;
 			break;
 		case Desert:
 			baseValue = 0;
@@ -110,6 +143,15 @@ public class Material {
 					}
 				}
 			}
+		}
+		// for testing
+		if(sum > 0){
+			sumValue += sum;
+			cnt++;
+			if(sum > maxValue)
+				maxValue = sum;
+			if(sum < minValue)
+				minValue = sum;
 		}
 		return sum;
 	}

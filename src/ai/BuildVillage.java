@@ -27,7 +27,10 @@ public class BuildVillage {
 	private Player aiPlayer;
 	private ArrayList<Player> otherPlayers;
 	
-	
+	public static double minValue = Double.MAX_VALUE;
+	public static double maxValue = Double.MIN_VALUE;
+	public static double sumValue = 0;
+	public static int cnt = 0;
 	
 	/**
 	 * Constructor. Initializes attributes.
@@ -50,9 +53,7 @@ public class BuildVillage {
 	 * @author Gergely Olah
 	 */
 	public double getBuildValue(){
-		refresh();
-		if(node==null)
-			buildValue=0;
+		//refresh();
 		return buildValue;
 	}
 	
@@ -62,7 +63,7 @@ public class BuildVillage {
 	 * @author Gergely Olah
 	 */
 	public Vertex getNode(){
-		refresh();
+		//refresh();
 		//System.out.println("Village value: " + buildValue);
 		return node;
 	}
@@ -90,7 +91,7 @@ public class BuildVillage {
 	 * up to date values. 
 	 * @author Gergely Olah
 	 */
-	private void refresh(){
+	public void refresh(){
 		buildValue = 0;
 		node = null;
 		if(isVillageAvailable()){
@@ -102,6 +103,14 @@ public class BuildVillage {
 					node = n;
 				}
 			}
+		}
+		if(buildValue > 0){
+			sumValue += buildValue;
+			cnt++;
+			if(buildValue > maxValue)
+				maxValue = buildValue;
+			if(buildValue < minValue)
+				minValue = buildValue;
 		}
 	}
 	

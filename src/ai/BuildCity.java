@@ -27,6 +27,11 @@ public class BuildCity {
 	private Player aiPlayer;
 	private ArrayList<Player> otherPlayers;
 	
+	public static double minValue = Double.MAX_VALUE;
+	public static double maxValue = Double.MIN_VALUE;
+	public static double sumValue = 0;
+	public static int cnt = 0;
+	
 	/**
 	 * Constructor. Initializes attributes.
 	 * @param map - the table
@@ -50,7 +55,7 @@ public class BuildCity {
 	 * @author Gergely Olah
 	 */
 	public double getBuildValue(){
-		refresh();
+		//refresh();
 		return buildValue;
 	}
 	
@@ -62,7 +67,7 @@ public class BuildCity {
 	 * @author Gergely Olah
 	 */
 	public Vertex getNode(){
-		refresh();
+		//refresh();
 		//System.out.println("City value: " + buildValue);
 		return node;
 	}
@@ -73,7 +78,7 @@ public class BuildCity {
 	 * up to date values. 
 	 * @author Gergely Olah
 	 */
-	private void refresh(){
+	public void refresh(){
 		buildValue = 0;
 		node = null;
 		if(isCityAvailable()){
@@ -86,6 +91,14 @@ public class BuildCity {
 					node = n;
 				}
 			}
+		}
+		if(buildValue > 0){
+			sumValue += buildValue;
+			cnt++;
+			if(buildValue > maxValue)
+				maxValue = buildValue;
+			if(buildValue < minValue)
+				minValue = buildValue;
 		}
 	}
 	/**

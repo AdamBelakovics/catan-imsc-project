@@ -32,6 +32,11 @@ public class BuildRoad {
 	
 	private int difForTest;
 	
+	public static double minValue = Double.MAX_VALUE;
+	public static double maxValue = Double.MIN_VALUE;
+	public static double sumValue = 0;
+	public static int cnt = 0;
+	
 	/**
 	 * Constructor. Initializes attributes.
 	 * @param map - the table
@@ -55,7 +60,7 @@ public class BuildRoad {
 	 * @author Gergely Olah
 	 */
 	public double getBuildValue(){
-		refresh();
+		//refresh();
 		return buildValue;
 	}
 	
@@ -65,7 +70,7 @@ public class BuildRoad {
 	 * @author Gergely Olah
 	 */
 	public Edge getEdge(){
-		refresh();
+		//refresh();
 		//System.out.println("Road value: " + buildValue);
 		return edge;
 	}
@@ -76,7 +81,7 @@ public class BuildRoad {
 	 * up to date values. 
 	 * @author Gergely Olah
 	 */
-	private void refresh(){
+	public void refresh(){
 		edge = null;
 		buildValue = 0;
 		if(isRoadAvailable()){
@@ -127,6 +132,14 @@ public class BuildRoad {
 				}
 			}
 			buildValue = maxVal;
+			if(buildValue > 0){
+				sumValue += buildValue;
+				cnt++;
+				if(buildValue > maxValue)
+					maxValue = buildValue;
+				if(buildValue < minValue)
+					minValue = buildValue;
+			}
 		}
 	}
 	
@@ -222,10 +235,12 @@ public class BuildRoad {
 	public int calculateMaxRoadDifference(){
 		int maxRoadVal = 0;
 		for(Player player : otherPlayers){
-			int playersMax = GameForTest.maxRoadLength(player);
-			//int playersMax = player.calculateMaxRoad();
-			if(playersMax > maxRoadVal)
-				maxRoadVal = playersMax;
+			if(!player.equals(aiPlayer)){
+				int playersMax = GameForTest.maxRoadLength(player);
+				//int playersMax = player.calculateMaxRoad();
+				if(playersMax > maxRoadVal)
+					maxRoadVal = playersMax;
+			}
 		}
 		int AIMaxVal = GameForTest.maxRoadLength(aiPlayer);
 		//int AIMaxVal = aiPlayer.calculateMaxRoad();

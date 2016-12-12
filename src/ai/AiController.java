@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import aitest.AiParameter;
+import aitest.GameForTest;
 import controller.map.Buildable;
 import controller.map.Edge;
 import controller.map.Hex;
@@ -29,24 +30,34 @@ import controller.player.devcards.YearOfPlentyCard;
 
 public class AiController extends PlayerController {
 
-	private Player me;
+	public Player me;
 	ArrayList<Player> players = new ArrayList<Player>();
 	private Table map;
 	private int robberSum;
 
-	private BuildCity buildCity;
-	private BuildVillage buildVillage;
-	private BuildRoad buildRoad;
-	private BuildDevelopment buildDevelopment;
+	public BuildCity buildCity;
+	public BuildVillage buildVillage;
+	public BuildRoad buildRoad;
+	public BuildDevelopment buildDevelopment;
 
 	private Set<Integer> numbers = new HashSet<Integer>();
 	private Map<Resource, Material> resources = new HashMap<Resource, Material>();
 	private Map<Resource, Integer> rAmount = new HashMap<Resource, Integer>();
 	private Map<Resource, Integer> rLut = new HashMap<Resource, Integer>();
 
+	// for testing
 	private HashSet<AiParameter> params;
 	private boolean isFirstTurn;
 	private int turnCount;
+	
+	public static double minValueNode = Double.MAX_VALUE;
+	public static double maxValueNode = Double.MIN_VALUE;
+	public static double sumValueNode = 0;
+	public static int cntNode = 0;
+	public static double minValueTerr = Double.MAX_VALUE;
+	public static double maxValueTerr = Double.MIN_VALUE;
+	public static double sumValueTerr = 0;
+	public static int cntTerr = 0;
 
 	/**
 	 * Constructor. Initializes attributes.
@@ -61,7 +72,7 @@ public class AiController extends PlayerController {
 		players.addAll(otherPlayers);
 		robberSum = 0;
 		for(Resource r:Resource.values())
-			resources.put(r,new Material(map,me,r));
+			resources.put(r,new Material(map,me,r, prms));
 		// these should be here, so they don't initialize with null pointers
 		buildCity = new BuildCity(t, this, p, otherPlayers);
 		buildVillage = new BuildVillage(t, this, p, otherPlayers);
@@ -142,7 +153,7 @@ public class AiController extends PlayerController {
 	}
 
 	/**
-	 * turn. The main calculator of future planes, and the center of control.
+	 * turn. The main calculator of future planes, and the center of control. (Avagy egy fasza repter :D)
 	 * @author Hollo-Szabo Akos
 	 */
 	public void turn() throws GameEndsException{
@@ -191,16 +202,21 @@ public class AiController extends PlayerController {
 					}
 				}
 			}
-
+			//System.out.println("Development ciklus ended");
 
 			boolean buildSuccesful = true;
 			while(buildSuccesful){
+				//System.out.println("Build ciklus");
 				buildSuccesful = false;
 				ArrayList<Buildable> choices = new ArrayList<Buildable>();
 				choices.add(Buildable.Settlement);
 				choices.add(Buildable.Road);
 				choices.add(Buildable.City);
 				choices.add(Buildable.Development);
+				buildCity.refresh();
+				buildVillage.refresh();
+				buildRoad.refresh();
+				buildDevelopment.refresh();
 				choices.sort(new BuildableComparator(map, me, this, players));
 				for(Buildable b : choices){
 					if(b.equals(Buildable.City)){
@@ -227,6 +243,9 @@ public class AiController extends PlayerController {
 						if(buildRoad.getEdge() != null){
 							if(me.build(b, buildRoad.getEdge())){
 								buildSuccesful = true;
+								if(buildRoad.getBuildValue() > 30){
+									//GameForTest.drawMap(buildRoad.getEdge().getBuilding(), buildRoad.getEdge());
+								}
 								break;
 							} else {
 								buildSuccesful = false;
@@ -237,14 +256,9 @@ public class AiController extends PlayerController {
 						if(me.getResourceAmount(Resource.Grain) >= 1 &&
 								me.getResourceAmount(Resource.Wool) >= 1 &&
 								me.getResourceAmount(Resource.Ore) >= 1){
-							if(buildDevelopment.getBuildValue() > 0){
-								try {
-									me.buyDevCard();
-									buildSuccesful = true;
-									//System.out.println("Successful development");
-								} catch (NotEnoughResourcesException e) {
-									buildSuccesful = false;
-								}
+							if(buildDevelopment.getBuildValue() > 0 && me.buyDevCard()){
+								buildSuccesful = true;
+								//System.out.println("Successful development");
 							} else {
 								//System.out.println("Nulla az erteke a fejlesztesnek");
 								buildSuccesful = false;
@@ -326,14 +340,9 @@ public class AiController extends PlayerController {
 						if(me.getResourceAmount(Resource.Grain) >= 1 &&
 								me.getResourceAmount(Resource.Wool) >= 1 &&
 								me.getResourceAmount(Resource.Ore) >= 1){
-							if(buildDevelopment.getBuildValue() > 0){
-								try {
-									me.buyDevCard();
-									buildSuccesful = true;
-									//System.out.println("Successful development");
-								} catch (NotEnoughResourcesException e) {
-									buildSuccesful = false;
-								}
+							if(buildDevelopment.getBuildValue() > 0 && me.buyDevCard()){
+								buildSuccesful = true;
+								//System.out.println("Successful development");
 							} else {
 								buildSuccesful = false;
 							}
@@ -343,6 +352,7 @@ public class AiController extends PlayerController {
 					}
 				}
 			}
+			//System.out.println("Build ciklus ended");
 		}
 	}
 
@@ -631,10 +641,19 @@ public class AiController extends PlayerController {
 		for(Hex x : terrytories){
 			sum += territoryPersonalValue(x);
 		}
+		if(sum > 0){
+			sumValueNode += sum;
+			cntNode++;
+			if(sum > maxValueNode)
+				maxValueNode = sum;
+			if(sum < minValueNode)
+				minValueNode = sum;
+		}
 		return sum;
 	}
 
 	public double territoryPersonalValue(Hex h){
+		double buildValue = 0;
 		ArrayList<Hex> valid = map.getValidFields();
 		if((h.getProsperity() > 0 || h.getPort() != null)){					
 			if(h.getPort() == null){
@@ -646,20 +665,28 @@ public class AiController extends PlayerController {
 				if(params.contains(AiParameter.NewRes) && this.resources.get(h.getResource()).personalFrequency() < (1.0 / 36.0)){
 					resourceValue = 2.5;
 				}
-				return 0.3 * Material.frequencyLUT(h.getProsperity()) * resources.get(h.getResource()).personalValue() * numberValue * resourceValue;
+				buildValue = 0.3 * Material.frequencyLUT(h.getProsperity()) * resources.get(h.getResource()).personalValue() * numberValue * resourceValue;
 			}
 			else if(!isFirstTurn && params.contains(AiParameter.Port)) {
 				// ha kikoto
 				if(h.getPort().getRes() == null){
-					return threeToOnePortPersonalValue();
+					buildValue = threeToOnePortPersonalValue();
 				} else{
 					if(me.getChangeLUT(h.getPort().getRes()) > h.getPort().getChangeNumber()){
-						return 0.1 * resources.get(h.getPort().getRes()).personalValue() * resources.get(h.getPort().getRes()).personalFrequency();
+						buildValue = 0.1 * resources.get(h.getPort().getRes()).personalValue() * resources.get(h.getPort().getRes()).personalFrequency();
 					}
 				}
 			}
 		}
-		return 0;
+		if(buildValue > 0){
+			sumValueTerr += buildValue;
+			cntTerr++;
+			if(buildValue > maxValueTerr)
+				maxValueTerr = buildValue;
+			if(buildValue < minValueTerr)
+				minValueTerr = buildValue;
+		}
+		return buildValue;
 	}
 
 	/**
@@ -748,11 +775,9 @@ public class AiController extends PlayerController {
 					if(me.getResourceAmount(Resource.Grain) >= 1 &&
 							me.getResourceAmount(Resource.Wool) >= 1 &&
 							me.getResourceAmount(Resource.Ore) >= 1){
-						try {
-							me.buyDevCard();
+						if(me.buyDevCard()){
 							buildSuccessful = true;
 							//System.out.println("Successful development");
-						} catch (NotEnoughResourcesException e) {
 						}
 					}
 				}
@@ -817,11 +842,9 @@ public class AiController extends PlayerController {
 					if(me.getResourceAmount(Resource.Grain) >= 1 &&
 							me.getResourceAmount(Resource.Wool) >= 1 &&
 							me.getResourceAmount(Resource.Ore) >= 1){
-						try {
-							me.buyDevCard();
+						if(me.buyDevCard()) {							
 							buildSuccessful = true;
 							//System.out.println("Successful development");
-						} catch (NotEnoughResourcesException e) {
 						}
 					}
 				}

@@ -27,7 +27,7 @@ import controller.player.Resource;
 public class BuildDevelopment {
 	private Table map;
 	private AiController owner;
-	private int player;
+	private double buildValue;
 	private Player aiPlayer;
 	private ArrayList<Player> otherPlayers;
 	
@@ -36,6 +36,11 @@ public class BuildDevelopment {
 	private double pKnight;
 	private double pPlusPoint;
 	private double pTwoRoad;
+	
+	public static double minValue = Double.MAX_VALUE;
+	public static double maxValue = Double.MIN_VALUE;
+	public static double sumValue = 0;
+	public static int cnt = 0;
 	
 	/**
 	 * Constructor
@@ -48,6 +53,7 @@ public class BuildDevelopment {
 		this.owner = owner;
 		this.aiPlayer = aiPlayer;
 		this.otherPlayers = otherPlayers;
+		buildValue = 0;
 		pMonopoly = 0.08;
 		pInvention = 0.08;
 		pKnight = 0.56;
@@ -63,27 +69,60 @@ public class BuildDevelopment {
 	 * @author Gergely Olah
 	 */
 	public double getBuildValue(){
-		calculateProbabilities();
-		/*double inv = calculateInventionValue();
+		return buildValue;
+		//refresh();
+		/*calculateProbabilities();
+		double inv = calculateInventionValue();
 		double kni = calculateKnightValue();
 		double mon = calculateMonopolyValue();
 		double pls = calculatePlusPointValue();
 		double two = calculateTwoRoadValue();
-		System.out.println("-");
+		/*System.out.println("-");
 		System.out.println("Invention value: " + inv + ", prob: " + pInvention);
 		System.out.println("Knight value: " + kni + ", prob: " + pKnight);
 		System.out.println("Monopoly value: " + mon + ", prob: " + pMonopoly);
 		System.out.println("PlusPoint value: " + pls + ", prob: " + pPlusPoint);
-		System.out.println("TwoRoad value: " + two + ", prob: " + pTwoRoad);*/
-		double result =
+		System.out.println("TwoRoad value: " + two + ", prob: " + pTwoRoad);
+		double buildValue =
 				pInvention * calculateInventionValue() + 
 				pKnight * calculateKnightValue() + 
 				pMonopoly * calculateMonopolyValue() + 
 				pPlusPoint * calculatePlusPointValue() +
 				pTwoRoad * calculateTwoRoadValue();
-		//System.out.println("Development value: " + result);
+		//System.out.println("Development value: " + buildValue);
 		//System.out.println("-");
-		return result;
+			sumValue += buildValue;
+			cnt++;
+			if(buildValue > maxValue){
+				maxValue = buildValue;
+				/*System.out.println("-");
+				System.out.println("Invention value: " + inv + ", prob: " + pInvention);
+				System.out.println("Knight value: " + kni + ", prob: " + pKnight);
+				System.out.println("Monopoly value: " + mon + ", prob: " + pMonopoly);
+				System.out.println("PlusPoint value: " + pls + ", prob: " + pPlusPoint);
+				System.out.println("TwoRoad value: " + two + ", prob: " + pTwoRoad);
+				System.out.println("Development value: " + buildValue);
+			}
+			if(buildValue < minValue)
+				minValue = buildValue;
+		return buildValue;*/
+	}
+	public void refresh(){
+		calculateProbabilities();
+		buildValue =
+				pInvention * calculateInventionValue() + 
+				pKnight * calculateKnightValue() + 
+				pMonopoly * calculateMonopolyValue() + 
+				pPlusPoint * calculatePlusPointValue() +
+				pTwoRoad * calculateTwoRoadValue();
+		if(buildValue > 0){
+			sumValue += buildValue;
+			cnt++;
+			if(buildValue > maxValue)
+				maxValue = buildValue;
+			if(buildValue < minValue)
+				minValue = buildValue;
+		}
 	}
 	/**
 	 * Calculates the value of getting a single two-road development card.
@@ -125,8 +164,8 @@ public class BuildDevelopment {
 			}
 		}
 		// the return value is between 0 and 10
-		if(minResourceFrequency > 0)
-			return 10.0 / minResourceFrequency;
+		if(minResourceFrequency > 0.025)
+			return 0.3 / minResourceFrequency;
 		else
 			return 0;
 	}
@@ -143,8 +182,8 @@ public class BuildDevelopment {
 			double currentValue;
 			// handling division by zero
 			try{
-				if(it.getValue().personalFrequency() > 0)
-					currentValue = 0.1 * it.getValue().personalValue() * it.getValue().globalFrequency() / it.getValue().personalFrequency();
+				if(it.getValue().personalFrequency() > 0.025)
+					currentValue = 0.001 * it.getValue().personalValue() * it.getValue().globalFrequency() / it.getValue().personalFrequency();
 				else
 					currentValue = 0;
 			} catch(IllegalArgumentException e){
@@ -217,7 +256,7 @@ public class BuildDevelopment {
 				}
 			}
 		}
-		if(aiPlayer.getPlayedDevelopmentCards() != null){
+		/*if(aiPlayer.getPlayedDevelopmentCards() != null){
 			// counting how many cards we (ai) played
 			for(DevCard dc : aiPlayer.getPlayedDevelopmentCards()){
 				if(dc.getClass().equals(KnightCard.class)){
@@ -233,11 +272,31 @@ public class BuildDevelopment {
 				}
 				allCnt++;
 			}
-		}
+		}*/
+		int monopolyCntCheat = 0;
+		int inventionCntCheat = 0;
+		int knightCntCheat = 0;
+		int plusPointCntCheat = 0;
+		int twoRoadCntCheat = 0;
+		int allCntCheat = 0;
 		for(Player player : otherPlayers){
-			allCnt += player.getDevCards().size();
+			for(DevCard dc : player.getDevCards()){
+				if(dc.getClass().equals(KnightCard.class)){
+					knightCntCheat++;
+				} else if(dc.getClass().equals(MonopolyCard.class)){
+					monopolyCntCheat++;
+				} else if(dc.getClass().equals(RoadBuildingCard.class)){
+					twoRoadCntCheat++;
+				} else if(dc.getClass().equals(VictoryPointCard.class)){
+					plusPointCntCheat++;
+				} else {
+					inventionCntCheat++;
+				}
+				allCnt++;
+				allCntCheat++;
+			}
 		}
-		allCnt += aiPlayer.getDevCards().size();
+		//allCnt += aiPlayer.getDevCards().size();
 		
 		if(allCnt == 25){
 			pKnight = 0;
@@ -248,11 +307,23 @@ public class BuildDevelopment {
 		}
 		// to avoid divide by zero
 		else if(allCnt > 0){
-			pKnight = (14 - knightCnt) / (25.0 - allCnt);
-			pInvention = (2 - inventionCnt) / (25.0 - allCnt);
-			pMonopoly = (2 - monopolyCnt) / (25.0 - allCnt);
-			pTwoRoad = (2 - twoRoadCnt) / (25.0 - allCnt);
-			pPlusPoint = (5 - plusPointCnt) / (25.0 - allCnt);
+			pKnight = Math.max(14 - knightCnt - knightCntCheat, 0) / (25.0 - allCnt);
+			pInvention = Math.max(2 - inventionCnt - inventionCntCheat, 0) / (25.0 - allCnt);
+			pMonopoly = Math.max(2 - monopolyCnt - monopolyCntCheat, 0) / (25.0 - allCnt);
+			pTwoRoad = Math.max(2 - twoRoadCnt - twoRoadCntCheat, 0) / (25.0 - allCnt);
+			pPlusPoint = Math.max(5 - plusPointCnt - plusPointCntCheat, 0) / (25.0 - allCnt);
+		}
+		
+		if(allCnt > 25 || pKnight > 1 || pMonopoly > 1 || pInvention > 1 || pPlusPoint > 1 || pTwoRoad > 1){
+			System.out.println("");
+			System.out.println("pKnight: " + pKnight + "\t" + "pMonopoly: " + pMonopoly + "\t" + "pInvention: " + pInvention + "\t" + "pPlusPoint: " + pPlusPoint + "\t" + "pTwoRoad: " + pTwoRoad);
+			System.out.println("allCnt: " + allCnt + "\t" + "knightCnt: " + knightCnt + "\t" + "inventionCnt: " + inventionCnt + "\t" + "monopolyCnt: " + monopolyCnt + "\t" + "twoRoadCnt: " + twoRoadCnt + "\t" + "plusPointCnt: " + plusPointCnt);
+			System.out.println("allCntCheat: " + allCntCheat + "\t" + "knightCntCheat: " + knightCntCheat + "\t" + "inventionCntCheat: " + inventionCntCheat + "\t" + "monopolyCntCheat: " + monopolyCntCheat + "\t" + "twoRoadCntCheat: " + twoRoadCntCheat + "\t" + "plusPointCntCheat: " + plusPointCntCheat);
+			for(Player player : otherPlayers){
+				System.out.println("Devcards: " + player.getDevCards().size());
+				System.out.println("Played devcards: " + player.getPlayedDevelopmentCards().size());
+			}
+			System.out.println("");
 		}
 	}
 }
