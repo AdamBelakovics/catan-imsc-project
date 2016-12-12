@@ -14,9 +14,7 @@ public class DevButton extends Button {
 	@Override
 	public void press() {
 		System.out.println("Pressed devbutton");
-		try {
-			ds.currUIC.controlledPlayer.buyDevCard();
-		} catch (NotEnoughResourcesException e) {}
+		ds.currUIC.controlledPlayer.buyDevCard();
 	}
 
 }

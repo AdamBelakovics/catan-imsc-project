@@ -21,7 +21,7 @@ public class InterfaceColorProfile {
 	//public static Color player3Color=new Color(Integer.decode("0x2B4970"));
 	//public static Color player4Color=new Color(Integer.decode("0x2D882D"));
 	
-	public static Color player1Color=new Color(100, 255, 0);
+	public static Color player1Color=new Color(255, 200, 0);
 	public static Color player2Color=new Color(255, 100, 0);
 	public static Color player3Color=new Color(0, 100, 255);
 	public static Color player4Color=new Color(255, 0, 100);

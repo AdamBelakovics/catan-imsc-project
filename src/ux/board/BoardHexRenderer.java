@@ -185,12 +185,8 @@ public class BoardHexRenderer extends ImageRenderer {
 	}
 	
 	private void paintPorts() {
-		hexCanvas.setColor(Color.BLACK);
-		/*for (Map.Entry<Vertex,Hex> entry : hvMap.entrySet()) {
-			
-			Point p=ds.vertexMap.get(entry.getKey());
-			hexCanvas.fillOval(p.x, p.y, 8, 8);
-		}*/
+		/*hexCanvas.setColor(Color.BLACK);
+		
 		final int step=15;
 		final int dec=10;
 		hexCanvas.setStroke(new BasicStroke((float) 3.0));
@@ -204,25 +200,7 @@ public class BoardHexRenderer extends ImageRenderer {
 			int pointAy=pointA.y;
 			int pointBx=pointB.x;
 			int pointBy=pointB.y;
-			/*int dist=(int)Math.floor((Math.sqrt(pointAx*pointAx+pointBx*pointBx)));
-			
-			pointAx=pointAx+(pointBx-pointAx)*dec/dist;
-			pointAy=pointAy+(pointBy-pointAy)*dec/dist;
-			pointBx=pointBx+(pointAx-pointBx)*dec/dist;
-			pointBy=pointBy+(pointAy-pointBy)*dec/dist;
 
-			
-			
-			int pointHx=ds.hexMap.get(e.getValue()).x;
-			int pointHy=ds.hexMap.get(e.getValue()).y;
-			
-			for (int i=1;i<=step;i++) {
-				hexCanvas.setColor(new Color(portC.getRed(), portC.getGreen(), portC.getBlue(), 200/i));
-				hexCanvas.drawLine(
-						pointAx+(pointHx-pointAx)*i/(step*3), 
-						pointAy+(pointHy-pointAy)*i/(step*3), 
-						pointBx+(pointHx-pointBx)*i/(step*3), 
-						pointBy+(pointHy-pointBy)*i/(step*3));*/
 			hexCanvas.setColor(portC);
 			hexCanvas.drawLine(
 					pointAx, 
@@ -230,7 +208,15 @@ public class BoardHexRenderer extends ImageRenderer {
 					pointBx, 
 					pointBy);
 						
-			}
+			}*/
+		
+		for (Map.Entry<Edge, Hex> e :portMap.entrySet()) {
+			Port p=e.getValue().getPort();
+			HexPoly hp = ds.hexMap.get(e.getValue());
+			Color portC=p.getRes()==null?Color.white:ds.colorMap.get(p.getRes());
+			hexCanvas.setColor(portC);
+			hexCanvas.fillOval((int)Math.floor(hp.x)-20, (int)Math.floor(hp.y)-20, 40, 40);
+		}
 			
 		}
 	
