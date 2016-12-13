@@ -6,5 +6,6 @@ public enum AiParameter {
 	NewRes,		// the ai will value territories with new resource or new numbers more
 	PrintStatus,// the ai prints its status to the console, this feature will be replaced with a much cooler one
 	Lumbrick,	// materials' base values will initialize to value lumber and brick the most. See ai/material for details
-	Orain;		// materials' base values will initialize to value ore and grain the most. See ai/material for details
+	Orain,		// materials' base values will initialize to value ore and grain the most. See ai/material for details
+	Interactive;// used for interactive gameplay to follow the ai through a game
 }

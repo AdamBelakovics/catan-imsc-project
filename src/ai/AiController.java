@@ -10,6 +10,7 @@ import java.util.Set;
 
 import aitest.AiParameter;
 import aitest.GameForTest;
+import aitest.GameVisualizer;
 import controller.map.Buildable;
 import controller.map.Edge;
 import controller.map.Hex;
@@ -49,6 +50,7 @@ public class AiController extends PlayerController {
 	private HashSet<AiParameter> params;
 	private boolean isFirstTurn;
 	private int turnCount;
+	public Vertex firstBuildVertex;
 	
 	public static double minValueNode = Double.MAX_VALUE;
 	public static double maxValueNode = - Double.MAX_VALUE;
@@ -82,6 +84,7 @@ public class AiController extends PlayerController {
 		params = prms;
 		isFirstTurn = true;
 		turnCount = 0;
+		firstBuildVertex = null;
 	}
 
 	/**
@@ -206,6 +209,8 @@ public class AiController extends PlayerController {
 
 			boolean buildSuccesful = true;
 			while(buildSuccesful){
+				if(params.contains(AiParameter.Interactive))
+					GameVisualizer.drawNextChoice(this);
 				//System.out.println("Build ciklus");
 				buildSuccesful = false;
 				ArrayList<Buildable> choices = new ArrayList<Buildable>();
@@ -608,10 +613,16 @@ public class AiController extends PlayerController {
 			if(params.contains(AiParameter.Random)){
 				firstTurnRandom();
 			} else {
+				if(params.contains(AiParameter.Interactive))
+					GameVisualizer.drawNextChoice(this);
 				Vertex villageNode = buildVillage.getNodeFirstTurn();
 				me.firstBuild(Buildable.Settlement, villageNode);
+				firstBuildVertex = villageNode;
+				if(params.contains(AiParameter.Interactive))
+					GameVisualizer.drawNextChoice(this);
 				Edge edgeRoad = buildRoad.getEdgeFirstTurn(villageNode);
 				me.firstBuild(Buildable.Road, edgeRoad);
+				firstBuildVertex = null;
 				turnCount++;
 				if(turnCount == 2)
 					isFirstTurn = false;

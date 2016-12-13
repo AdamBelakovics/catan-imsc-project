@@ -27,6 +27,7 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import aitest.GameForTest;
+import aitest.GameVisualizer;
 import controller.Game;
 import controller.map.*;
 import controller.player.*;
@@ -140,79 +141,88 @@ public class Renderer {
 			// for quick access
 			RendererDataStore ds=dataStore;
 			try {
-			// Selecting board elements
-			Hex selectedHex=boardPanel.hexRenderer.getHexUnderCursor(ev.getX(), ev.getY());
-			if (selectedHex!=null) {
-				boardPanel.resetBoardSelection();
-				hudPanel.resetInterfaceSelection();
-				boardPanel.hexRenderer.selectHex(selectedHex);
-				hudPanel.interfaceRenderer.setActiveHex(selectedHex);
-			}
-			
-			Vertex selectedVertex=boardPanel.vertexRenderer.getVertexUnderCursor(ev.getX(), ev.getY());
-			if (selectedVertex!=null) {
-				if (ds.currentlyBuilding!=null) {
-					if (ds.currUIC.firstturnactive && ds.currUIC.state==FirstTurnState.STARTED && ds.currUIC.controlledPlayer.isFirstBuildPossible(Buildable.Settlement, selectedVertex)) {
-						
+				// Selecting board elements
+				Hex selectedHex=boardPanel.hexRenderer.getHexUnderCursor(ev.getX(), ev.getY());
+				if (selectedHex!=null) {
+					boardPanel.resetBoardSelection();
+					hudPanel.resetInterfaceSelection();
+					boardPanel.hexRenderer.selectHex(selectedHex);
+					hudPanel.interfaceRenderer.setActiveHex(selectedHex);
+				}
+
+				Vertex selectedVertex=boardPanel.vertexRenderer.getVertexUnderCursor(ev.getX(), ev.getY());
+				if (selectedVertex!=null) {
+					if (ds.currentlyBuilding!=null) {
+						if (ds.currUIC.firstturnactive && ds.currUIC.state==FirstTurnState.STARTED && ds.currUIC.controlledPlayer.isFirstBuildPossible(Buildable.Settlement, selectedVertex)) {
+
 							ds.currUIC.state=FirstTurnState.CITYBUILT;
 							ds.currUIC.controlledPlayer.firstBuild(Buildable.Settlement, selectedVertex);
-							
-					} else if (ds.currUIC.active) {
-						switch (ds.currentlyBuilding) {
-						case Settlement:
-							if (ds.currUIC.controlledPlayer.isBuildPossible(Buildable.Settlement, selectedVertex))
-								ds.currUIC.controlledPlayer.build(Buildable.Settlement, selectedVertex);
-							break;
-						case City:
-							if (ds.currUIC.controlledPlayer.isBuildPossible(Buildable.City, selectedVertex))
-								ds.currUIC.controlledPlayer.build(Buildable.City, selectedVertex);
-							break;		
-						default:
-							break;
+
+						} else if (ds.currUIC.active) {
+							switch (ds.currentlyBuilding) {
+							case Settlement:
+								if (ds.currUIC.controlledPlayer.isBuildPossible(Buildable.Settlement, selectedVertex))
+									ds.currUIC.controlledPlayer.build(Buildable.Settlement, selectedVertex);
+								break;
+							case City:
+								if (ds.currUIC.controlledPlayer.isBuildPossible(Buildable.City, selectedVertex))
+									ds.currUIC.controlledPlayer.build(Buildable.City, selectedVertex);
+								break;		
+							default:
+								break;
+							}
+
 						}
-						
 					}
 				}
-			}
-			Edge selectedEdge=boardPanel.edgeRenderer.getEdgeUnderCursor(ev.getX(), ev.getY());
-			System.out.println(selectedEdge);
-			if (selectedEdge!=null && ds.currentlyBuilding==Buildable.Road) {
+				Edge selectedEdge=boardPanel.edgeRenderer.getEdgeUnderCursor(ev.getX(), ev.getY());
+				//System.out.println(selectedEdge);
+				if (selectedEdge!=null && ds.currentlyBuilding==Buildable.Road) {
 					if (ds.currUIC.firstturnactive && ds.currUIC.state==FirstTurnState.CITYBUILT &&
 							ds.currUIC.controlledPlayer.isFirstBuildPossible(Buildable.Road, selectedEdge)) {
-						
-							ds.currUIC.state=FirstTurnState.ROADBUILT;
-							ds.currUIC.controlledPlayer.firstBuild(Buildable.Road, selectedEdge);
-						
+
+						ds.currUIC.state=FirstTurnState.ROADBUILT;
+						ds.currUIC.controlledPlayer.firstBuild(Buildable.Road, selectedEdge);
+
 					}
 					else if (ds.currUIC.active && ds.currUIC.controlledPlayer.isBuildPossible(Buildable.Road, selectedEdge))
 						ds.currUIC.controlledPlayer.build(Buildable.Road, selectedEdge);
-			}
-			 
-			
-			// Player activity check
-			if (!ds.currUIC.active && !ds.currUIC.firstturnactive) return;
-			
-			
-			// Selecting interface elements
-			Button selectedButton=hudPanel.interfaceRenderer.getButtonUnderCursor(ev.getX(), ev.getY());
-			if (selectedButton!=null) {
-				boardPanel.resetBoardSelection();
-				hudPanel.resetInterfaceSelection();
-				hudPanel.pressButton(selectedButton);
-				if (selectedButton instanceof BuildButton && selectedButton.isSelected())
-					ds.currentlyBuilding=((BuildButton)selectedButton).building;
-			}
-			
-			DevCard selectedCard=hudPanel.cardRenderer.getDevCardUnderCursor(ev.getX(), ev.getY());
-			if (selectedCard!=null && selectedCard!=hudPanel.cardRenderer.getSelectedDevCard()) {
-				boardPanel.resetBoardSelection();
-				hudPanel.resetInterfaceSelection();
-				
-				hudPanel.cardRenderer.selectDevCard(selectedCard);
-			} else if (ds.currUIC.active && selectedCard!=null && selectedCard==hudPanel.cardRenderer.getSelectedDevCard()) { 
-				ds.currUIC.controlledPlayer.playDev(selectedCard, null);
-				hudPanel.cardRenderer.deselectDevCards();
-			} else {hudPanel.cardRenderer.deselectDevCards();}		
+				}
+
+
+				// Player activity check
+				/*if (!ds.currUIC.active && !ds.currUIC.firstturnactive) return;
+
+
+				// Selecting interface elements
+				Button selectedButton=hudPanel.interfaceRenderer.getButtonUnderCursor(ev.getX(), ev.getY());
+				if (selectedButton!=null) {
+					boardPanel.resetBoardSelection();
+					hudPanel.resetInterfaceSelection();
+					hudPanel.pressButton(selectedButton);
+					if (selectedButton instanceof BuildButton && selectedButton.isSelected())
+						ds.currentlyBuilding=((BuildButton)selectedButton).building;
+				}
+
+				DevCard selectedCard=hudPanel.cardRenderer.getDevCardUnderCursor(ev.getX(), ev.getY());
+				if (selectedCard!=null && selectedCard!=hudPanel.cardRenderer.getSelectedDevCard()) {
+					boardPanel.resetBoardSelection();
+					hudPanel.resetInterfaceSelection();
+
+					hudPanel.cardRenderer.selectDevCard(selectedCard);
+				} else if (ds.currUIC.active && selectedCard!=null && selectedCard==hudPanel.cardRenderer.getSelectedDevCard()) { 
+					ds.currUIC.controlledPlayer.playDev(selectedCard, null);
+					hudPanel.cardRenderer.deselectDevCards();
+				} else {hudPanel.cardRenderer.deselectDevCards();
+				}*/
+				// for testing, to print personal values to console
+				if(selectedVertex != null){
+					GameVisualizer.vertexClicked(selectedVertex);
+				} else if(selectedEdge != null){
+					GameVisualizer.edgeClicked(selectedEdge);
+				} else if(selectedHex != null){
+					GameVisualizer.hexClicked(selectedHex);
+				}
 			} catch (GameEndsException e) {
 				displayGameEndScreen(Game.players.stream().filter(x -> (Integer)e.getPlayerID() == x.getId()).findFirst().get());
 			}
@@ -253,8 +263,11 @@ public class Renderer {
 				boardPanel.hexRenderer.cycleOrientation(1);
 				break;
 			// for ai testing
+			case 'n':
+				GameVisualizer.nextPlayer = true;
+				break;
 			case ' ':
-				GameForTest.nextPlayer = true;
+				GameVisualizer.nextMove = true;
 				break;
 			}
 		}

@@ -58,75 +58,58 @@ public class TestMain {
 		paramSets.add(paramSet3);
 		paramSets.add(paramSet4);
 		// turns, players count, random, is there a stupid player, paramsets
-		run(100, 4, true, false, paramSets);
+		//run(100, 4, true, false, paramSets);
+		interactiveGameplay(4, false, false, paramSets);
 		//printStatus();
 		System.out.println("Clever: " + Player.cleverUpdateCount + "\tstupid:" + Player.stupidUpdateCount);
 	}
-	/**
-	 * This won't be needed, cooler features are about to release. ;)
-	 */
-	private static void printStatus(){
+	private static void interactiveGameplay(int playerCnt, boolean random, boolean isStupid, ArrayList<HashSet<AiParameter>> paramSets){
 		Table board = new Table();
 		MapXMLParser.readCatanMap(new File(System.getProperty("user.dir") + System.getProperty("file.separator") + "catan_base_map.xml"), board);
 		
-		Player AI01 = new Player("AI01", 01, board);
-		Player AI02 = new Player("AI02", 02, board);
-		Player AI03 = new Player("AI03", 03, board);
-		Player AI04 = new Player("AI04", 04, board);
-		
-		AI01.setStupidity(false);
-		AI02.setStupidity(false);
-		AI03.setStupidity(false);
-		AI04.setStupidity(false);
-		
 		ArrayList<Player> playerList = new ArrayList<Player>();
-		playerList.add(AI01);
-		playerList.add(AI02);
-		playerList.add(AI03);
-		playerList.add(AI04);
+		ArrayList<PlayerController> pclist = new ArrayList<PlayerController>();
+		for(int i = 0; i < playerCnt; i++) {
+			paramSets.get(i).add(AiParameter.Interactive);
+			Player p = new Player("AI0" + (i + 1), (i + 1), board);
+			playerList.add(p);
+			p.setStupidity(isStupid);
+		}
+		
+		ArrayList<AiController> ais = new ArrayList<>();
+		
+		for(int i = 0; i < playerCnt; i++) {
+			AiController ai = new AiController(board, playerList.get(i), playerList, paramSets.get(i));
+			pclist.add(ai);
+			ais.add(ai);
+			playerList.get(i).setPlayerController(ai);
+		}
 		
 		Game.initializeGame(board, playerList);
 		DevCardShop.initializeShop();
 		
-		HashSet<AiParameter> paramTest1 = new HashSet<AiParameter>();
-		paramTest1.add(AiParameter.NewRes);
-		HashSet<AiParameter> paramTest2 = new HashSet<AiParameter>();
-		paramTest2.add(AiParameter.Port);
-		HashSet<AiParameter> paramTest3 = new HashSet<AiParameter>();
-		paramTest3.add(AiParameter.NewRes);
-		paramTest3.add(AiParameter.Port);
-		HashSet<AiParameter> paramBase = new HashSet<AiParameter>();
-		//paramBase.add(AiParameter.Port);
+		GameForTest.initialize(playerList, ais, board);
+		GameVisualizer.initialize(ais, board);
 		
-		AiController AICONT01 = new AiController(board, AI01, playerList, paramTest1);
-		AiController AICONT02 = new AiController(board, AI02, playerList, paramTest2);
-		AiController AICONT03 = new AiController(board, AI03, playerList, paramTest3);
-		AiController AICONT04 = new AiController(board, AI04, playerList, paramBase);
-		
-		ArrayList<PlayerController> pclist = new ArrayList<PlayerController>();
-		pclist.add(AICONT01);
-		pclist.add(AICONT02);
-		pclist.add(AICONT03);
-		pclist.add(AICONT04);
-		
-		AI01.setPlayerController(AICONT01);
-		AI02.setPlayerController(AICONT02);
-		AI03.setPlayerController(AICONT03);
-		AI04.setPlayerController(AICONT04);
-		
-		/*for(int i = 0; i < pclist.size(); i++){
+		if(random)
+			Collections.shuffle(pclist);
+		for(int i = 0; i < pclist.size(); i++){
 			pclist.get(i).firstturn();
 		}
 		
 		for(int i = pclist.size()-1; i >= 0; i--){
 			pclist.get(i).firstturn();
-		}*/
-		//AICONT01.printStatus();
-		AICONT02.printStatus();
-		//AICONT03.printStatus();
-		//AICONT04.printStatus();
-		
-		Renderer rend = new Renderer(new UIController(new Player("", -1, board)), board, 1280, 700);
+		}
+		GameVisualizer.firstTurnEnded();
+		try {				
+			while(true){
+				for(PlayerController pc : pclist){
+					pc.turn();
+				}
+			}
+		} catch (GameEndsException e) {
+			
+		}
 	}
 	/**
 	 * Ais play a number of games in a row. Some statistics
@@ -235,7 +218,7 @@ public class TestMain {
 							hibak++;
 					}
 				}
-			}	
+			}
 		}
 		if(turns == 1){
 			ArrayList<Integer> vicPts = new ArrayList<>();
@@ -287,6 +270,73 @@ public class TestMain {
 		int sec = (int)TimeUnit.MILLISECONDS.toSeconds(difTime);
 		System.out.println("\nRuntime: " + hour + ":" + min % 60 + ":" + sec % 60);
 		System.out.println("Start: " + startTime.get(Calendar.HOUR) + ":" + startTime.get(Calendar.MINUTE) + ":" + startTime.get(Calendar.SECOND) + "\tend: " + endTime.get(Calendar.HOUR) + ":" + endTime.get(Calendar.MINUTE) + ":" + endTime.get(Calendar.SECOND));
+	}
+	
+	/**
+	 * This won't be needed, cooler features are about to release. ;)
+	 */
+	private static void printStatus(){
+		Table board = new Table();
+		MapXMLParser.readCatanMap(new File(System.getProperty("user.dir") + System.getProperty("file.separator") + "catan_base_map.xml"), board);
+		
+		Player AI01 = new Player("AI01", 01, board);
+		Player AI02 = new Player("AI02", 02, board);
+		Player AI03 = new Player("AI03", 03, board);
+		Player AI04 = new Player("AI04", 04, board);
+		
+		AI01.setStupidity(false);
+		AI02.setStupidity(false);
+		AI03.setStupidity(false);
+		AI04.setStupidity(false);
+		
+		ArrayList<Player> playerList = new ArrayList<Player>();
+		playerList.add(AI01);
+		playerList.add(AI02);
+		playerList.add(AI03);
+		playerList.add(AI04);
+		
+		Game.initializeGame(board, playerList);
+		DevCardShop.initializeShop();
+		
+		HashSet<AiParameter> paramTest1 = new HashSet<AiParameter>();
+		paramTest1.add(AiParameter.NewRes);
+		HashSet<AiParameter> paramTest2 = new HashSet<AiParameter>();
+		paramTest2.add(AiParameter.Port);
+		HashSet<AiParameter> paramTest3 = new HashSet<AiParameter>();
+		paramTest3.add(AiParameter.NewRes);
+		paramTest3.add(AiParameter.Port);
+		HashSet<AiParameter> paramBase = new HashSet<AiParameter>();
+		//paramBase.add(AiParameter.Port);
+		
+		AiController AICONT01 = new AiController(board, AI01, playerList, paramTest1);
+		AiController AICONT02 = new AiController(board, AI02, playerList, paramTest2);
+		AiController AICONT03 = new AiController(board, AI03, playerList, paramTest3);
+		AiController AICONT04 = new AiController(board, AI04, playerList, paramBase);
+		
+		ArrayList<PlayerController> pclist = new ArrayList<PlayerController>();
+		pclist.add(AICONT01);
+		pclist.add(AICONT02);
+		pclist.add(AICONT03);
+		pclist.add(AICONT04);
+		
+		AI01.setPlayerController(AICONT01);
+		AI02.setPlayerController(AICONT02);
+		AI03.setPlayerController(AICONT03);
+		AI04.setPlayerController(AICONT04);
+		
+		/*for(int i = 0; i < pclist.size(); i++){
+			pclist.get(i).firstturn();
+		}
+		
+		for(int i = pclist.size()-1; i >= 0; i--){
+			pclist.get(i).firstturn();
+		}*/
+		//AICONT01.printStatus();
+		AICONT02.printStatus();
+		//AICONT03.printStatus();
+		//AICONT04.printStatus();
+		
+		Renderer rend = new Renderer(new UIController(new Player("", -1, board)), board, 1280, 700);
 	}
 }
 

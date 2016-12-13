@@ -43,8 +43,6 @@ public class GameForTest {
 	private static Table board;
 	// current ai's playing
 	private static ArrayList<AiController> aclist;
-	// renderer's mouse click listener can set this to change the current ai to display
-	public static boolean nextPlayer = true;
 	// the player who has the two point bonus for longest road, null if no one has it
 	// this has no real purpose, used for testing
 	public static Player longestRoadKing = null;
@@ -215,84 +213,5 @@ public class GameForTest {
 		if(!maxRoadLengthsFromNode.get(p).containsKey(v))
 			return -1;
 		return maxRoadLengthsFromNode.get(p).get(v);
-	}
-	
-	/**
-	 * Draws the current state of the map and visualizes the last
-	 * build (which is given as a parameter).
-	 * @param lastBuild - the build to visualize
-	 * @param where - where would the ai build it
-	 */
-	public static void drawMap(Building lastBuild, TableElement where){
-		Renderer rend = new Renderer(new UIController(new Player("", -1, board)), board, 1280, 700);
-		while(true){
-			try {
-				// blinking the given building
-				Thread.sleep(500);
-				where.setBuilding(null);
-				Thread.sleep(500);
-				where.setBuilding(lastBuild);
-			} catch (InterruptedException e) {
-
-			}
-		}
-	}
-	
-	/**
-	 * Draws the map in it's current state, and visualizes the current ai's
-	 * calculated best options as if it would be its turn. The current ai
-	 * can be switched with pressing the space bar.
-	 */
-	public static void drawMap(){
-		Renderer rend = new Renderer(new UIController(new Player("", -1, board)), board, 1280, 700);
-		AiController ai = null;
-		Vertex nodeCity = null;
-		Vertex nodeVillage = null;
-		Edge edgeRoad = null;
-		City city = null;
-		Settlement villageBefore = null;
-		Settlement village = null;
-		Road road = null;
-		int index = -1;
-		while(true){
-			// this is set to true when the space bar is pressed
-			if(nextPlayer){
-				// we change the current ai to the next in the list, and set the buildings to display
-				nextPlayer = false;
-				index = (index + 1) % aclist.size();
-				ai = aclist.get(index);
-				ai.buildCity.refresh();
-				ai.buildVillage.refresh();
-				ai.buildRoad.refresh();
-				nodeCity = ai.buildCity.getNode();
-				nodeVillage = ai.buildVillage.getNode();
-				edgeRoad = ai.buildRoad.getEdge();
-				city = new City(ai.me);
-				villageBefore = null;
-				if(nodeCity != null)
-					villageBefore = (Settlement)nodeCity.getBuilding();
-				village = new Settlement(ai.me);
-				road = new Road(ai.me);
-			}
-			try {
-				// blinking the buildings the ai would buy
-				Thread.sleep(500);
-				if(nodeCity != null)
-					nodeCity.setBuilding(city);
-				if(nodeVillage != null)
-					nodeVillage.setBuilding(village);
-				if(edgeRoad != null)
-				edgeRoad.setBuilding(road);
-				Thread.sleep(500);
-				if(nodeCity != null)
-					nodeCity.setBuilding(villageBefore);
-				if(nodeVillage != null)
-					nodeVillage.setBuilding(null);
-				if(edgeRoad != null)
-					edgeRoad.setBuilding(null);
-			} catch (InterruptedException e) {
-
-			}
-		}
 	}
 }
