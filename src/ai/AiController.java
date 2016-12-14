@@ -60,6 +60,14 @@ public class AiController extends PlayerController {
 	public static double maxValueTerr = - Double.MAX_VALUE;
 	public static double sumValueTerr = 0;
 	public static int cntTerr = 0;
+	public static double minValuePort3 = Double.MAX_VALUE;
+	public static double maxValuePort3 = - Double.MAX_VALUE;
+	public static double sumValuePort3 = 0;
+	public static int cntPort3 = 0;
+	public static double minValuePort2 = Double.MAX_VALUE;
+	public static double maxValuePort2 = - Double.MAX_VALUE;
+	public static double sumValuePort2 = 0;
+	public static int cntPort2 = 0;
 
 	/**
 	 * Constructor. Initializes attributes.
@@ -643,7 +651,7 @@ public class AiController extends PlayerController {
 		double sum = 0;
 		ArrayList<Hex> terrytories = v.getNeighbourHexes();
 		for(Hex x : terrytories){
-			sum += territoryPersonalValue(x);
+			sum += territoryPersonalValue(x) * 0.5;
 		}
 		if(sum > 0){
 			sumValueNode += sum;
@@ -664,31 +672,47 @@ public class AiController extends PlayerController {
 				// ha nem kikoto
 				double numberValue = 1;
 				if(params.contains(AiParameter.NewRes) && !numbers.contains(h.getProsperity()))
-					numberValue = 1.8;
+					numberValue = 1.4;
 				double resourceValue = 1;
 				if(params.contains(AiParameter.NewRes) && this.resources.get(h.getResource()).personalFrequency() < (1.0 / 36.0)){
-					resourceValue = 2.5;
+					resourceValue = 2;
 				}
-				buildValue = 0.3 * Material.frequencyLUT(h.getProsperity()) * resources.get(h.getResource()).personalValue() * numberValue * resourceValue;
+				buildValue = 4 * Material.frequencyLUT(h.getProsperity()) * resources.get(h.getResource()).personalValue() * numberValue * resourceValue;
+				if(buildValue > 0){
+					sumValueTerr += buildValue;
+					cntTerr++;
+					if(buildValue > maxValueTerr)
+						maxValueTerr = buildValue;
+					if(buildValue < minValueTerr)
+						minValueTerr = buildValue;
+				}
 			}
 			else if(!isFirstTurn && params.contains(AiParameter.Port)) {
 				// ha kikoto
 				if(h.getPort().getRes() == null){
 					buildValue = threeToOnePortPersonalValue();
+					if(buildValue > 0){
+						sumValuePort3 += buildValue;
+						cntPort3++;
+						if(buildValue > maxValuePort3)
+							maxValuePort3 = buildValue;
+						if(buildValue < minValuePort3)
+							minValuePort3 = buildValue;
+					}
 				} else{
 					if(me.getChangeLUT(h.getPort().getRes()) > h.getPort().getChangeNumber()){
-						buildValue = 0.1 * resources.get(h.getPort().getRes()).personalValue() * resources.get(h.getPort().getRes()).personalFrequency();
+						buildValue = 1.4 * resources.get(h.getPort().getRes()).personalValue() * resources.get(h.getPort().getRes()).personalFrequency();
+						if(buildValue > 0){
+							sumValuePort2 += buildValue;
+							cntPort2++;
+							if(buildValue > maxValuePort2)
+								maxValuePort2 = buildValue;
+							if(buildValue < minValuePort2)
+								minValuePort2 = buildValue;
+						}
 					}
 				}
 			}
-		}
-		if(buildValue > 0){
-			sumValueTerr += buildValue;
-			cntTerr++;
-			if(buildValue > maxValueTerr)
-				maxValueTerr = buildValue;
-			if(buildValue < minValueTerr)
-				minValueTerr = buildValue;
 		}
 		return buildValue;
 	}
@@ -702,9 +726,9 @@ public class AiController extends PlayerController {
 		double result = 0;
 		for(Resource res : Resource.values()){
 			if(me.getChangeLUT(res) > 3)
-				result +=  resources.get(res).personalValue() * 0.008;
+				result +=  resources.get(res).personalValue();
 		}
-		return result;
+		return result * 0.2;
 	}
 	
 	/**
@@ -935,5 +959,11 @@ public class AiController extends PlayerController {
 	}
 	public double buildCityNodeValue(Vertex where){
 		return buildCity.nodeValue(where);
+	}
+	public double buildDevelopmentValue(){
+		return buildDevelopment.getBuildValue();
+	}
+	public double resourceValue(Resource res){
+		return resources.get(res).personalValue();
 	}
 }

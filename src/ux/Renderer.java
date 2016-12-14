@@ -35,6 +35,7 @@ import controller.player.devcards.*;
 import ux.board.BoardRenderer;
 import ux.ui.BuildButton;
 import ux.ui.Button;
+import ux.ui.DevButton;
 import ux.ui.HUDRenderer;
 import ux.ui.InterfaceColorProfile;
 import ux.ui.StringPainter;
@@ -215,13 +216,19 @@ public class Renderer {
 					hudPanel.cardRenderer.deselectDevCards();
 				} else {hudPanel.cardRenderer.deselectDevCards();
 				}*/
+				
 				// for testing, to print personal values to console
+				Button selectedButton=hudPanel.interfaceRenderer.getButtonUnderCursor(ev.getX(), ev.getY());
 				if(selectedVertex != null){
 					GameVisualizer.vertexClicked(selectedVertex);
 				} else if(selectedEdge != null){
 					GameVisualizer.edgeClicked(selectedEdge);
 				} else if(selectedHex != null){
 					GameVisualizer.hexClicked(selectedHex);
+				} else if(selectedButton != null){
+					if (selectedButton instanceof DevButton){
+						GameVisualizer.devButtonClicked();
+					}
 				}
 			} catch (GameEndsException e) {
 				displayGameEndScreen(Game.players.stream().filter(x -> (Integer)e.getPlayerID() == x.getId()).findFirst().get());

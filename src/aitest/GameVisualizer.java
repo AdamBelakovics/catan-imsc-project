@@ -129,7 +129,7 @@ public class GameVisualizer {
 		Resource res = where.getResource();
 		if(res != null){
 			// TODO
-			System.out.println("Resource value: ");
+			System.out.println("Resource value: " + currentAi.resourceValue(res));
 		}
 		System.out.println("Territory value: " + currentAi.territoryPersonalValue(where));
 		System.out.println("-------------------------------");
@@ -137,6 +137,11 @@ public class GameVisualizer {
 	public static void edgeClicked(Edge where){
 		System.out.println("-------------------------------");
 		System.out.println("BuildRoad edge value: " + currentAi.buildRoadEdgeValue(where));
+		System.out.println("-------------------------------");
+	}
+	public static void devButtonClicked(){
+		System.out.println("-------------------------------");
+		System.out.println("BuildDevelopment value: " + currentAi.buildDevelopmentValue());
 		System.out.println("-------------------------------");
 	}
 }

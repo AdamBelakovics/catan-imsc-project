@@ -228,7 +228,7 @@ public class BoardHexRenderer extends ImageRenderer {
 	 * @author Kiss Lorinc
 	 */
 	public void selectHex(Hex h) {
-		System.out.println("[Renderer]Selected "+ds.hexMap.get(h).toString());
+		//System.out.println("[Renderer]Selected "+ds.hexMap.get(h).toString());
 		deselectHexes();
 		ds.hexMap.get(h).selected=!(ds.hexMap.get(h).selected);
 	}

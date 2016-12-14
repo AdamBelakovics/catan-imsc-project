@@ -160,7 +160,7 @@ public class BuildDevelopment {
 			difVal = 5;
 		else if(dif < -2)
 			difVal = 3;
-		double result = r.getBuildValue() + difVal;
+		double result = 0.5 * r.getBuildValue() + difVal;
 		// for testing, collects statistics of build value
 		if(result > 0){
 			sumValueTwoRoad += result;
@@ -199,9 +199,9 @@ public class BuildDevelopment {
 		double result = 0;
 		// the return value is between 0 and 10
 		if(minResourceFrequency > 0.025)
-			result = Math.max(3, 0.25 / minResourceFrequency);
+			result = Math.max(3, 0.2 / minResourceFrequency);
 		else
-			result = 8;
+			result = 7;
 		
 		// for testing, collects statistics of build value
 		if(result > 0){
@@ -228,7 +228,7 @@ public class BuildDevelopment {
 			// handling division by zero
 			try{
 				if(it.getValue().personalFrequency() > 0.025)
-					currentValue = Math.min(7, 0.2 * it.getValue().personalValue() * it.getValue().globalFrequency() / it.getValue().personalFrequency());
+					currentValue = Math.min(8, 0.2 * it.getValue().personalValue() * it.getValue().globalFrequency() / it.getValue().personalFrequency());
 			} catch(IllegalArgumentException e){
 				currentValue = 0;
 			}

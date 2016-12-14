@@ -98,7 +98,7 @@ public class BuildVillage {
 		if(isVillageAvailable()){
 			ArrayList<Vertex> nodes = listValidNodes();		
 			for(Vertex n : nodes){
-				double currentValue = 8 * owner.nodePersonalValue(n);
+				double currentValue = 1.5 * owner.nodePersonalValue(n);
 				if(currentValue > buildValue){
 					buildValue = currentValue;
 					node = n;
@@ -197,7 +197,7 @@ public class BuildVillage {
 		node = null;		
 		for(Vertex n : map.getNodes()){
 			if(owner.isNodeValid(n)){
-				double currentValue = 8 * owner.nodePersonalValue(n);
+				double currentValue = 1.5 * owner.nodePersonalValue(n);
 				if(currentValue > buildValue){
 					buildValue = currentValue;
 					node = n;
@@ -209,9 +209,9 @@ public class BuildVillage {
 	// For testing purposes
 	//---------------------------------------------------------------------------------------------------------
 	public double nodeValueFirstTurn(Vertex v){
-		return 8 * owner.nodePersonalValue(v);
+		return 1.5 * owner.nodePersonalValue(v);
 	}
 	public double nodeValue(Vertex v){
-		return 8 * owner.nodePersonalValue(v);
+		return 1.5 * owner.nodePersonalValue(v);
 	}
 }

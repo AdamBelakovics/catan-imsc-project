@@ -281,14 +281,14 @@ public class BuildRoad {
 		//System.out.println(n);
 		//System.out.println(fromNode);
 		int dif = difForTest;
-		double difVal = 1;
+		double difVal = 0;
 		if(dif < 2){
 			if(dif >= -1)
-				difVal = 1.5;
+				difVal = 4;
 			else
-				difVal = 1.2;
+				difVal = 2;
 			if(isMaxRoadStart(fromNode))
-				val = difVal * val;
+				val = difVal + val;
 		}
 		return val;
 	}
@@ -318,7 +318,7 @@ public class BuildRoad {
 		double ownPersVal = nodePersonalValueForRoadLocal(n);
 		// some magic formula, looks useable
 		// TODO optimize this shit
-		result +=  ownPersVal * ownPersVal * (cnt + 1) * (cnt + 1) * (cnt + 1) * 0.0156215;
+		result +=  ownPersVal * (cnt + 1) * (cnt + 1) * 0.02;
 		//System.out.println("MagicRoadVal: " + result + " cnt: " + cnt);
 		for(Double val : persValues){
 			result += val;
@@ -348,7 +348,7 @@ public class BuildRoad {
 	
 	private double nodePersonalValueForRoadLocal(Vertex v){
 		if(owner.isNodeValid(v))
-			return 2 * owner.nodePersonalValue(v);
+			return 1.5 * owner.nodePersonalValue(v);
 		return 0;
 	}
 
