@@ -276,6 +276,9 @@ public class Renderer {
 			case ' ':
 				GameVisualizer.nextMove = true;
 				break;
+			case 'x':
+				GameVisualizer.showBuildPlan = !GameVisualizer.showBuildPlan; 
+				break;
 			}
 		}
 

@@ -24,6 +24,7 @@ public class GameVisualizer {
 	public static boolean nextPlayer = true;
 	// renderer's mouse click listener can set this to make a move for the current ai
 	public static boolean nextMove = false;
+	public static boolean showBuildPlan = true;
 	/**
 	 * Initializes members of this class, and creates a renderer which draws the map.
 	 * @param aclist - the ai's playing in the game
@@ -93,11 +94,11 @@ public class GameVisualizer {
 			try {
 				// blinking the buildings the ai would buy
 				Thread.sleep(500);
-				if(nodeCity != null)
+				if(showBuildPlan && nodeCity != null)
 					nodeCity.setBuilding(city);
-				if(nodeVillage != null)
+				if(showBuildPlan && nodeVillage != null)
 					nodeVillage.setBuilding(village);
-				if(edgeRoad != null)
+				if(showBuildPlan && edgeRoad != null)
 					edgeRoad.setBuilding(road);
 				Thread.sleep(500);
 				if(nodeCity != null)
