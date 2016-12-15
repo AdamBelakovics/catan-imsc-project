@@ -701,7 +701,7 @@ public class AiController extends PlayerController {
 					}
 				} else{
 					if(me.getChangeLUT(h.getPort().getRes()) > h.getPort().getChangeNumber()){
-						buildValue = 1.4 * resources.get(h.getPort().getRes()).personalValue() * resources.get(h.getPort().getRes()).personalFrequency();
+						buildValue = 10 * resources.get(h.getPort().getRes()).personalFrequency();
 						if(buildValue > 0){
 							sumValuePort2 += buildValue;
 							cntPort2++;

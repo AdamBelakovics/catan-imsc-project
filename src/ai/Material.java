@@ -67,15 +67,15 @@ public class Material {
 		switch (myresource) {
 		case Brick:
 			if(params.contains(AiParameter.Lumbrick))
-				baseValue = 7;
+				baseValue = 6;
 			else if(params.contains(AiParameter.Orain))
-				baseValue = 2;
+				baseValue = 3;
 			else 
 				baseValue = 5;
 			break;
 		case Lumber:
 			if(params.contains(AiParameter.Lumbrick))
-				baseValue = 8;
+				baseValue = 6;
 			else if(params.contains(AiParameter.Orain))
 				baseValue = 3;
 			else 
@@ -83,25 +83,25 @@ public class Material {
 			break;
 		case Ore:
 			if(params.contains(AiParameter.Lumbrick))
-				baseValue = 2;
+				baseValue = 3;
 			else if(params.contains(AiParameter.Orain))
-				baseValue = 8;
+				baseValue = 6;
 			else 
 				baseValue = 5;
 			break;
 		case Grain:
 			if(params.contains(AiParameter.Lumbrick))
-				baseValue = 3;
+				baseValue = 4;
 			else if(params.contains(AiParameter.Orain))
-				baseValue = 7;
+				baseValue = 6;
 			else 
 				baseValue = 5;
 			break;
 		case Wool:
 			if(params.contains(AiParameter.Lumbrick))
-				baseValue = 3;
+				baseValue = 4;
 			else if(params.contains(AiParameter.Orain))
-				baseValue = 6;
+				baseValue = 5;
 			else 
 				baseValue = 5;
 			break;
